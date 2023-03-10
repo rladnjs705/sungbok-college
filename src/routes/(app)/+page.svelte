@@ -1,4 +1,26 @@
 <script>
-    import Task from "$components/Task.svelte";
+    import List from "$components/board/List.svelte";
+
+    const boardList = {};
+
+    const notice = {
+        title: "공지사항",
+        list: boardList,
+        boardType: "notice"
+    };
+
+    const questions = {
+        title: "Q&A 게시판",
+        list: boardList,
+        boardType: "questions"
+    };
 </script>
-<Task/>
+
+<div class="flex flex-col gap-x-10 gap-y-10 md:flex-row">
+    <List list={notice}/>
+    <List list={questions}/>
+</div>
+<div class="flex flex-col gap-x-10 gap-y-10 md:flex-row md:mt-8">
+    <List list={notice}/>
+    <List list={questions}/>
+</div>

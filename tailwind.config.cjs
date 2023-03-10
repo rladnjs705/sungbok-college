@@ -2,15 +2,9 @@
 module.exports = {
   content: ['./src/**/*.{html,js,svelte,ts}'],
   theme: {
-    extend: {
-      animation: {
-        // custom animation 이름과 keyframes 이름을 매칭합니다.
-        'slide-in': 'slide-in .5s ease-in-out',
-        'slide-out': 'slide-out .5s ease-in-out',
-      },
+    fontFamily: {
+      'sans': ["Pretendard Variable", 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'],
     },
   },
-  plugins: [
-    require('tailwind-scrollbar-hide')
-  ],
+  plugins: [],
 }

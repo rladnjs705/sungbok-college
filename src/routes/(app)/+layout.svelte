@@ -12,7 +12,7 @@
   let loading = true;
   let isSidebar = false;
   let isMobile = true;
-  
+
   const getTheme = () => {
       const defaultValue = '';
       const isThemeToken = browser ? window.localStorage.getItem('dark') ?? defaultValue : defaultValue;    
@@ -38,44 +38,42 @@
       checkMobile();
       window.addEventListener('resize', checkMobile);
       loading = false;
+      isSidebar = false;
   });
 
   const onSideBar = () => {
       isSidebar = !isSidebar;
+      if(isSidebar){
+        document.body.classList.add("sidebar-open");
+      } else{
+        document.body.classList.remove("sidebar-open");
+      }
   }
   
   function checkMobile() {
  		isMobile = window.innerWidth < 768;
 	}
-</script>
 
-<div class:dark={isDark} class:loading={loading} class:scrollbar-hidden={isMobile}>
-  <Header isDark={isDark} toggleTheme={toggleTheme} onSideBar={onSideBar} />
-  
+  function closedSidebar() {
+    isSidebar = false;
+    document.body.classList.remove("sidebar-open");
+  }
+
+</script>
+<div class:dark={isDark} class:loading={loading} class:scrollbar-hidden={isMobile} class:sidebar-open={isSidebar}>
+
+  <!-- 사이드바 dim처리 -->
   <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-white dark:bg-gray-700 text-black dark:text-white" on:click={() => isSidebar = false} class:sidebar-background={isSidebar}>    
-    <Sidebar isSidebar={isSidebar} />
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div class="h-full mt-14 mb-20 md:ml-64">
-      <slot/>
-      <!-- <div class="grid grid-cols-1 lg:grid-cols-2 p-4 gap-4">
-      </div> -->
+  <div class="bg-[rgba(0,0,0,0.3)] top-0 left-0 absolute h-full w-full z-10" class:hidden={!isSidebar} on:click|preventDefault={closedSidebar}></div>
+
+  <Header isDark={isDark} toggleTheme={toggleTheme} onSideBar={onSideBar} />
+  <Sidebar isSidebar={isSidebar} onSideBar={onSideBar} />
+
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-white dark:bg-gray-700 text-black dark:text-white" on:click|preventDefault={closedSidebar}>    
+    <div class="mt-16 mb-20 mx-4 lg:ml-80 lg:mr-24">
+        <slot/>
     </div>
   </div>
-  <Footer isSidebar={isSidebar}/>
+  <Footer/>
 </div>
-
-<style>
-  .sidebar-background{
-    background-color: rgb(185, 183, 183);
-  }
-
-  .scrollbar-hidden::-webkit-scrollbar {
-    display: none;
-  }
-
-  .scrollbar-hidden{
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-  }
-</style>

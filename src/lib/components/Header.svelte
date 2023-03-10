@@ -5,22 +5,60 @@
 </script>
 
 <!-- Header -->
-<div class="fixed w-full flex items-center justify-between h-14 text-white z-10">
-    <div class="flex items-center justify-start md:justify-center pl-3 w-14 md:w-64 h-14 bg-blue-800 dark:bg-gray-800 border-none">
-      <img class="w-7 h-7 md:w-10 md:h-10 mr-2 rounded-md overflow-hidden hidden md:block processing" src="https://therminic2018.eu/wp-content/uploads/2018/07/dummy-avatar.jpg" alt="profile" />
+<div class="absolute md:fixed w-full flex items-center justify-between h-14 text-white z-10">
+    <div class="flex items-center justify-start md:justify-center pl-3 w-14 md:w-64 h-14 bg-blue-600 dark:bg-gray-600 border-none">
+      <img class="w-7 h-7 md:w-10 md:h-10 mr-2 rounded-md overflow-hidden hidden processing" src="/dummy-avatar.jpg" alt="profile" />
       <button class="w-12 h-16 -mr-2 border-r rounded-md overflow-hidden md:hidden" on:click={onSideBar}>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 my-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
        </button>
-      <span class="hidden md:block">아이디</span>
+       <a href="/">
+        <img class="w-24 h-24 bg-transparent hidden md:block" src="/logo-removebg.png" alt="logo">
+      </a>
     </div>
-    <div class="flex justify-between items-center h-14 bg-blue-800 dark:bg-gray-800 header-right">
-      <div class="bg-white rounded flex items-center w-full max-w-xl mr-4 p-2 shadow-sm border border-gray-200">
-        <button class="outline-none focus:outline-none">
-          <svg class="w-5 text-gray-600 h-5 cursor-pointer" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-        </button>
-        <input type="search" name="" id="" placeholder="Search" class="w-full pl-3 text-sm text-black outline-none focus:outline-none bg-transparent" />
+    <div class="flex justify-between items-center h-14 bg-blue-600 dark:bg-gray-600 header-right">
+      <div class="flex items-center">
+        <div class="block w-px h-6 bg-gray-400 dark:bg-gray-700 md:hidden"></div>
+        <a href="/">
+          <img class="w-24 h-24 bg-transparent md:hidden" src="/logo-removebg.png" alt="logo">
+        </a>
+        <div class="hidden items-center md:space-x-3 lg:space-x-7 md:flex lg:ml-[60px]">
+          <div class="shrink-0">
+              <a
+                  class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-200 text-sm font-medium"
+                  href="/notice"><span class="hover:no-underline">공지사항</span></a
+              >
+          </div>
+          <div class="h-3 w-[1px] bg-gray-400 dark:bg-gray-400/70" />
+          <div class="shrink-0">
+              <a
+                  class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-100 text-sm font-medium hover:no-underline"
+                  href="/lecture">강의콘텐츠</a
+              >
+          </div>
+          <div class="h-3 w-[1px] bg-gray-400 dark:bg-gray-400/70" />
+          <div class="shrink-0">
+            <a
+                class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-100 text-sm font-medium hover:no-underline"
+                href="/reportCard">출결 현황</a
+            >
+          </div>
+          <div class="h-3 w-[1px] bg-gray-400 dark:bg-gray-400/70" />
+          <div class="shrink-0">
+              <a
+                  class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-100 text-sm font-medium hover:no-underline"
+                  href="/reportCard">성적</a
+              >
+          </div>
+          <div class="h-3 w-[1px] bg-gray-400 dark:bg-gray-400/70" />
+          <div class="shrink-0">
+            <a
+                class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-100 text-sm font-medium hover:no-underline"
+                href="/questions">Q&amp;A</a
+            >
+        </div>
+      </div>      
       </div>
       <ul class="flex items-center">
         <li>
