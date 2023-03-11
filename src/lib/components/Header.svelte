@@ -1,4 +1,8 @@
 <script lang="ts">
+    import { itemFooterSelected } from "$lib/stores";
+    import { ALL } from "$lib/utils/constans";
+
+
     export let toggleTheme:any;
     export let isDark:any;
     export let onSideBar:any;
@@ -20,7 +24,7 @@
     <div class="flex justify-between items-center h-14 bg-blue-600 dark:bg-gray-600 header-right">
       <div class="flex items-center">
         <div class="block w-px h-6 bg-gray-400 dark:bg-gray-700 md:hidden"></div>
-        <a href="/">
+        <a href="/" on:click={() => itemFooterSelected.selectFooter(ALL)}>
           <img class="w-24 h-24 bg-transparent md:hidden" src="/logo-removebg.png" alt="logo">
         </a>
         <div class="hidden items-center md:space-x-3 lg:space-x-7 md:flex lg:ml-[60px]">

@@ -9,6 +9,8 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
 
+  import { itemFooterSelected } from '$stores';
+
   let loading = true;
   let isSidebar = false;
   let isMobile = true;
@@ -16,6 +18,7 @@
   const getTheme = () => {
       const defaultValue = '';
       const isThemeToken = browser ? window.localStorage.getItem('dark') ?? defaultValue : defaultValue;    
+      console.log(isThemeToken)
       if (isThemeToken) {
         return JSON.parse(isThemeToken);
       }
@@ -41,12 +44,15 @@
       isSidebar = false;
   });
 
-  const onSideBar = () => {
+  const onSideBar = (_id:string) => {
       isSidebar = !isSidebar;
       if(isSidebar){
         document.body.classList.add("sidebar-open");
       } else{
         document.body.classList.remove("sidebar-open");
+
+        //푸터 선택 변경
+        itemFooterSelected.selectFooter(_id)
       }
   }
   
