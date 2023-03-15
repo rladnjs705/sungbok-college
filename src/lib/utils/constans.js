@@ -2,7 +2,7 @@ export const ALL = '0';
 export const NOTICE = '100';
 export const QUESTIONS = '200';
 export const LECTURE = '300';
-export const PROFILE = '400';
+export const FREE = '400';
 export const NONE = '1';
 
 export const ORDER_ADDED = 'ORDER_ADDED';

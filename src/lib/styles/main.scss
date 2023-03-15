@@ -132,6 +132,11 @@
 
   @media only screen and (min-width: 768px) {
       .header-right {
+          width: calc(100% - 3.5rem);
+      }        
+  }
+  @media only screen and (min-width: 1024px) {
+      .header-right {
           width: calc(100% - 16rem);
       }        
   }
@@ -172,3 +177,25 @@
     font-size: 13px;
     color: #3182ce;
   }
+
+  select {
+    background-image: url('/selectBottomBtn.svg');
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    padding: 0.5rem 0.75rem;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #fff;
+    border-color: #6b7280;
+    border-width: 1px;
+    border-radius: 0;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    --tw-shadow: 0 0 #0000;
+}

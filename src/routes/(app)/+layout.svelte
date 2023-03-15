@@ -5,11 +5,25 @@
   import Sidebar from '$components/Sidebar.svelte';
   import Header from "$components/Header.svelte";
   import Footer from "$components/Footer.svelte";
-
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
-
   import { itemFooterSelected } from '$stores';
+  import { authToken, auth } from '$stores';
+
+  $: {
+      if($authToken){
+          auth.createAuth();
+      } else {
+          auth.resetAuth();
+      }
+  }
+
+  const initAuth = async () => {
+      if($authToken) {
+          await auth.createAuth();
+      }
+      return;
+  }
 
   let loading = true;
   let isSidebar = false;
@@ -17,8 +31,7 @@
 
   const getTheme = () => {
       const defaultValue = '';
-      const isThemeToken = browser ? window.localStorage.getItem('dark') ?? defaultValue : defaultValue;    
-      console.log(isThemeToken)
+      const isThemeToken = browser ? window.localStorage.getItem('dark') ?? defaultValue : defaultValue;
       if (isThemeToken) {
         return JSON.parse(isThemeToken);
       }
@@ -66,6 +79,7 @@
   }
 
 </script>
+{#await initAuth() then initAuth}
 <div class:dark={isDark} class:loading={loading} class:scrollbar-hidden={isMobile} class:sidebar-open={isSidebar}>
 
   <!-- 사이드바 dim처리 -->
@@ -77,9 +91,10 @@
 
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-white dark:bg-gray-700 text-black dark:text-white" on:click|preventDefault={closedSidebar}>    
-    <div class="mt-16 mb-20 mx-4 lg:ml-80 lg:mr-24">
+    <div class="mt-16 mb-20 mx-4 lg:ml-80 lg:mr-72">
         <slot/>
     </div>
   </div>
   <Footer/>
 </div>
+{/await}
