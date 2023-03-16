@@ -84,13 +84,13 @@
 
   <!-- 사이드바 dim처리 -->
   <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div class="bg-[rgba(0,0,0,0.3)] top-0 left-0 absolute h-full w-full z-10" class:hidden={!isSidebar} on:click|preventDefault={closedSidebar}></div>
+  <div class="bg-[rgba(0,0,0,0.3)] top-0 left-0 absolute h-full w-full z-10 md:hidden" class:hidden={!isSidebar} on:click={closedSidebar}></div>
 
   <Header isDark={isDark} toggleTheme={toggleTheme} onSideBar={onSideBar} />
   <Sidebar isSidebar={isSidebar} onSideBar={onSideBar} />
 
   <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-white dark:bg-gray-700 text-black dark:text-white" on:click|preventDefault={closedSidebar}>    
+  <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-white dark:bg-gray-700 text-black dark:text-white" on:click={closedSidebar}>    
     <div class="mt-16 mb-20 mx-4 lg:ml-80 lg:mr-72">
         <slot/>
     </div>

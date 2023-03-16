@@ -1,22 +1,14 @@
 <script lang="ts">
+    import type { PageData } from './$types';
     import Create from "$components/button/group/Create.svelte";
     import Editor from "@toast-ui/editor";
     import { extractErrors, noticeValidateSchema } from '$utils/validates';
+    import { auth } from '$stores';
     import axios from 'axios';
     import { onMount } from "svelte";
-    import type { PageData } from './$types';
     import { goto } from "$app/navigation";
     import Swal from "sweetalert2";
-    
-    // import { Notyf } from 'notyf';
-    // import 'notyf/notyf.min.css';
-    // const notyf = new Notyf({
-    //     duration: 3000,
-    //     position: {
-    //     x: 'right',
-    //     y: 'top',
-    //     }
-    // });
+    import { Checkbox } from 'flowbite-svelte'
 
     export let data: PageData;
     let editor:any;
@@ -30,6 +22,13 @@
         title: '',
         content: '',
         boardType: 'NOTICE',
+        //유저정보
+        userId: 0,
+        email: '',
+        userName: '',
+        nickName: '',
+        role: '',
+        isSecret: false,
     }
 
     onMount(() => {
@@ -75,12 +74,29 @@
             }else{
                 addValues.content = editor.getHTML();
             }
-            await noticeValidateSchema.validate(addValues, {abortEarly: false});
-            await onAddBoard();
+            addValues.userId = Number($auth._id);
+            addValues.email = $auth.email;
+            addValues.nickName = $auth.nickName;
+            addValues.userName = $auth.userName;
+            addValues.role = $auth.role;
+            if($auth._id != ''){
+                await noticeValidateSchema.validate(addValues, {abortEarly: false});
+                await onAddBoard();
+            }else {
+                Swal.fire({
+                    icon: 'error',
+                    text: "로그인이 되어있지 않습니다. 로그인 후 이용해주세요",
+                    timer: 3000, // 3초 후 자동으로 닫힘
+                });
+            }
         } catch (error) {
             console.log(error);
             errors = extractErrors(error);
         }
+    }
+
+    const handleClick = () => {
+        addValues.isSecret = !addValues.isSecret;
     }
 </script>
 
@@ -137,6 +153,12 @@
                 {#if errors.content}
                     <div class="text-red-500">{errors.content}</div>
                 {/if}
+            </div>
+            <div class="flex items center space-y-1">
+                <div class="flex flex-1 flex-wrap items-center"></div>
+                <div class="inline-flex rounded">
+                    <Checkbox bind:checked={addValues.isSecret} on:click={handleClick}>익명</Checkbox>
+                </div>
             </div>
         </div>
         <Create link={cancelLink} onAddBoard={onSubmitAddBoard} />
