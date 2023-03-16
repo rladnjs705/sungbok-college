@@ -10,6 +10,6 @@
   identifier={id}
   title="새벽이슬"
   url="https://port-0-sungbok-college-1jx7m2gldi7x7be.gksl2.cloudtype.app"
-  lang="ko"
+  language="ko"
 />
 {id}
