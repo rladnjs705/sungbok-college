@@ -5,6 +5,8 @@
     import axios from 'axios';
     import { onMount } from "svelte";
     import type { PageData } from './$types';
+    import { goto } from "$app/navigation";
+    import Swal from "sweetalert2";
     
     // import { Notyf } from 'notyf';
     // import 'notyf/notyf.min.css';
@@ -52,8 +54,14 @@
             const response = await axios.post("/api/admin/board/create", addValues);
             if(response.status == 200){
                 //notyf.success("생성되었습니다.");
+                goto("/notice");
             }else{
-                //notyf.error(response.data.resultMsg);
+                console.log(response);
+                Swal.fire({
+                    icon: 'error',
+                    text: "에러가 발생했습니다. 관리자에게 문의해주세요.",
+                    timer: 3000, // 3초 후 자동으로 닫힘
+                });
             }
         } catch(error) {
             errors = extractErrors(error);
@@ -62,7 +70,7 @@
 
     const onSubmitAddBoard = async () => {
         try {
-            if(editor.getHTML()=="<p><br></p>"){
+            if(editor.getHTML()=="<p><br></p>"|| editor.getHTML()==""){
                 addValues.content = '';
             }else{
                 addValues.content = editor.getHTML();

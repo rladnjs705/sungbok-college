@@ -127,6 +127,7 @@
                     <a
                         class="line-clamp-1 w-fit break-all text-sm font-semibold text-gray-900 hover:text-blue-500 dark:text-gray-100 dark:hover:text-blue-200 sm:text-base sm:leading-5"
                         href="/articles/1411330"
+                        on:click={() => goto("/articles/1411330")}
                         >[중요 알림] OKKY v2.5 릴리스 및 DB 작업으로 인한
                         다운타임 공지</a
                     >
