@@ -1,12 +1,9 @@
 <script lang="ts">
     export let list:any;
 
-    let boardList = list.list
-
-    console.log(boardList)
+    let boardList = list.list;
 
     function displayedAt(createDate:Array<number>) {
-        console.log(dateFommater(createDate))
         const milliSeconds = new Date().valueOf() - new Date(dateFommater(createDate)).valueOf();
         const seconds = milliSeconds / 1000
         if (seconds < 60) return `방금 전`
@@ -75,6 +72,7 @@
     >
     <div>
         <ul class="divide-y divide-gray-500/30 dark:divide-gray-500/70">
+            {#if boardList}
             {#each boardList as list}
             <li class="py-4 last:pb-0">
                 <div class="mb-2 flex">
@@ -163,6 +161,11 @@
                 </div>
             </li>
             {/each}
+            {:else}
+            <li>
+                <div>게시물이 없습니다.</div>
+            </li>
+            {/if}
         </ul>
     </div>
 </div>

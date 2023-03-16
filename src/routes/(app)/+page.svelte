@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
     import List from "$components/board/List.svelte";
 
-    const boardList = {};
+    const boardList:Object = {};
 
     const notice = {
         title: "공지사항",
