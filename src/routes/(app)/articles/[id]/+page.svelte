@@ -1,11 +1,14 @@
 <script lang="ts">
-    import { page } from "$app/stores";
-    const id = $page.params.id;
-    // import { Textarea, Button } from 'flowbite-svelte';
+    import type { PageData } from './$types';
+
+    export let data: PageData;
+
+
+    let board = data.item.response;
+    let category = board.boardCategoryResponseDTOList;
+    let commentList = board.commentResponseDTOList;
+    let userInfo = board.writer;
+
+    console.log(board);
+
 </script>
-<!-- <Textarea class="mb-4" placeholder="Write a comment">
-    <div slot="footer" class="flex items-center justify-between">
-    <Button type="submit">Post comment</Button>
-    </div>
-  </Textarea> -->
-{id}

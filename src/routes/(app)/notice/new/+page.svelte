@@ -30,7 +30,7 @@
         role: '',
         isSecret: false,
     }
-
+    
     onMount(() => {
         editor = new Editor({
             el: container,
@@ -98,6 +98,76 @@
     const handleClick = () => {
         addValues.isSecret = !addValues.isSecret;
     }
+
+    
+    // 해시태그
+    let tag = '';
+    let tags:string[] = [];
+    
+    function sanitizeTag(value:any) {
+        return value.replace(/<[^>]*>?/gm, '').trim();
+    }
+    
+    function parsedTag(tag:any) {
+        return tag.replace(',', '').replace(' ', '');
+    }
+    
+    function addIfUnique(array:any[], value:any) {
+        return [...array, value];
+    }
+    
+    function processTagsOnKeyUpEvent(e:any) {
+        const keyCode = e.keyCode;
+  
+        if(keyCode === 13) {
+            tag = sanitizeTag(tag);
+            if (tags.length < 5) {
+                if (tag.length > 0) {
+                    if (tag.indexOf(',') > -1) {
+                        console.log("여긴가?")
+                        let tagList = tag.split(',');
+                        tagList.forEach((tag:any) => {
+                            if (tag.length > 0) {
+                                tags = addIfUnique(tags, parsedTag(tag));
+                            }
+                        });
+                        revertTag();
+                    } else if (/\s/g.test(tag)) {
+                        console.log("여긴가?1")
+                        let tagList = tag.split(' ');
+                        tagList.forEach((tag:any) => {
+                            if (tag.length > 0) {
+                                tags = addIfUnique(tags, parsedTag(tag));
+                            }
+                        });
+                        revertTag();
+                    } else {
+                        console.log("여긴가?2")
+                        console.log(tags)
+                        console.log(tag)
+                        console.log(tags)
+                        tags = addIfUnique(tags, tag);
+                        console.log(tags)
+                        revertTag();
+                    }
+                }
+            } else {
+                revertTag();
+            }
+        }
+    }
+    
+    function tagInputDisabled() {
+        return tags.length >= 5;
+    }
+    
+    function removeTag(index:any) {
+        tags = [...tags.slice(0,index), ...tags.slice(index+1)]
+    }
+    
+    function revertTag() {
+        tag = '';
+    }
 </script>
 
 <div class="md:mx-48">
@@ -128,6 +198,7 @@
                     for="title"
                     class="text-sm font-medium text-gray-700 dark:text-gray-300"
                     >제목</label>
+                <!-- svelte-ignore a11y-autofocus -->
                 <input
                     type="text"
                     id="title"
@@ -135,10 +206,47 @@
                     class="block w-full appearance-none rounded-md border border-gray-500/30 pl-3 pr-10 text-base placeholder-gray-500/80 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-0 dark:bg-gray-500/20"
                     name="title"
                     class:border-red-500={errors.title}
-                    bind:value={addValues.title}/>
+                    bind:value={addValues.title}
+                     />
                 {#if errors.title}
                     <div class="text-red-500">{errors.title}</div>
                 {/if}
+            </div>
+            <div class="space-y-1">
+                <label for="tag" class="text-sm font-medium text-gray-700 dark:text-gray-300">태그 - 
+                    <span class="rounded-sm text-sm text-blue-500">내용을 대표하는 태그 3개 정도 입력해주세요.</span>
+                </label>
+                <div class="mt-4">
+                    <div class="sm:col-span-6">
+                        <div class="flex relative bg-white overflow-hidden rounded-md shadow-sm focus:outline-none focus:shadow-outline border border-gray-300">
+                          {#each tags as tag, index}
+                            <div
+                              class="flex-grow-0 text-gray-700 text-center my-1 ml-1"
+                            >
+                              <span class="inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold bg-indigo-500 hover:bg-indigo-300 text-white hover:text-black cursor-pointer">
+                                {tag}
+                                <button
+                                  type="button"
+                                  class="flex-shrink-0 inline-flex hover:bg-indigo-400 p-1 rounded-full"
+                                  on:click={() => removeTag(index)}
+                                >
+                                  X
+                                </button>
+                              </span>
+                            </div>
+                          {/each}
+                          <input
+                            type="text"
+                            class="flex-grow w-full px-3 py-1 text-sm leading-5 focus:outline-none"
+                            placeholder="Type a tag and press enter"
+                            bind:value={tag}
+                            on:keydown={processTagsOnKeyUpEvent}
+                            disabled={tagInputDisabled()}
+                            maxlength="10"
+                          />
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="space-y-1">
                 <label

@@ -1,8 +1,6 @@
 <script lang="ts">
     export let list:any;
 
-    let boardList = list.list;
-
     function displayedAt(createDate:Array<number>) {
         const milliSeconds = new Date().valueOf() - new Date(dateFommater(createDate)).valueOf();
         const seconds = milliSeconds / 1000
@@ -72,8 +70,8 @@
     >
     <div>
         <ul class="divide-y divide-gray-500/30 dark:divide-gray-500/70">
-            {#if boardList}
-            {#each boardList as list}
+            {#if list.list}
+            {#each list.list as boardList}
             <li class="py-4 last:pb-0">
                 <div class="mb-2 flex">
                     <div class="flex flex-1 items-center space-x-1">
@@ -86,7 +84,7 @@
                         <!-- </a> -->
                         <div
                             class="inline pl-1 text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-200 dark:hover:text-blue-200 sm:text-sm"
-                            >{list.isSecret === false ? list.writer.nickName : "익명"}</div
+                            >{boardList.isSecret === false ? boardList.writer.nickName : "익명"}</div
                         >
                         <div
                             class="text-xs font-normal leading-5 text-gray-700 dark:text-gray-200 sm:text-sm"
@@ -105,8 +103,8 @@
                                     fill="currentColor"
                                 /></svg
                             ><span class="space-x-1"
-                                ><span>{list.viewCount}</span><span>·</span><span
-                                    >{displayedAt(list.createDate)}</span
+                                ><span>{boardList.viewCount}</span><span>·</span><span
+                                    >{displayedAt(boardList.createDate)}</span
                                 ></span
                             >
                         </div>
@@ -129,7 +127,7 @@
                                     d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
                                 /></svg
                             ><span class="text-xs font-normal sm:text-sm"
-                                >{list.likeCount}</span
+                                >{boardList.likeCount}</span
                             >
                         </div>
                         <div class="flex flex-1 items-center">
@@ -147,7 +145,7 @@
                                     d="M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"
                                 /></svg
                             ><span class="ml-0.5 text-xs font-normal sm:text-sm"
-                                >{list.commentCount}</span
+                                >{boardList.commentCount}</span
                             >
                         </div>
                     </div>
@@ -155,8 +153,8 @@
                 <div>
                     <a
                         class="line-clamp-1 w-fit break-all text-sm font-semibold text-gray-900 hover:text-blue-500 dark:text-gray-100 dark:hover:text-blue-200 sm:text-base sm:leading-5"
-                        href="/articles/{list.id}"
-                        >{list.title}</a
+                        href="/articles/{boardList.id}"
+                        >{boardList.title}</a
                     >
                 </div>
             </li>
