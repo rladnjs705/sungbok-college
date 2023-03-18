@@ -113,50 +113,44 @@
     }
     
     function addIfUnique(array:any[], value:any) {
-        return [...array, value];
+        return [...new Set(array).add(value)];
     }
     
     function processTagsOnKeyUpEvent(e:any) {
         const keyCode = e.keyCode;
-  
-        if(keyCode === 13) {
-            tag = sanitizeTag(tag);
-            if (tags.length < 5) {
-                if (tag.length > 0) {
-                    if (tag.indexOf(',') > -1) {
-                        console.log("여긴가?")
-                        let tagList = tag.split(',');
-                        tagList.forEach((tag:any) => {
-                            if (tag.length > 0) {
-                                tags = addIfUnique(tags, parsedTag(tag));
-                            }
-                        });
-                        revertTag();
-                    } else if (/\s/g.test(tag)) {
-                        console.log("여긴가?1")
-                        let tagList = tag.split(' ');
-                        tagList.forEach((tag:any) => {
-                            if (tag.length > 0) {
-                                tags = addIfUnique(tags, parsedTag(tag));
-                            }
-                        });
-                        revertTag();
-                    } else {
-                        console.log("여긴가?2")
-                        console.log(tags)
-                        console.log(tag)
-                        console.log(tags)
-                        tags = addIfUnique(tags, tag);
-                        console.log(tags)
-                        revertTag();
+        if(tag != ''){
+            if(keyCode === 13 || keyCode === 32){
+                tag = sanitizeTag(tag);
+                if (tags.length < 5) {
+                    if (tag.length > 0) {
+                        if (tag.indexOf(',') > -1) {
+                            let tagList = tag.split(',');
+                            tagList.forEach((tag:any) => {
+                                if (tag.length > 0) {
+                                    tags = addIfUnique(tags, parsedTag(tag));
+                                }
+                            });
+                            revertTag();
+                        } else if (/\s/g.test(tag)) {
+                            let tagList = tag.split(' ');
+                            tagList.forEach((tag:any) => {
+                                if (tag.length > 0) {
+                                    tags = addIfUnique(tags, parsedTag(tag));
+                                }
+                            });
+                            revertTag();
+                        } else {
+                            tags = addIfUnique(tags, tag);
+                            revertTag();
+                        }
                     }
+                } else {
+                    revertTag();
                 }
-            } else {
-                revertTag();
             }
         }
     }
-    
+        
     function tagInputDisabled() {
         return tags.length >= 5;
     }
@@ -168,6 +162,8 @@
     function revertTag() {
         tag = '';
     }
+
+    $:tag = tag.trim();
 </script>
 
 <div class="md:mx-48">
@@ -216,28 +212,28 @@
                 <label for="tag" class="text-sm font-medium text-gray-700 dark:text-gray-300">태그 - 
                     <span class="rounded-sm text-sm text-blue-500">내용을 대표하는 태그 3개 정도 입력해주세요.</span>
                 </label>
-                <div class="mt-4">
-                    <div class="sm:col-span-6">
-                        <div class="flex relative bg-white overflow-hidden rounded-md shadow-sm focus:outline-none focus:shadow-outline border border-gray-300">
-                          {#each tags as tag, index}
-                            <div
-                              class="flex-grow-0 text-gray-700 text-center my-1 ml-1"
-                            >
-                              <span class="inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold bg-indigo-500 hover:bg-indigo-300 text-white hover:text-black cursor-pointer">
-                                {tag}
+                <div class="grid grid-cols-5">
+                    <div class="col-span-6">
+                        {#each tags as tag, index}
+                            <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibol">
+                                #{tag}
                                 <button
-                                  type="button"
-                                  class="flex-shrink-0 inline-flex hover:bg-indigo-400 p-1 rounded-full"
-                                  on:click={() => removeTag(index)}
+                                type="button"
+                                class="flex-shrink-0 inline-flex hover:bg-indigo-400 p-1 rounded-full"
+                                on:click={() => removeTag(index)}
                                 >
-                                  X
+                                X
                                 </button>
-                              </span>
-                            </div>
-                          {/each}
+                            </span>
+                        {/each}
+                    </div>
+                </div>
+                <div class="grid grid-cols-6">
+                    <div class="col-span-6">
+                        <div class="flex relative bg-white overflow-hidden rounded-md shadow-sm focus:outline-none focus:shadow-outline border border-gray-300">
                           <input
                             type="text"
-                            class="flex-grow w-full px-3 py-1 text-sm leading-5 focus:outline-none"
+                            class="flex-grow py-1 text-sm focus:outline-none"
                             placeholder="Type a tag and press enter"
                             bind:value={tag}
                             on:keydown={processTagsOnKeyUpEvent}
