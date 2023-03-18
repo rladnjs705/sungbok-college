@@ -69,7 +69,7 @@
         <div class="grid grid-cols-1 gap-y-7">
             <div class="space-y-2 mt-3">
                 <h3 class="text-xl font-medium sm:text-3xl sm:leading-10">궁금증 해결하기</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">
+                <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400">
                     <strong>워니김</strong>님 성경대학에서 다른 학우들과 함께 궁금증을 해결하세요.
                 </p>
             </div>
