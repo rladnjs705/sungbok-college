@@ -65,7 +65,9 @@
         document.body.classList.remove("sidebar-open");
 
         //푸터 선택 변경
-        itemFooterSelected.selectFooter(_id)
+        if(typeof _id === 'string'){
+          itemFooterSelected.selectFooter(_id)
+        }
       }
   }
   

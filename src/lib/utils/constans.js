@@ -3,6 +3,7 @@ export const NOTICE = '100';
 export const QUESTIONS = '200';
 export const LECTURE = '300';
 export const FREE = '400';
+export const REPORTCARD = '500';
 export const NONE = '1';
 
 export const ORDER_ADDED = 'ORDER_ADDED';

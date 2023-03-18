@@ -176,7 +176,7 @@
                 </p>
             </div>
             <div class="space-y-1">
-                <label for="categoryId" class="text-sm font-medium text-gray-700 dark:text-gray-300">토픽</label>
+                <label for="categoryId" class="text-sm font-medium text-gray-700 dark:text-gray-200">토픽</label>
                 <select id="categoryId" class="block w-full rounded-md border-gray-500/30 pl-3 pr-10 text-base placeholder-gray-500/80 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-0 dark:bg-gray-500/20" name="categoryId" bind:value={addValues.categoryId}>
                     <option value="" class="dark:bg-gray-500">토픽을 선택해주세요.</option>
                     {#if data}
@@ -192,7 +192,7 @@
             <div class="space-y-1">
                 <label
                     for="title"
-                    class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                    class="text-sm font-medium text-gray-700 dark:text-gray-200"
                     >제목</label>
                 <!-- svelte-ignore a11y-autofocus -->
                 <input
@@ -209,7 +209,7 @@
                 {/if}
             </div>
             <div class="space-y-1">
-                <label for="tag" class="text-sm font-medium text-gray-700 dark:text-gray-300">태그 - 
+                <label for="tag" class="text-sm font-medium text-gray-700 dark:text-gray-200">태그 - 
                     <span class="rounded-sm text-sm text-blue-500">내용을 대표하는 태그 3개 정도 입력해주세요.</span>
                 </label>
                 <div class="grid grid-cols-5">
@@ -247,7 +247,7 @@
             <div class="space-y-1">
                 <label
                     for="text"
-                    class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                    class="text-sm font-medium text-gray-700 dark:text-gray-200"
                     >본문</label>
                 <div class="remirror-theme relative z-0 rounded-md border border-gray-500/30 shadow-sm dark:border-gray-500/70" class:border-red-500={errors.content}>
                     <div class="min-h-[50vh]">
@@ -261,7 +261,7 @@
             <div class="flex items center space-y-1">
                 <div class="flex flex-1 flex-wrap items-center"></div>
                 <div class="inline-flex rounded">
-                    <Checkbox bind:checked={addValues.isSecret} on:click={handleClick}>익명</Checkbox>
+                    <Checkbox bind:checked={addValues.isSecret} on:click={handleClick} class="dark:text-gray-200">익명</Checkbox>
                 </div>
             </div>
         </div>

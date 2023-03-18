@@ -1,6 +1,6 @@
 <script lang="ts">
     import { itemFooterSelected } from "$lib/stores";
-    import { ALL } from "$lib/utils/constans";
+    import { ALL, FREE, LECTURE, NONE, NOTICE, QUESTIONS } from "$lib/utils/constans";
     import { authToken, auth, isAdmin } from '$stores';
     import { goto } from '$app/navigation';
 
@@ -20,7 +20,7 @@
 
 <!-- Header -->
 <div class="absolute md:fixed w-full flex items-center h-14 text-white z-10">
-    <div class="flex items-center justify-around pl-2 md:px-3 w-full h-14 bg-blue-600 dark:bg-gray-600 border-none">
+    <div class="flex items-center justify-around pl-2 md:px-3 w-full h-14 bg-blue-700 dark:bg-gray-600 border-none">
       <div class="flex">
         <!-- <img class="w-7 h-7 mr-2 rounded-md overflow-hidden hidden processing" src="/dummy-avatar.jpg" alt="profile" /> -->
         <button class="items-center overflow-hidden md:hidden" on:click={onSideBar}>
@@ -28,7 +28,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
         </button>
-        <a href="/">
+        <a href="/" on:click={() => itemFooterSelected.selectFooter(ALL)}>
           <img class="w-24 h-24 bg-transparent hidden md:block" src="/logo-removebg.png" alt="logo">
         </a>
       </div>
@@ -38,35 +38,35 @@
         </a>
         <div class="hidden items-center md:space-x-3 lg:space-x-7 md:flex lg:ml-[60px]">
           <div class="shrink-0">
-              <a
+              <a  on:click={() => itemFooterSelected.selectFooter(NOTICE)}
                   class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-200 text-sm font-medium"
                   href="/notice"><span class="hover:no-underline">공지사항</span></a
               >
           </div>
           <div class="h-3 w-[1px] bg-gray-400 dark:bg-gray-400/70" />
           <div class="shrink-0">
-              <a
+              <a  on:click={() => itemFooterSelected.selectFooter(LECTURE)}
                   class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-100 text-sm font-medium hover:no-underline"
                   href="/lecture">강의콘텐츠</a
               >
           </div>
           <div class="h-3 w-[1px] bg-gray-400 dark:bg-gray-400/70" />
           <div class="shrink-0">
-            <a
+            <a  on:click={() => itemFooterSelected.selectFooter(FREE)}
                 class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-100 text-sm font-medium hover:no-underline"
                 href="/free">자유게시판</a
             >
           </div>
           <div class="h-3 w-[1px] bg-gray-400 dark:bg-gray-400/70" />
           <div class="shrink-0">
-              <a
+              <a  on:click={() => itemFooterSelected.selectFooter(NONE)}
                   class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-100 text-sm font-medium hover:no-underline"
                   href="/reportCard">성적</a
               >
           </div>
           <div class="h-3 w-[1px] bg-gray-400 dark:bg-gray-400/70" />
           <div class="shrink-0">
-            <a
+            <a  on:click={() => itemFooterSelected.selectFooter(QUESTIONS)}
                 class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-100 text-sm font-medium hover:no-underline"
                 href="/questions">Q&amp;A</a
             >
