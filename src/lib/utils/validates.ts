@@ -61,3 +61,8 @@ export const noticeValidateSchema = yup.object().shape({
   content: yup.string()
   .required("내용을 입력해 주세요.")
 });
+
+export const attendanceValidateSchema = yup.object().shape({
+  content: yup.string()
+  .required("내용을 입력해 주세요.")
+})

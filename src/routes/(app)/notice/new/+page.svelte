@@ -166,7 +166,7 @@
     $:tag = tag.trim();
 </script>
 
-<div class="md:mx-48">
+<div class="md:mx-8">
     <div class="space-y-11">
         <div class="grid grid-cols-1 gap-y-7">
             <div class="space-y-2 mt-3">
