@@ -42,12 +42,12 @@
         </a>
     {/if}
     {#if $itemFooterSelected === LECTURE}
-        <a href="/attendance" class="h-10 w-30 grid grid-row-2 justify-items-center footer">
+        <a href="/lecture" class="h-10 w-30 grid grid-row-2 justify-items-center footer">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-gray-500"><path d="M19.5 6h-15v9h15V6z" /><path fill-rule="evenodd" d="M3.375 3C2.339 3 1.5 3.84 1.5 4.875v11.25C1.5 17.16 2.34 18 3.375 18H9.75v1.5H6A.75.75 0 006 21h12a.75.75 0 000-1.5h-3.75V18h6.375c1.035 0 1.875-.84 1.875-1.875V4.875C22.5 3.839 21.66 3 20.625 3H3.375zm0 13.5h17.25a.375.375 0 00.375-.375V4.875a.375.375 0 00-.375-.375H3.375A.375.375 0 003 4.875v11.25c0 .207.168.375.375.375z" clip-rule="evenodd" /></svg>              
             <p3 class="mt-1 text-gray-500 text-[11px] tracking-wide">강의콘텐츠</p3>
         </a>
         {:else}
-        <a href="/attendance" class="h-10 w-30 grid grid-row-2 justify-items-center footer" on:click={() => onSelectCategory(LECTURE)}>
+        <a href="/lecture" class="h-10 w-30 grid grid-row-2 justify-items-center footer" on:click={() => onSelectCategory(LECTURE)}>
             <svg class="w-5 h-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 20.25h12m-7.5-3v3m3-3v3m-10.125-3h17.25c.621 0 1.125-.504 1.125-1.125V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125z" /></svg>
             <p3 class="mt-1 text-gray-500 text-[11px] tracking-wide">강의콘텐츠</p3>
         </a>

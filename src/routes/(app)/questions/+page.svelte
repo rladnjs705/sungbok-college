@@ -2,9 +2,10 @@
 	import List from '$components/board/List.svelte';
     import CreateBtn from "$components/button/Create.svelte";
     import type { PageData } from './$types';
+    import { QUESTIONS } from '$utils/constans';
 
     export let data: PageData;
-    const boardType = "questions";
+    const boardType = QUESTIONS;
     const boardList = data.list.response.content;
     const list = {
         title: "Q&A 게시판",
@@ -15,4 +16,4 @@
 </script>
 
 <List list={list}/>
-<CreateBtn link={boardType} />
+<CreateBtn boardType={boardType} />

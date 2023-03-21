@@ -9,6 +9,7 @@
     import { goto } from "$app/navigation";
     import Swal from "sweetalert2";
     import { Checkbox } from 'flowbite-svelte'
+    import { NOTICE } from '$lib/utils/constans';
 
     export let data: PageData;
     let editor:any;
@@ -16,12 +17,21 @@
     const cancelLink = "/notice";
 
     let errors:any = {};
+    
+    // 해시태그
+    let tag = '';
+    let tags:string[] = [];
 
     let addValues = {
         categoryId: '',
         title: '',
         content: '',
-        boardType: 'NOTICE',
+        boardType: NOTICE,
+
+        //태그정보
+        //hashTag: [{hashTag: {name: ''}},{hashTag: {name: ''}},{hashTag: {name: ''}},{hashTag: {name: ''}},{hashTag: {name: ''}}],
+        hashTag: tags,
+
         //유저정보
         userId: 0,
         email: '',
@@ -51,6 +61,7 @@
     const onAddBoard = async () => {
         try {
             const response = await axios.post("/api/admin/board/create", addValues);
+            console.log(response);
             if(response.status == 200){
                 //notyf.success("생성되었습니다.");
                 goto("/notice");
@@ -79,6 +90,12 @@
             addValues.nickName = $auth.nickName;
             addValues.userName = $auth.userName;
             addValues.role = $auth.role;
+            // tags.forEach((tag:any, index) => {
+            //     if (tag.length > 0) {
+            //         addValues.hashTag[index].hashTag.name = tag;
+            //     }
+            // });
+            addValues.hashTag = tags;
             if($auth._id != ''){
                 await noticeValidateSchema.validate(addValues, {abortEarly: false});
                 await onAddBoard();
@@ -99,10 +116,6 @@
         addValues.isSecret = !addValues.isSecret;
     }
 
-    
-    // 해시태그
-    let tag = '';
-    let tags:string[] = [];
     
     function sanitizeTag(value:any) {
         return value.replace(/<[^>]*>?/gm, '').trim();
