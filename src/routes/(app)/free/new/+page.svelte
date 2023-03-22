@@ -9,7 +9,7 @@
     import { goto } from "$app/navigation";
     import Swal from "sweetalert2";
     import { Checkbox } from 'flowbite-svelte'
-    import { NOTICE } from '$lib/utils/constans';
+    import { FREE } from '$lib/utils/constans';
 
     export let data: PageData;
     let editor:any;
@@ -26,7 +26,7 @@
         categoryId: '',
         title: '',
         content: '',
-        boardType: NOTICE,
+        boardType: FREE,
 
         //태그정보
         hashTag: tags,
@@ -176,7 +176,7 @@
     <div class="space-y-11">
         <div class="grid grid-cols-1 gap-y-7">
             <div class="space-y-2 mt-3">
-                <h3 class="text-xl font-medium sm:text-3xl sm:leading-10">공지사항</h3>
+                <h3 class="text-xl font-medium sm:text-3xl sm:leading-10">커뮤니티</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400">
                     공지사항을 등록하여 새 소식, 정보를 공유해 주세요.
                 </p>

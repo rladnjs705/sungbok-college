@@ -8,7 +8,6 @@
     }
 </script>
 
-<div class="justify-start relative my-8 flex items-center">
     <div class="flex grow flex-col">
         <div class="justify-between flex">
             <a
@@ -37,4 +36,3 @@
             >
         </div>
     </div>
-</div>

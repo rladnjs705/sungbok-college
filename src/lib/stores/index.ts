@@ -3,6 +3,25 @@ import { ALL, ADMIN } from '$utils/constans';
 import { browser } from '$app/environment';
 import axios from 'axios';
 
+function setItemCategorySelected() {
+  const { subscribe, update, set } = writable(ALL);
+
+  const selectCategory = (_id:any) => {
+    set(_id)
+  }
+
+  const resetCategory = () => {
+    update(data => {return ALL;})
+  }
+
+  return {
+    subscribe,
+    selectCategory,
+    set,
+    resetCategory,
+  }
+}
+
 function setAuthToken() {
   const defaultValue = '';
   const isLoginToken = browser ? window.localStorage.getItem('token') ?? defaultValue : defaultValue;
@@ -107,8 +126,41 @@ function setItemFooterSelected() {
   }
 }
 
+function setBoardDetailList() :any {
+  const { subscribe, update, set } = writable();
+  const getBoardDetailList = async (boardType:string,categoryEng:string) => {
+      if(categoryEng == ALL){
+        try {
+          console.log("들어옴?")
+          const response = await fetch("/api/admin/board/"+boardType);
+          const item = await response.json();
+          set(item);
+        } catch (error) {
+          console.log(error);
+        }
+      }else{
+        try {
+          const response = await fetch("/api/admin/board/"+boardType+"/"+categoryEng);
+          const item = await response.json();
+          set(item);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+    return {
+      subscribe,
+      update,
+      set,
+      getBoardDetailList,
+    }
+}
+
 export const authToken = setAuthToken();
 export const auth = setAuth();
 export const isAdmin = setIsAdmin();
 export const itemFooterSelected = setItemFooterSelected();
 export const sidebarOpen = writable(0);
+export const itemCategorySelected = setItemCategorySelected();
+export const pageNumber = writable(0);
+export const boardDetailList = setBoardDetailList();

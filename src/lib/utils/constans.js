@@ -1,10 +1,11 @@
 export const ALL = '0';
-export const NOTICE = '100';
-export const QUESTIONS = '200';
-export const LECTURE = '300';
-export const FREE = '400';
-export const REPORTCARD = '500';
 export const NONE = '1';
+export const NOTICE = 'notice';
+export const QUESTIONS = 'questions';
+export const LECTURE = 'lecture';
+export const FREE = 'free';
+export const REPORTCARD = 'reportcard';
+export const ATTENDANCE = 'attendance';
 
 export const ORDER_ADDED = 'ORDER_ADDED';
 export const ADMIN = 'ADMIN';

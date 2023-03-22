@@ -66,8 +66,7 @@
                     alt="notice"
                 />
             </div>
-        </div></a
-    >
+        </div></a>
     <div>
         <ul class="divide-y divide-gray-500/30 dark:divide-gray-500/70">
             {#if list.list}

@@ -1,18 +1,17 @@
 <script lang="ts">
-	import DetailList from '$components/board/DetailList.svelte';
+    import DetailList from '$components/board/DetailList.svelte';
     import type { PageData } from './$types';
-    import { QUESTIONS } from '$utils/constans';
+    import { FREE } from '$utils/constans';
 
     export let data: PageData;
-    const boardType = QUESTIONS;
+    const boardType = FREE;
     const boardList = data.list.response.content;
     const categories = data.categories.response;
     const list = {
-        title: "Q&A 게시판",
+        title: "커뮤니티",
         list : boardList,
-        link : "/"+boardType,
         boardType:boardType,
     }
 </script>
 
-<DetailList list={list} categories={categories} boardType={boardType}/>
+<DetailList list={list} boardList={boardList} categories={categories} boardType={boardType}/>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import DetailList from '$components/board/DetailList.svelte';
+    import DetailList from '$components/board/DetailList.svelte';
     import type { PageData } from './$types';
     import { QUESTIONS } from '$utils/constans';
 
@@ -10,7 +10,6 @@
     const list = {
         title: "Q&A 게시판",
         list : boardList,
-        link : "/"+boardType,
         boardType:boardType,
     }
 </script>

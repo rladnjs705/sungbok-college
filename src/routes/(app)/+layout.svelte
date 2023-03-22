@@ -7,8 +7,9 @@
   import Footer from "$components/Footer.svelte";
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
-  import { itemFooterSelected } from '$stores';
+  import { itemFooterSelected, itemCategorySelected,boardDetailList } from '$stores';
   import { authToken, auth } from '$stores';
+  import { ALL } from "$lib/utils/constans";
 
   $: {
       if($authToken){
@@ -67,6 +68,8 @@
         //푸터 선택 변경
         if(typeof _id === 'string'){
           itemFooterSelected.selectFooter(_id)
+          itemCategorySelected.selectCategory(ALL);
+          boardDetailList.getBoardDetailList(_id,ALL);
         }
       }
   }
