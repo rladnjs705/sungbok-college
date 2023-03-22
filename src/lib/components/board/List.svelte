@@ -33,7 +33,7 @@
 
 </script>
 
-<div class="w-full">
+<div class="w-full mt-5">
     <a
         class="relative mb-2 text-gray-900 no-underline dark:text-gray-100"
         href={list.boardType}

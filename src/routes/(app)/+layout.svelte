@@ -7,9 +7,9 @@
   import Footer from "$components/Footer.svelte";
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
-  import { itemFooterSelected, itemCategorySelected,boardDetailList } from '$stores';
+  import { itemFooterSelected, itemCategorySelected,boardDetailList, pageNumber } from '$stores';
   import { authToken, auth } from '$stores';
-  import { ALL } from "$lib/utils/constans";
+  import { ALL, FREE, LECTURE, NOTICE, QUESTIONS } from "$lib/utils/constans";
 
   $: {
       if($authToken){
@@ -69,7 +69,10 @@
         if(typeof _id === 'string'){
           itemFooterSelected.selectFooter(_id)
           itemCategorySelected.selectCategory(ALL);
-          boardDetailList.getBoardDetailList(_id,ALL);
+          if(_id === NOTICE || _id === QUESTIONS || _id === LECTURE || _id === FREE){
+            boardDetailList.getBoardDetailList(_id,ALL);
+          }
+          $pageNumber = 1;
         }
       }
   }
@@ -92,7 +95,7 @@
   <div class="bg-[rgba(0,0,0,0.3)] top-0 left-0 absolute h-full w-full z-10 md:hidden" class:hidden={!isSidebar} on:click={closedSidebar}></div>
 
   <Header isDark={isDark} toggleTheme={toggleTheme} onSideBar={onSideBar} />
-  <Sidebar isSidebar={isSidebar} onSideBar={onSideBar} />
+  <Sidebar isSidebar={isSidebar} onSideBar={onSideBar} closedSidebar={closedSidebar}/>
 
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-white dark:bg-gray-700 text-black dark:text-white" on:click={closedSidebar}>    

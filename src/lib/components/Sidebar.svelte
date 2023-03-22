@@ -1,16 +1,26 @@
 <script lang="ts">
+	import { page } from '$app/stores';
   import { onMount } from 'svelte';
-  import { ALL, NOTICE, QUESTIONS, LECTURE, FREE, NONE, REPORTCARD} from '$utils/constans';
-  import { auth, itemFooterSelected,itemCategorySelected } from '$stores';
+  import { ALL, NOTICE, QUESTIONS, LECTURE, FREE, REPORTCARD, PROFILE} from '$utils/constans';
+  import { auth, itemFooterSelected,itemCategorySelected, pageNumber, authToken } from '$stores';
   import { goto } from '$app/navigation';
 
   export let isSidebar: boolean;
   export let onSideBar:any;
+  export let closedSidebar:any;
   let isMobile = true;
 
   onMount(() => {
     checkMobile();
     window.addEventListener('resize', checkMobile);
+    if($page.params.categoryEng){
+          itemCategorySelected.selectCategory($page.params.categoryEng);
+          $pageNumber = 1
+      }else{
+          $itemCategorySelected = ALL;
+          itemCategorySelected.selectCategory(ALL);
+          $pageNumber = 1
+      }
   });
 
   function checkMobile() {
@@ -22,12 +32,14 @@
       auth.resetAuth();
       onSideBar(ALL)
       itemCategorySelected.selectCategory(ALL);
+      $pageNumber = 1;
       
       goto("/")
     } catch (error) {
       console.log(error);
     }
   }
+
 </script>
 <!-- Sidebar -->
 {#if isMobile}
@@ -111,7 +123,7 @@
               </div>
             </li> -->
             <li>
-              <a href="/profile" on:click={() => onSideBar(NONE)} class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 dark:hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-500 dark:hover:border-gray-800 pr-6">
+              <a href="/profile" on:click={() => onSideBar(PROFILE)} class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 dark:hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-500 dark:hover:border-gray-800 pr-6" class:border-blue-500={$itemFooterSelected===PROFILE} class:text-white-800={$itemFooterSelected===PROFILE} class:bg-blue-700={$itemFooterSelected===PROFILE}>
                 <span class="inline-flex justify-center items-center ml-4">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                 </span>
@@ -129,6 +141,7 @@
                 <span class="ml-2 text-sm tracking-wide truncate">설정</span>
               </a>
             </li> -->
+            {#if $authToken}
             <li>
               <a href="#null" on:click={onLogout} class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 dark:hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-500 dark:hover:border-gray-800 pr-6">
                 <span class="inline-flex justify-center items-center ml-4">
@@ -137,6 +150,20 @@
                 <span class="ml-2 text-sm tracking-wide truncate">Logout</span>
               </a>
             </li>
+            {:else}
+            <li class="flex flex-col-2 justify-around">
+              <a class="flex w-20 h-10 mt-2 items-center justify-center rounded-3xl border border-gray-500/30 bg-white px-2 py-0.5 text-xs text-center font-medium text-gray-900 shadow-sm hover:bg-gray-100 focus:outline-none dark:border-gray-500/70 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-600 sm:flex"
+                href="/login"
+                on:click={closedSidebar}>
+                로그인
+              </a>
+              <a class="flex w-20 h-10 mt-2 items-center justify-center rounded-3xl border border-transparent bg-blue-500 px-2 py-0.5 text-xs font-medium text-white hover:bg-blue-400 focus:outline-none focus:ring-offset-0 sm:flex"
+                  href="/signup"
+                  on:click={closedSidebar}>
+                회원가입
+              </a>
+            </li>
+            {/if}
           </ul>
           <p class="mb-14 px-5 py-3 hidden md:block text-center text-xs">Copyright @2023</p>
         </div>

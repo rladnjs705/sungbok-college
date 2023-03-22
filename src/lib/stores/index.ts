@@ -2,6 +2,7 @@ import { writable, derived } from 'svelte/store';
 import { ALL, ADMIN } from '$utils/constans';
 import { browser } from '$app/environment';
 import axios from 'axios';
+import { goto } from '$app/navigation';
 
 function setItemCategorySelected() {
   const { subscribe, update, set } = writable(ALL);
@@ -97,6 +98,9 @@ function setAuth() {
 
   const resetAuth = () => {
     authToken.removeAuthToken();
+    if(browser){
+      window.localStorage.removeItem('token');
+    }
     set({...initValues});
     return;
   }
@@ -129,9 +133,11 @@ function setItemFooterSelected() {
 function setBoardDetailList() :any {
   const { subscribe, update, set } = writable();
   const getBoardDetailList = async (boardType:string,categoryEng:string) => {
+    if(boardType == ALL){
+      goto("/")
+    }else{ 
       if(categoryEng == ALL){
         try {
-          console.log("들어옴?")
           const response = await fetch("/api/admin/board/"+boardType);
           const item = await response.json();
           set(item);
@@ -148,6 +154,7 @@ function setBoardDetailList() :any {
         }
       }
     }
+  }
     return {
       subscribe,
       update,
@@ -162,5 +169,5 @@ export const isAdmin = setIsAdmin();
 export const itemFooterSelected = setItemFooterSelected();
 export const sidebarOpen = writable(0);
 export const itemCategorySelected = setItemCategorySelected();
-export const pageNumber = writable(0);
+export const pageNumber = writable(1);
 export const boardDetailList = setBoardDetailList();

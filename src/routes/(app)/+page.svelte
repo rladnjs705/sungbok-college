@@ -1,6 +1,8 @@
 <script lang="ts">
+    import { itemFooterSelected} from "$lib/stores";
     import List from "$components/board/List.svelte";
-    import { FREE, LECTURE, NOTICE, QUESTIONS } from "$lib/utils/constans";
+    import { ALL, FREE, LECTURE, NOTICE, QUESTIONS } from "$lib/utils/constans";
+    import { onMount } from "svelte";
     import type { PageData } from './$types';
     export let data: PageData;
 
@@ -9,8 +11,6 @@
         list: data.noticeList.response.content,
         boardType: NOTICE
     };
-
-    console.log(data)
 
     const questions = {
         title: "Q&A 게시판",
@@ -29,13 +29,17 @@
         list: data.lectureList.response,
         boardType: LECTURE
     };
+
+    onMount(() => {
+        itemFooterSelected.selectFooter(ALL);
+    })
 </script>
 
-<div class="flex flex-col gap-x-10 gap-y-10 md:flex-row">
+<div class="flex flex-col gap-x-10 md:flex-row">
     <List list={notice}/>
     <List list={questions}/>
 </div>
-<div class="flex flex-col gap-x-10 md:flex-row md:mt-8">
+<div class="flex flex-col gap-x-10 md:flex-row">
     <List list={free}/>
     <List list={lecture}/>
 </div>

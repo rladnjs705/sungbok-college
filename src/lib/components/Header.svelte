@@ -1,7 +1,7 @@
 <script lang="ts">
     import { itemFooterSelected, boardDetailList, itemCategorySelected } from "$lib/stores";
-    import { ALL, FREE, LECTURE, NONE, NOTICE, QUESTIONS } from "$lib/utils/constans";
-    import { authToken, auth, isAdmin } from '$stores';
+    import { ALL, FREE, LECTURE, NOTICE, QUESTIONS, REPORTCARD } from "$lib/utils/constans";
+    import { authToken, auth, isAdmin, pageNumber } from '$stores';
     import { goto } from '$app/navigation';
 
 
@@ -11,6 +11,9 @@
     const onLogout = async () => {
     try {
         auth.resetAuth();
+        itemFooterSelected.selectFooter(ALL);
+        itemCategorySelected.selectCategory(ALL);
+
         goto("/")
       } catch (error) {
         console.log(error);
@@ -21,6 +24,7 @@
       itemFooterSelected.selectFooter(_id);
       itemCategorySelected.selectCategory(ALL);
       boardDetailList.getBoardDetailList(_id,ALL);
+      $pageNumber = 1;
     }
 </script>
 
@@ -65,7 +69,7 @@
           </div>
           <div class="h-3 w-[1px] bg-gray-400 dark:bg-gray-400/70" />
           <div class="shrink-0">
-              <a  on:click={() => itemHeaderselected(NONE)}
+              <a  on:click={() => itemHeaderselected(REPORTCARD)}
                   class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-100 text-sm font-medium hover:no-underline"
                   href="/reportCard">성적</a
               >

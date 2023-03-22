@@ -6,6 +6,7 @@
     export let data: PageData;
     const boardType = FREE;
     const boardList = data.list.response.content;
+    const response = data.list.response;
     const categories = data.categories.response;
     const list = {
         title: "커뮤니티",
@@ -14,4 +15,4 @@
     }
 </script>
 
-<DetailList list={list} boardList={boardList} categories={categories} boardType={boardType}/>
+<DetailList list={list} boardList={boardList} categories={categories} boardType={boardType} response={response}/>

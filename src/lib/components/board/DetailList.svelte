@@ -1,15 +1,19 @@
 <script lang="ts">
-    import { boardDetailList } from '$stores';
+    import { goto } from '$app/navigation';
+    import { boardDetailList, pageNumber, itemCategorySelected } from '$stores';
     import Category from './Category.svelte';
-
+    // import Pagination from './Pagination.svelte';
+    import { paginate, LightPaginationNav } from 'svelte-paginate'
+    
     export let list:any;
     export let categories:any=[];
     export let boardType:any;
     export let boardList:any = list.list;
-
-    let size = 5;
-    let total = 0;
-    let totalPage;
+    export let response:any;
+    let items:any[];
+    let paginatedItems:any;
+    let currentPage = 1
+    let pageSize:number = 4
 
     function displayedAt(createDate:Array<number>) {
         const milliSeconds = new Date().valueOf() - new Date(dateFommater(createDate)).valueOf();
@@ -52,8 +56,17 @@
     {
         if($boardDetailList){
             boardList = $boardDetailList.response.content;
+            response = $boardDetailList.response;
+            items = boardList;
+            paginatedItems = paginate({ items, pageSize, currentPage});
         }
-        totalPage = Math.ceil(total/size);
+    }
+
+    const onCategorySelected = (categoryEng:string) =>{
+        $pageNumber = 1;
+        itemCategorySelected.selectCategory(categoryEng);
+        boardDetailList.getBoardDetailList(boardType,categoryEng);
+        goto(`/${boardType}/${categoryEng}`)
     }
     
 </script>
@@ -99,8 +112,8 @@
         {/if}
     <div>
         <ul class="divide-y divide-gray-500/30 dark:divide-gray-500/70">
-            {#if boardList}
-            {#each boardList as board}
+            {#if paginatedItems}
+            {#each paginatedItems as board}
             <li class="py-4 last:pb-0">
                 <div class="mb-2 flex">
                     <div class="flex flex-1 items-center space-x-1">
@@ -149,7 +162,7 @@
                 <div class="flex mt-4">
                     <div class="flex flex-1 items-center gap-x-3">
                         {#if board.category}
-                            <a class="shrink-0 rounded bg-blue-50 py-0.5 px-2.5 text-xs font-medium text-blue-500 hover:text-blue-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:text-blue-200" href="/{boardType}/{board.category.categoryEng}">{board.category.categoryName}</a>
+                            <a class="shrink-0 rounded bg-blue-50 py-0.5 px-2.5 text-xs font-medium text-blue-500 hover:text-blue-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:text-blue-200" href="#null" on:click={() => onCategorySelected(board.category.categoryEng)}>{board.category.categoryName}</a>
                         {/if}
                         <div class="flex items-center gap-x-2 sm:gap-x-2">
                             {#if board.hashTag}
@@ -192,47 +205,14 @@
             </li>
             {/if}
             <!-- Pagination -->
-            <span class="flex justify-center col-span-4 mt-1 sm:mt-auto">
-                <nav aria-label="Table navigation">
-                  <ul class="inline-flex items-center mt-4">
-                    <li>
-                      <button class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple" aria-label="Previous">
-                        <svg aria-hidden="true" class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                          <path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" fill-rule="evenodd"></path>
-                        </svg>
-                      </button>
-                    </li>
-                    <li>
-                      <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">1</button>
-                    </li>
-                    <li>
-                      <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">2</button>
-                    </li>
-                    <li>
-                      <button class="px-3 py-1 text-white dark:text-gray-800 transition-colors duration-150 bg-blue-600 dark:bg-gray-100 border border-r-0 border-blue-600 dark:border-gray-100 rounded-md focus:outline-none focus:shadow-outline-purple">3</button>
-                    </li>
-                    <li>
-                      <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">4</button>
-                    </li>
-                    <li>
-                      <span class="px-3 py-1">...</span>
-                    </li>
-                    <li>
-                      <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">8</button>
-                    </li>
-                    <li>
-                      <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">9</button>
-                    </li>
-                    <li>
-                      <button class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple" aria-label="Next">
-                        <svg class="w-4 h-4 fill-current" aria-hidden="true" viewBox="0 0 20 20">
-                          <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" fill-rule="evenodd"></path>
-                        </svg>
-                      </button>
-                    </li>
-                  </ul>
-                </nav>
-              </span>            
+            <LightPaginationNav
+            totalItems="{response.totalElements}"
+            pageSize="{pageSize}"
+            currentPage="{currentPage}"
+            limit="{1}"
+            showStepOptions="{true}"
+            on:setPage="{(e) => currentPage = e.detail.page}"
+            />
         </ul>
     </div>
 </div>

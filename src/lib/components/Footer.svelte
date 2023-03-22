@@ -1,12 +1,22 @@
 <script lang="ts">
-    import { itemFooterSelected,itemCategorySelected,boardDetailList } from '$stores';
+	import { page } from '$app/stores';
+    import { itemFooterSelected,itemCategorySelected,boardDetailList,pageNumber } from '$stores';
     import { ALL, NOTICE, QUESTIONS, LECTURE, FREE } from '$utils/constans';
+    import { onMount } from 'svelte';
 
     const onSelectCategory = (_id:string) => {
         itemFooterSelected.selectFooter(_id);
         itemCategorySelected.selectCategory(ALL);
         boardDetailList.getBoardDetailList(_id,ALL);
+        $pageNumber = 1;
     };
+
+    
+    onMount(() => {
+        if($page.url.pathname.split("/")[1]){
+            itemFooterSelected.selectFooter($page.url.pathname.split("/")[1]);
+        }
+    })
 </script>
 <footer class="fixed flex justify-around items-center md:hidden bottom-0 left-0 right-0 h-16 bg-white border-t">
     <!-- 각 아이콘을 반복해서 표시하고 클릭하면 해당 페이지로 이동합니다. -->

@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { page } from '$app/stores';
     import CreateBtn from "$components/button/Create.svelte";
-    import { itemCategorySelected,boardDetailList } from '$stores';
+    import { itemCategorySelected, boardDetailList, pageNumber, isAdmin, authToken } from '$stores';
     import { ALL } from '$utils/constans';
+    import { onMount } from 'svelte';
 
     export let boardType:any;
     export let categories:any;
@@ -10,12 +12,34 @@
         $itemCategorySelected = ALL;
         itemCategorySelected.selectCategory(_id);
         boardDetailList.getBoardDetailList(boardType,_id);
+        $pageNumber = 1
     };
+
+    onMount(() => {
+        if($page.params.categoryEng){
+            itemCategorySelected.selectCategory($page.params.categoryEng);
+            boardDetailList.getBoardDetailList(boardType,$page.params.categoryEng);
+            $pageNumber = 1
+        }else{
+            $itemCategorySelected = ALL;
+            itemCategorySelected.selectCategory(ALL);
+            boardDetailList.getBoardDetailList(boardType,ALL);
+            $pageNumber = 1
+        }
+    })
 </script>
 <div class="justify-between relative my-6 flex items-center">
     <div class="flex grow flex-col gap-y-4">
-        <div class="flex justify-start">
-            <CreateBtn boardType={boardType} />
+        <div class="flex justify-end">
+            {#if boardType == "notice"}
+                {#if $isAdmin}
+                    <CreateBtn boardType={boardType} />
+                {/if}
+                {:else}
+                {#if $authToken}
+                    <CreateBtn boardType={boardType} />
+                {/if}
+            {/if}
             <nav class="scroll-hidden flex lg:space-x-8">
                 {#each categories as category}
                     {#if $itemCategorySelected === category.categoryEng}
