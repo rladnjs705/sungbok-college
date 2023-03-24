@@ -52,6 +52,15 @@
         if (n >= 1e12) return +(n / 1e12).toFixed(1) + 'T'
     }
 
+    //xss 역치환
+    function convertHtml(str:string){
+        str = str.replace(/&lt;/g,"<");
+        str = str.replace(/&gt;/g,">");
+        str = str.replace(/&quot;/g,"\"");
+        str = str.replace(/&#39;/g,"\'");
+        return str;
+    }
+
     $:
     {
         if($boardDetailList){
@@ -129,26 +138,19 @@
                             >{board.isSecret === false ? board.writer.nickName : "익명"}</div
                         >
                         <div
-                            class="text-xs font-normal leading-5 text-gray-700 dark:text-gray-200 sm:text-sm"
+                            class="text-xs font-normal leading-5 text-gray-700 dark:text-gray-200 sm:text-sm flex"
                         >
-                            <span class="mr-0.5">·</span><svg
-                                class="inline h-3 w-3"
-                                width="9"
-                                height="12"
-                                viewBox="0 1 9 12"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                ><title>bolt icon</title><path
-                                    fill-rule="evenodd"
-                                    clip-rule="evenodd"
-                                    d="M5.21535 0.575533C5.4443 0.647704 5.6 0.86003 5.6 1.10009V3.85009L7.8 3.85009C8.00508 3.85009 8.19313 3.96419 8.28783 4.14609C8.38254 4.328 8.36818 4.54748 8.25057 4.71549L4.40057 10.2155C4.26291 10.4122 4.0136 10.4968 3.78464 10.4246C3.55569 10.3525 3.4 10.1401 3.4 9.90009L3.4 7.15009H1.2C0.994914 7.15009 0.806866 7.03599 0.712157 6.85408C0.617448 6.67218 0.631811 6.45269 0.749418 6.28468L4.59942 0.784684C4.73708 0.588021 4.98639 0.503362 5.21535 0.575533Z"
-                                    fill="currentColor"
-                                /></svg
-                            ><span class="space-x-1"
-                                ><span>0</span><span>·</span><span
-                                    >{displayedAt(board.createDate)}</span
-                                ></span
-                            >
+                            <span class="mr-1">·</span>
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline w-3 h-3 md:w-4 md:h-4 text-red-500 fill-red-500">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                </svg>
+                            </span>
+                            <span>{formatLargeNumber(board.likeCount)}</span>
+                            <span>
+                                <span class="ml-1">·</span>
+                                <span>{displayedAt(board.createDate)}</span>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -156,7 +158,7 @@
                     <a
                         class="line-clamp-1 w-fit break-all text-sm font-semibold text-gray-900 hover:text-blue-500 dark:text-gray-100 dark:hover:text-blue-200 sm:text-base sm:leading-5"
                         href="/articles/{board.id}"
-                        >{board.title}</a
+                        >{convertHtml(board.title)}</a
                     >
                 </div>
                 <div class="flex mt-4">
@@ -188,13 +190,13 @@
                             <span class="font-medium">{formatLargeNumber(board.commentCount)}</span>
                             <span class="sr-only">comments</span>
                         </div>
-                        <div class="inline-flex items-center -space-x-0.5 text-xs sm:text-sm">
+                        <!-- <div class="inline-flex items-center -space-x-0.5 text-xs sm:text-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-5 w-5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
                             </svg>
                             <span class="font-medium">{formatLargeNumber(board.likeCount)}</span>
                             <span class="sr-only">likes</span>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </li>

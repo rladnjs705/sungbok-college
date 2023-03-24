@@ -209,6 +209,7 @@
                     name="title"
                     class:border-red-500={errors.title}
                     bind:value={addValues.title}
+                    maxlength="50"
                      />
                 {#if errors.title}
                     <div class="text-red-500">{errors.title}</div>
