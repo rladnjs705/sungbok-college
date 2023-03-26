@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+import { page } from '$app/stores';
     import { onMount } from "svelte";
     import Viewer from "@toast-ui/editor/dist/toastui-editor-viewer";
     import Editor from '@toast-ui/editor';
@@ -89,6 +89,7 @@
                         data = {item};
                         board = data.item.response;
                         commentList = board.commentResponseDTOList;
+                        console.log(commentList)
                         for (let i=0; i<commentList.content.length; i++){
                             commentsShow.push(false);
                         }
@@ -104,6 +105,7 @@
                         for (let i=0; i<commentList.content.length; i++){
                             commentsShow.push(false)
                         }
+                        
                     }else{
                         throw error(404, {
                             message: item.error.message

@@ -39,12 +39,12 @@
           </svg>
         </button>
         <a href="/" on:click={() => itemHeaderselected(ALL)}>
-          <img class="w-24 h-24 bg-transparent hidden md:block" src="/logo-removebg.png" alt="logo">
+          <img class="w-24 h-24 bg-transparent hidden md:block" src="/logo_white2.png" alt="logo">
         </a>
       </div>
       <div class="flex items-center">
         <a href="/" on:click={() => itemHeaderselected(ALL)}>
-          <img class="w-24 h-24 bg-transparent md:hidden" src="/logo-removebg.png" alt="logo">
+          <img class="w-24 h-24 bg-transparent md:hidden" src="/logo_white2.png" alt="logo">
         </a>
         <div class="hidden items-center md:space-x-3 lg:space-x-7 md:flex lg:ml-[60px]">
           <div class="shrink-0">

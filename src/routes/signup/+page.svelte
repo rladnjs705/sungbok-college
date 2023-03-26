@@ -64,7 +64,7 @@
 <div class="flex justify-center px-6 pb-16 mt-2">
     <div class="w-full max-w-md">
         <a href="/">
-            <img class="mx-auto h-32 w-auto" src="/logo.png" alt="OKKY" />
+            <img class="mx-auto h-32 w-auto" src="/logo.png" alt="Sungbok" />
         </a>
         <h2 class="mt-2 text-center text-2xl font-bold sm:text-3xl">
             새벽이슬에 오신것을 환영합니다.
