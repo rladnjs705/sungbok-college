@@ -59,7 +59,7 @@
 
     const onAddBoard = async () => {
         try {
-            const response = await axios.post("/api/admin/board/create", addValues);
+            const response = await axios.post("/api/user/board/create", addValues);
             if(response.status == 200){
                 //notyf.success("생성되었습니다.");
                 goto(`/${addValues.boardType}`);

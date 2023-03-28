@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
     import CreateBtn from "$components/button/Create.svelte";
     import { itemCategorySelected, boardDetailList, pageNumber, isAdmin, authToken } from '$stores';
-    import { ALL } from '$utils/constans';
+    import { ALL, LECTURE, NOTICE } from '$utils/constans';
     import { onMount } from 'svelte';
 
     export let boardType:any;
@@ -31,7 +31,7 @@
 <div class="justify-between relative my-6 flex items-center">
     <div class="flex grow flex-col gap-y-4">
         <div class="flex justify-end">
-            {#if boardType == "notice"}
+            {#if boardType == NOTICE || boardType == LECTURE}
                 {#if $isAdmin}
                     <CreateBtn boardType={boardType} />
                 {/if}
@@ -49,7 +49,7 @@
                     {/if}
                 {/each}
                 {#if $itemCategorySelected === ALL}
-                <a href="/{boardType}" class="bg-gray-100 dark:bg-gray-700 flex shrink-0 rounded-md py-2 px-0 md:px-3 text-sm font-medium sm:text-base sm:leading-5" on:click={() => onSelectCategory(ALL)}>전체</a>
+                <a href="/{boardType}" class="bg-gray-100 dark:bg-gray-700 flex shrink-0 rounded-md py-2 px-1 md:px-3 text-sm font-medium sm:text-base sm:leading-5" on:click={() => onSelectCategory(ALL)}>전체</a>
                 {:else}
                 <a href="/{boardType}" class="text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-200 flex shrink-0 rounded-md py-2 px-1 md:px-3 text-sm font-medium sm:text-base sm:leading-5" on:click={() => onSelectCategory(ALL)}>전체</a>
                 {/if}

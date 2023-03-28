@@ -2,6 +2,17 @@
     import axios from 'axios';
     import Swal from "sweetalert2";
     import { extractErrors, attendanceValidateSchema } from '$utils/validates';
+    import { paginate, LightPaginationNav } from 'svelte-paginate'
+    import { onMount } from 'svelte';
+    import { auth } from '$stores';
+    import { goto } from '$app/navigation';
+
+    let paginatedItems:any;
+    let currentPage = 1
+    let pageSize:number = 10
+
+    let attendanceList:any;
+    let items;
 
     let addValues:any={
         content:''
@@ -9,21 +20,38 @@
 
     let errors:any = {};
 
+    onMount(async () => {
+      await fetch("/api/user/attendance")
+            .then(response => response.json())
+            .then(item => {
+              attendanceList = item.response;
+              console.log(attendanceList.content)
+            })
+            .catch(error => console.log(error));
+    });
+
+    $:if(attendanceList){
+      items = attendanceList.content;
+      paginatedItems = paginate({ items, pageSize, currentPage});
+    }
+
+
     const submitAttendance = async () => {
         try {
+            addValues.userId = Number($auth._id);
             await attendanceValidateSchema.validate(addValues, {abortEarly: false});
             await onAddAttendance();
         } catch (error) {
-            console.log(error);
             errors = extractErrors(error);
         }
     }
 
     const onAddAttendance = async () => {
         try {
-            const response = await axios.post("/api/admin/attendance/create", addValues);
+            const response = await axios.post("/api/user/attendance/create", addValues);
             if(response.status == 200){
                 //notyf.success("생성되었습니다.");
+                location.reload()
             }else{
                 console.log(response);
                 Swal.fire({
@@ -33,11 +61,38 @@
                 });
             }
         } catch(error) {
-            errors = extractErrors(error);
+            console.log(error)
+            if(error){
+              if(error.response.status == 400){
+                if(error.response.data.resultCode ==1100){
+                  Swal.fire({
+                    icon: 'error',
+                    text: error.response.data.resultMsg,
+                    timer: 3000, // 3초 후 자동으로 닫힘
+                  });
+                }
+              } else if(error.response.status == 401){
+                  goto("/login");
+              }
+            }
         }
     }
+
+
+    const dateFommater = (date:Array<number>):string => {
+        const yyyy = date[0];
+        const MM = date[1];
+        const dd = date[2];
+        const HH = date[3];
+        const mm = date[4];
+        const ss = date[5];
+
+        return yyyy+"-"+MM+"-"+dd+" "+HH+":"+mm+":"+ss;
+
+    }
+
 </script>
-<div class="md:mx-48">
+<div class="md:mx-24">
     <div class="space-y-11">
         <div class="grid grid-cols-1 gap-y-7">
             <div class="space-y-2 mt-3">
@@ -48,7 +103,8 @@
                     type="text"
                     id="content"
                     placeholder="내용을 입력해주세요."
-                    class="block w-full appearance-none rounded-md border border-gray-500/30 pl-3 pr-10 text-base placeholder-gray-500/80 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-0 dark:bg-gray-500/20"
+                    class="block w-full h-16 md:h-20 appearance-none rounded-md border border-gray-500/30 pl-3 pr-10 text-base placeholder-gray-500/80 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-0 dark:bg-gray-500/20"
+                    maxlength="100"
                     name="content"
                     class:border-red-500={errors.content}
                     bind:value={addValues.content}
@@ -61,166 +117,53 @@
                     type="submit" 
                     class="inline-flex items-center space-x-2 rounded-md bg-blue-500 px-8 py-2 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-600"
                     on:click={() => submitAttendance()}
-                    >등록</button>
+                    >출석하기</button>
                 </div>
-                <div class="w-full overflow-hidden rounded-lg shadow-xs">
                     <div class="w-full overflow-x-auto">
-                      <table class="w-full">
-                        <!-- <thead>
-                          <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
-                            <th class="px-4 py-3">닉네임</th>
-                            <th class="px-4 py-3">Amount</th>
-                            <th class="px-4 py-3">Status</th>
-                            <th class="px-4 py-3">Date</th>
-                          </tr>
-                        </thead> -->
+                      <table class="table-auto w-full p-6 text-xs text-left whitespace-nowrap">
+                        <thead>
+                          <!-- <tr>
+                            <th class="px-4 py-2"></th>
+                            <th class="px-4 py-2 "></th>
+                            <th class="px-4 py-2"></th>
+                          </tr> -->
+                        </thead>
                         <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                        {#if paginatedItems}
+                          {#each paginatedItems as data}
                           <tr class="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-700 dark:text-gray-400">
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 w-2/12">
                               <div class="flex items-center text-sm">
                                 <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                                  <img class="object-cover w-full h-full rounded-full" src="https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=200&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjE3Nzg0fQ" alt="" loading="lazy">
+                                  <img class="object-cover w-full h-full rounded-full" src="/dummy-avatar.jpg" alt="" loading="lazy">
                                   <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
                                 </div>
                                 <div>
-                                  <p class="font-semibold">Hans Burger</p>
-                                  <p class="text-xs text-gray-600 dark:text-gray-400">10x Developer</p>
+                                  <p class="font-semibold">{data.writer.nickName}</p>
                                 </div>
                               </div>
                             </td>
-                            <td class="px-4 py-3 text-sm">$855.85</td>
-                            <td class="px-4 py-3 text-xs">
-                              <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100"> Approved </span>
-                            </td>
-                            <td class="px-4 py-3 text-sm">15-01-2021</td>
+                            <td class="px-8 py-3 text-sm w-8/12"><p class="w-24 md:w-72 lg:w-96 overflow-ellipsis overflow-hidden">{data.content}</p></td>
+                            <td class="px-4 py-3 text-xs text-gray-400 w-2/12">{dateFommater(data.createDate)}</td>
                           </tr>
-                          <tr class="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-700 dark:text-gray-400">
-                            <td class="px-4 py-3">
-                              <div class="flex items-center text-sm">
-                                <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                                  <img class="object-cover w-full h-full rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=200&amp;facepad=3&amp;fit=facearea&amp;s=707b9c33066bf8808c934c8ab394dff6" alt="" loading="lazy">
-                                  <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
-                                </div>
-                                <div>
-                                  <p class="font-semibold">Jolina Angelie</p>
-                                  <p class="text-xs text-gray-600 dark:text-gray-400">Unemployed</p>
-                                </div>
-                              </div>
-                            </td>
-                            <td class="px-4 py-3 text-sm">$369.75</td>
-                            <td class="px-4 py-3 text-xs">
-                              <span class="px-2 py-1 font-semibold leading-tight text-yellow-700 bg-yellow-100 rounded-full"> Pending </span>
-                            </td>
-                            <td class="px-4 py-3 text-sm">23-03-2021</td>
-                          </tr>
-                          <tr class="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-700 dark:text-gray-400">
-                            <td class="px-4 py-3">
-                              <div class="flex items-center text-sm">
-                                <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                                  <img class="object-cover w-full h-full rounded-full" src="https://images.unsplash.com/photo-1502720705749-871143f0e671?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=200&amp;fit=max&amp;s=b8377ca9f985d80264279f277f3a67f5" alt="" loading="lazy">
-                                  <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
-                                </div>
-                                <div>
-                                  <p class="font-semibold">Dave Li</p>
-                                  <p class="text-xs text-gray-600 dark:text-gray-400">Influencer</p>
-                                </div>
-                              </div>
-                            </td>
-                            <td class="px-4 py-3 text-sm">$775.45</td>
-                            <td class="px-4 py-3 text-xs">
-                              <span class="px-2 py-1 font-semibold leading-tight text-gray-700 bg-gray-100 rounded-full dark:text-gray-100 dark:bg-gray-700"> Expired </span>
-                            </td>
-                            <td class="px-4 py-3 text-sm">09-02-2021</td>
-                          </tr>
-                          <tr class="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-700 dark:text-gray-400">
-                            <td class="px-4 py-3">
-                              <div class="flex items-center text-sm">
-                                <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                                  <img class="object-cover w-full h-full rounded-full" src="https://images.unsplash.com/photo-1551006917-3b4c078c47c9?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=200&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjE3Nzg0fQ" alt="" loading="lazy">
-                                  <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
-                                </div>
-                                <div>
-                                  <p class="font-semibold">Rulia Joberts</p>
-                                  <p class="text-xs text-gray-600 dark:text-gray-400">Actress</p>
-                                </div>
-                              </div>
-                            </td>
-                            <td class="px-4 py-3 text-sm">$1276.75</td>
-                            <td class="px-4 py-3 text-xs">
-                              <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100"> Approved </span>
-                            </td>
-                            <td class="px-4 py-3 text-sm">17-04-2021</td>
-                          </tr>
-                          <tr class="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-700 dark:text-gray-400">
-                            <td class="px-4 py-3">
-                              <div class="flex items-center text-sm">
-                                <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                                  <img class="object-cover w-full h-full rounded-full" src="https://images.unsplash.com/photo-1566411520896-01e7ca4726af?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=200&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjE3Nzg0fQ" alt="" loading="lazy">
-                                  <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
-                                </div>
-                                <div>
-                                  <p class="font-semibold">Hitney Wouston</p>
-                                  <p class="text-xs text-gray-600 dark:text-gray-400">Singer</p>
-                                </div>
-                              </div>
-                            </td>
-                            <td class="px-4 py-3 text-sm">$863.45</td>
-                            <td class="px-4 py-3 text-xs">
-                              <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-700"> Denied </span>
-                            </td>
-                            <td class="px-4 py-3 text-sm">11-01-2021</td>
-                          </tr>
+                          {/each}
+                          
+                        {/if}
                         </tbody>
                       </table>
                     </div>
-                    <div class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800">
-                      <span class="flex items-center col-span-3"> Showing 21-30 of 100 </span>
-                      <span class="col-span-2"></span>
-                      <!-- Pagination -->
-                      <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
-                        <nav aria-label="Table navigation">
-                          <ul class="inline-flex items-center">
-                            <li>
-                              <button class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple" aria-label="Previous">
-                                <svg aria-hidden="true" class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                                  <path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" fill-rule="evenodd"></path>
-                                </svg>
-                              </button>
-                            </li>
-                            <li>
-                              <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">1</button>
-                            </li>
-                            <li>
-                              <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">2</button>
-                            </li>
-                            <li>
-                              <button class="px-3 py-1 text-white dark:text-gray-800 transition-colors duration-150 bg-blue-600 dark:bg-gray-100 border border-r-0 border-blue-600 dark:border-gray-100 rounded-md focus:outline-none focus:shadow-outline-purple">3</button>
-                            </li>
-                            <li>
-                              <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">4</button>
-                            </li>
-                            <li>
-                              <span class="px-3 py-1">...</span>
-                            </li>
-                            <li>
-                              <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">8</button>
-                            </li>
-                            <li>
-                              <button class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">9</button>
-                            </li>
-                            <li>
-                              <button class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple" aria-label="Next">
-                                <svg class="w-4 h-4 fill-current" aria-hidden="true" viewBox="0 0 20 20">
-                                  <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" fill-rule="evenodd"></path>
-                                </svg>
-                              </button>
-                            </li>
-                          </ul>
-                        </nav>
-                      </span>
-                    </div>
+                    <!-- Pagination -->
+                    {#if attendanceList && attendanceList.totalElements > 0}
+                      <LightPaginationNav
+                      totalItems="{attendanceList.totalElements}"
+                      pageSize="{pageSize}"
+                      currentPage="{currentPage}"
+                      limit="{1}"
+                      showStepOptions="{true}"
+                      on:setPage="{(e) => currentPage = e.detail.page}"
+                      />
+                    {/if}
                   </div>
-            </div>
         </div>
     </div>
 </div>

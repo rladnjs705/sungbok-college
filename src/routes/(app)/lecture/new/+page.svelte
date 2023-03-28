@@ -9,12 +9,12 @@
     import { goto } from "$app/navigation";
     import Swal from "sweetalert2";
     import { Checkbox } from 'flowbite-svelte'
-    import { FREE } from '$lib/utils/constans';
+    import { LECTURE } from '$lib/utils/constans';
 
     export let data: PageData;
     let editor:any;
     let container: HTMLElement;
-    const cancelLink = "/notice";
+    const cancelLink = "/lecture";
 
     let errors:any = {};
     
@@ -26,10 +26,13 @@
         categoryId: '',
         title: '',
         content: '',
-        boardType: FREE,
+        boardType: LECTURE,
 
         //태그정보
         hashTag: tags,
+
+        //파일정보
+        thumbnailPath: '',
 
         //유저정보
         userId: 0,
@@ -49,11 +52,6 @@
             initialEditType: "wysiwyg",
             previewStyle: "vertical",
             hideModeSwitch: true,
-            toolbarItems: [
-                ["heading", "bold", "italic", "strike"],
-                ["ul", "ol"],
-                ["image", "link"],
-            ],
         });
     })
 
@@ -176,9 +174,9 @@
     <div class="space-y-11">
         <div class="grid grid-cols-1 gap-y-7">
             <div class="space-y-2 mt-3">
-                <h3 class="text-xl font-medium sm:text-3xl sm:leading-10">커뮤니티</h3>
+                <h3 class="text-xl font-medium sm:text-3xl sm:leading-10">강의 등록</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400">
-                    공지사항을 등록하여 새 소식, 정보를 공유해 주세요.
+                    강의를 등록하여 주변에 선한 영향력을 행사해 주세요.
                 </p>
             </div>
             <div class="space-y-1">

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
   import { onMount } from 'svelte';
-  import { ALL, NOTICE, QUESTIONS, LECTURE, FREE, REPORTCARD, PROFILE} from '$utils/constans';
+  import { ALL, NOTICE, QUESTIONS, LECTURE, FREE, REPORTCARD, PROFILE, ATTENDANCE} from '$utils/constans';
   import { auth, itemFooterSelected,itemCategorySelected, pageNumber, authToken } from '$stores';
   import { goto } from '$app/navigation';
 
@@ -84,6 +84,14 @@
               </a>
             </li>
             <li>
+              <a href="/free" on:click={() => onSideBar(FREE)} class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 dark:hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-500 dark:hover:border-gray-800 pr-6" class:border-blue-500={$itemFooterSelected===FREE} class:text-white-800={$itemFooterSelected===FREE} class:bg-blue-700={$itemFooterSelected===FREE}>
+                <span class="inline-flex justify-center items-center ml-4">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+                </span>
+                <span class="ml-2 text-sm tracking-wide truncate">커뮤니티</span>
+              </a>
+            </li>
+            <li>
               <a href="/lecture" on:click={() => onSideBar(LECTURE)} class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 dark:hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-500 dark:hover:border-gray-800 pr-6" class:border-blue-500={$itemFooterSelected===LECTURE} class:text-white-800={$itemFooterSelected===LECTURE} class:bg-blue-700={$itemFooterSelected===LECTURE}>
                 <span class="inline-flex justify-center items-center ml-4">
                   <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 20.25h12m-7.5-3v3m3-3v3m-10.125-3h17.25c.621 0 1.125-.504 1.125-1.125V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125z" /></svg>
@@ -93,19 +101,21 @@
               </a>
             </li>
             <li>
-              <a href="/reportCard" on:click={() => onSideBar(REPORTCARD)} class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 dark:hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-500 dark:hover:border-gray-800 pr-6" class:border-blue-500={$itemFooterSelected===REPORTCARD} class:text-white-800={$itemFooterSelected===REPORTCARD} class:bg-blue-700={$itemFooterSelected===REPORTCARD}>
+              <a href="/attendance" on:click={() => onSideBar(ATTENDANCE)} class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 dark:hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-500 dark:hover:border-gray-800 pr-6" class:border-blue-500={$itemFooterSelected===REPORTCARD} class:text-white-800={$itemFooterSelected===REPORTCARD} class:bg-blue-700={$itemFooterSelected===REPORTCARD}>
                 <span class="inline-flex justify-center items-center ml-4">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75" />
+                  </svg>  
                 </span>
-                <span class="ml-2 text-sm tracking-wide truncate">성적</span>
+                <span class="ml-2 text-sm tracking-wide truncate">출석부</span>
               </a>
             </li>
             <li>
-              <a href="/free" on:click={() => onSideBar(FREE)} class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 dark:hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-500 dark:hover:border-gray-800 pr-6" class:border-blue-500={$itemFooterSelected===FREE} class:text-white-800={$itemFooterSelected===FREE} class:bg-blue-700={$itemFooterSelected===FREE}>
+              <a href="/reportCard" on:click={() => onSideBar(REPORTCARD)} class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-700 dark:hover:bg-gray-600 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-500 dark:hover:border-gray-800 pr-6" class:border-blue-500={$itemFooterSelected===REPORTCARD} class:text-white-800={$itemFooterSelected===REPORTCARD} class:bg-blue-700={$itemFooterSelected===REPORTCARD}>
                 <span class="inline-flex justify-center items-center ml-4">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
-                </span>
-                <span class="ml-2 text-sm tracking-wide truncate">커뮤니티</span>
+                </span>                                
+                <span class="ml-2 text-sm tracking-wide truncate">성적</span>
               </a>
             </li>
             <!-- <li>

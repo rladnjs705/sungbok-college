@@ -1,6 +1,6 @@
 <script lang="ts">
     import { itemFooterSelected, boardDetailList, itemCategorySelected } from "$lib/stores";
-    import { ALL, FREE, LECTURE, NOTICE, QUESTIONS, REPORTCARD } from "$lib/utils/constans";
+    import { ALL, FREE, LECTURE, NOTICE, QUESTIONS, REPORTCARD, ATTENDANCE } from "$lib/utils/constans";
     import { authToken, auth, isAdmin, pageNumber } from '$stores';
     import { goto } from '$app/navigation';
 
@@ -79,6 +79,13 @@
             <a  on:click={() => itemHeaderselected(QUESTIONS)}
                 class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-100 text-sm font-medium hover:no-underline"
                 href="/questions">Q&amp;A</a
+            >
+          </div> 
+          <div class="h-3 w-[1px] bg-gray-400 dark:bg-gray-400/70" />
+          <div class="shrink-0">
+            <a  on:click={() => itemHeaderselected(ATTENDANCE)}
+                class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-100 text-sm font-medium hover:no-underline"
+                href="/attendance">출석부</a
             >
           </div> 
         </div>

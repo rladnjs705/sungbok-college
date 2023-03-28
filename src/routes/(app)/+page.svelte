@@ -4,6 +4,7 @@
     import { ALL, FREE, LECTURE, NOTICE, QUESTIONS } from "$lib/utils/constans";
     import { onMount } from "svelte";
     import type { PageData } from './$types';
+    import LectureList from "$lib/components/board/LectureList.svelte";
     export let data: PageData;
 
     const notice = {
@@ -41,5 +42,5 @@
 </div>
 <div class="flex flex-col gap-x-10 md:flex-row">
     <List list={free}/>
-    <List list={lecture}/>
+    <LectureList list={lecture}/>
 </div>

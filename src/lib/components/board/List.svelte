@@ -69,7 +69,7 @@
         </div></a>
     <div>
         <ul class="divide-y divide-gray-500/30 dark:divide-gray-500/70">
-            {#if list.list}
+            {#if list.list.length > 0}
             {#each list.list as boardList}
             <li class="py-4 last:pb-0">
                 <div class="mb-2 flex">
@@ -160,7 +160,7 @@
             {/each}
             {:else}
             <li>
-                <div>게시물이 없습니다.</div>
+                <div class="text-center">게시물이 없습니다.</div>
             </li>
             {/if}
         </ul>

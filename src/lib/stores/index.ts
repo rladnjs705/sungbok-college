@@ -138,7 +138,7 @@ function setBoardDetailList() :any {
     }else{ 
       if(categoryEng == ALL){
         try {
-          const response = await fetch("/api/admin/board/"+boardType);
+          const response = await fetch("/api/user/board/"+boardType);
           const item = await response.json();
           set(item);
         } catch (error) {
@@ -146,7 +146,7 @@ function setBoardDetailList() :any {
         }
       }else{
         try {
-          const response = await fetch("/api/admin/board/"+boardType+"/"+categoryEng);
+          const response = await fetch("/api/user/board/"+boardType+"/"+categoryEng);
           const item = await response.json();
           set(item);
         } catch (error) {

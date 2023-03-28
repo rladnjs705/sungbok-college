@@ -2,13 +2,18 @@
 import { page } from '$app/stores';
     import { onMount } from "svelte";
     import Viewer from "@toast-ui/editor/dist/toastui-editor-viewer";
-    import Editor from '@toast-ui/editor';
+    import Editor  from '@toast-ui/editor';
     import { auth, authToken } from '$stores';
     import { error } from '@sveltejs/kit';
     import { goto } from '$app/navigation';
     import { extractErrors, commentValidateSchema } from '$utils/validates';
     import Swal from "sweetalert2";
     import axios from 'axios';
+    import { paginate, LightPaginationNav } from 'svelte-paginate'
+
+    let paginatedItems:any;
+    let currentPage = 1
+    let pageSize:number = 10
 
     let editor:any;
     let container: HTMLElement;
@@ -22,6 +27,7 @@ import { page } from '$app/stores';
     let heartSelected = false;
     let comments:any[]=[];
     let commentsEditor:any[]=[];
+    let items:any[];
 
     let commentValues = {
         userId :0,
@@ -42,40 +48,36 @@ import { page } from '$app/stores';
         '서로 다른 경험과 관점을 존중해요.'
     ]
 
-    $:board;
+    
 
     $:if(commentList){
-        if(commentList.content.length > 0){
-            for (let i=0; i<commentList.content.length; i++){
-                let number = Math.floor(Math.random()*5);
-                let comment = comments[i];
-                let commentChildEditor = commentsEditor[i];
-                if(comment){
-                    new Viewer({
-                        el: comment,
-                        initialValue: convertHtml(commentList.content[i].content),
-                    });
+        items = commentList.content;
+        paginatedItems = paginate({ items, pageSize, currentPage});
+        for (let i=0; i<paginatedItems.length; i++){
+            let comment = comments[i];
+            if(comment){
+                new Viewer({
+                    el: comment,
+                    initialValue: convertHtml(paginatedItems[i].content),
+                    customHTMLRenderer: {
+                            htmlBlock: {
+                            iframe(node) {
+                                return [
+                                { type: 'openTag', tagName: 'iframe', outerNewLine: true, attributes: node.attrs },
+                                { type: 'html', content: node.childrenHTML },
+                                { type: 'closeTag', tagName: 'iframe', outerNewLine: true },
+                                ];
+                            },
+                        }
+                        },
+                });
 
-                    commentsEditor[i] = new Editor({
-                        el: commentChildEditor,
-                        initialValue: commentValues.content,
-                        placeholder: placeHolderList[number],
-                        initialEditType: "wysiwyg",
-                        previewStyle: "vertical",
-                        hideModeSwitch: true,
-                        height: "16vh",
-                        toolbarItems: [
-                            ["heading", "bold", "italic", "strike"],
-                            ["ul", "ol"],
-                            ["image", "link"],
-                        ],
-                    });
-
-
-                }
             }
         }
     }
+
+    
+
 
     onMount(async ()=> {
         userId = Number($auth._id);
@@ -83,27 +85,26 @@ import { page } from '$app/stores';
         try {
             if(!isNaN(id)){
                 if(userId > 0){
-                    await fetch("/api/admin/board/detail/"+id+"/"+$auth._id)
+                    await fetch("/api/user/board/detail/"+id+"/"+$auth._id)
                     .then(response => response.json())
                     .then(item => {
                         data = {item};
                         board = data.item.response;
                         commentList = board.commentResponseDTOList;
-                        console.log(commentList)
                         for (let i=0; i<commentList.content.length; i++){
-                            commentsShow.push(false);
+                            commentsShow[commentsShow.length] = false;
                         }
                     })
                     .catch(error => console.log(error));
                 }else {
-                    const response = await fetch("/api/admin/board/detail/"+id);
+                    const response = await fetch("/api/user/board/detail/"+id);
                     const item = await response.json();
                     if(item.success == true){
                         data = {item};
                         board = data.item.response;
                         commentList = board.commentResponseDTOList;
                         for (let i=0; i<commentList.content.length; i++){
-                            commentsShow.push(false)
+                            commentsShow[commentsShow.length] = false;
                         }
                         
                     }else{
@@ -125,6 +126,17 @@ import { page } from '$app/stores';
         editor = new Viewer({
             el: container,
             initialValue: convertHtml(board.content),
+            customHTMLRenderer: {
+                            htmlBlock: {
+                            iframe(node) {
+                                return [
+                                { type: 'openTag', tagName: 'iframe', outerNewLine: true, attributes: node.attrs },
+                                { type: 'html', content: node.childrenHTML },
+                                { type: 'closeTag', tagName: 'iframe', outerNewLine: true },
+                                ];
+                            },
+                        }
+                        },
         });
 
         let number = Math.floor(Math.random()*5);
@@ -142,6 +154,44 @@ import { page } from '$app/stores';
                 ["image", "link"],
             ],
         });
+
+        for (let i=0; i<commentList.content.length; i++){
+                let number = Math.floor(Math.random()*5);
+                let comment = comments[i];
+                let commentChildEditor = commentsEditor[i];
+                if(comment){
+                    new Viewer({
+                        el: comment,
+                        initialValue: convertHtml(commentList.content[i].content),
+                        customHTMLRenderer: {
+                            htmlBlock: {
+                            iframe(node) {
+                                return [
+                                { type: 'openTag', tagName: 'iframe', outerNewLine: true, attributes: node.attrs },
+                                { type: 'html', content: node.childrenHTML },
+                                { type: 'closeTag', tagName: 'iframe', outerNewLine: true },
+                                ];
+                            },
+                        }
+                        },
+                    });
+
+                    commentsEditor[i] = new Editor({
+                        el: commentChildEditor,
+                        initialValue: commentValues.content,
+                        placeholder: placeHolderList[number],
+                        initialEditType: "wysiwyg",
+                        previewStyle: "vertical",
+                        hideModeSwitch: true,
+                        height: "16vh",
+                        toolbarItems: [
+                            ["heading", "bold", "italic", "strike"],
+                            ["ul", "ol"],
+                            ["image", "link"],
+                        ],
+                    });
+                }
+            }
         
     })
 
@@ -252,9 +302,12 @@ import { page } from '$app/stores';
         try {
             const response = await axios.post("/api/user/comment/"+board.id, commentValues);
             if(response.status == 200){
+                location.reload();
+
                 const comment = response.data.response;
                 commentList.content = [comment, ...commentList.content];
-                location.reload();
+                commentEditor.setHTML("");
+
             }else{
                 console.log(response);
                 Swal.fire({
@@ -293,11 +346,27 @@ import { page } from '$app/stores';
         }
     }
 
-    const onAddChildComment = async () => {
+    const onAddChildComment = async (parentId:number) => {
         try {
             const response = await axios.post("/api/user/comment/"+board.id, commentValues);
             if(response.status == 200){
                 location.reload();
+
+                const comment = response.data.response;
+                let index = commentList.content.findIndex((data:any) => data.ref == comment.ref);
+                if(parentId > 0){
+                    index = [...commentList.content].reverse().findIndex((data:any) => data.parentId == parentId);
+                }
+
+                commentList.content = [
+                    ...commentList.content.slice(0, index-1),
+                    comment,
+                    ...commentList.content.slice(index),
+                ]
+
+                for(let i=0; i<commentsShow.length; i++){
+                    commentsShow[i] = false;
+                }
             }else{
                 console.log(response);
                 Swal.fire({
@@ -311,7 +380,7 @@ import { page } from '$app/stores';
         }
     }
 
-    const onSubmitAddChildComment = async (index:number, commentId:number) => {
+    const onSubmitAddChildComment = async (index:number, commentId:number, parentId:number) => {
         try {
             if(commentsEditor[index].getHTML()=="<p><br></p>"|| commentsEditor[index].getHTML()==""){
                 commentValues.content = '';
@@ -320,10 +389,14 @@ import { page } from '$app/stores';
             }
             commentValues.userId = userId;
             commentValues.commentId = commentId;
-            commentValues.parentId = commentId;
+            if(parentId == 0){
+                commentValues.parentId = commentId;
+            } else if(parentId > 0){
+                commentValues.parentId = parentId;
+            }
             if(userId > 0){
                 await commentValidateSchema.validate(commentValues, {abortEarly: false});
-                await onAddChildComment();
+                await onAddChildComment(parentId);
             }else {
                 Swal.fire({
                     icon: 'error',
@@ -350,6 +423,13 @@ import { page } from '$app/stores';
             }
             // open the clicked comment
             commentsShow[index] = true;
+        }
+    }
+
+    function setPage(e:any) {
+        currentPage = e.detail.page;
+        for(let i=0; i<commentsShow.length; i++){
+            commentsShow[i] = false;
         }
     }
 
@@ -494,9 +574,9 @@ import { page } from '$app/stores';
     <div class="my-5 border-t border-gray-500/30 dark:border-gray-500/70"/>
     <div class="my-4 md:my-8">
         <ul class="divide-y divide-gray-500/30 dark:divide-gray-500/70">
-            {#if commentList}
-            {#each commentList.content as comment, index}
-                <li class="py-6">
+            {#if paginatedItems}
+            {#each paginatedItems as comment, index}
+                <li class="py-6" style="padding-left: {comment.step*10}px; border-block-style: {comment.step>0 ? "dashed" : "solid"};">
                     <div class="flex items-center space-x-2">
                         <div class="flex-shrink-0">
                             <a href="/users/{comment.writer.userId}">
@@ -536,7 +616,7 @@ import { page } from '$app/stores';
                                             <button
                                             type="button"
                                             class="inline-flex items-center space-x-2 rounded-md bg-blue-500 px-8 py-2 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-600 disabled:bg-blue-500 disabled:opacity-40"
-                                                on:click={() => onSubmitAddChildComment(index,comment.id)}
+                                                on:click={() => onSubmitAddChildComment(index,comment.id,comment.parentId)}
                                                 >댓글 쓰기</button
                                                 >
                                         </div>
@@ -558,6 +638,17 @@ import { page } from '$app/stores';
                     </div>
                 </li>
                 {/each}
+                <!-- Pagination -->
+                {#if commentList.totalElements > 0}
+                    <LightPaginationNav
+                    totalItems="{commentList.totalElements}"
+                    pageSize="{pageSize}"
+                    currentPage="{currentPage}"
+                    limit="{1}"
+                    showStepOptions="{true}"
+                    on:setPage="{setPage}"
+                    />
+                {/if}
             {/if}
         </ul>
     </div>

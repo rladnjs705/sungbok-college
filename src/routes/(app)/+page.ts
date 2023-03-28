@@ -1,10 +1,10 @@
 import type { PageLoad } from './$types';
 
 export const load = (async ({ fetch }) => {
-const responseNotice = await fetch("/api/admin/board/notice");
-const responseQuestion = await fetch("/api/admin/board/best/questions");
-const responseFree = await fetch("/api/admin/board/best/free");
-const responseLecture = await fetch("/api/admin/board/best/lecture");
+const responseNotice = await fetch("/api/user/board/notice");
+const responseQuestion = await fetch("/api/user/board/best/questions");
+const responseFree = await fetch("/api/user/board/best/free");
+const responseLecture = await fetch("/api/user/board/best/lecture");
 
 const noticeList = await responseNotice.json();
 const questionList = await responseQuestion.json();
