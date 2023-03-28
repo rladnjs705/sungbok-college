@@ -43,7 +43,7 @@
 </script>
 <!-- Sidebar -->
 {#if isMobile}
-    <div class="absolute flex flex-col top-14 left-0 w-64 bg-blue-800 dark:bg-gray-700 h-full text-white transition-all duration-300 border-none z-10 sidebar" style={isSidebar ? "transform: translateX(0)" : "transform: translateX(-100%)"}>
+    <div class="absolute flex flex-col top-14 left-0 w-64 bg-blue-800 dark:bg-gray-700 h-full text-white transition-all duration-300 border-none z-50 sidebar" style={isSidebar ? "transform: translateX(0)" : "transform: translateX(-100%)"}>
         <div class="overflow-y-auto overflow-x-hidden flex flex-col justify-between flex-grow">
           <ul class="flex flex-col py-4 space-y-1">
             <li class="px-5 hidden md:block">

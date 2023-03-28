@@ -29,7 +29,7 @@
 </script>
 
 <!-- Header -->
-<div class="absolute md:fixed w-full flex items-center h-14 text-white z-10">
+<div class="absolute md:fixed w-full flex items-center h-14 text-white z-50">
     <div class="flex items-center justify-around pl-2 md:px-3 w-full h-14 bg-blue-700 dark:bg-gray-600 border-none">
       <div class="flex">
         <!-- <img class="w-7 h-7 mr-2 rounded-md overflow-hidden hidden processing" src="/dummy-avatar.jpg" alt="profile" /> -->

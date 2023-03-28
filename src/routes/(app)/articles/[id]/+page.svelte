@@ -2,7 +2,9 @@
 import { page } from '$app/stores';
     import { onMount } from "svelte";
     import Viewer from "@toast-ui/editor/dist/toastui-editor-viewer";
-    import Editor  from '@toast-ui/editor';
+    import suneditor from "suneditor";
+    import {ko} from 'suneditor/src/lang';
+    import plugins from 'suneditor/src/plugins';
     import { auth, authToken } from '$stores';
     import { error } from '@sveltejs/kit';
     import { goto } from '$app/navigation';
@@ -25,9 +27,10 @@ import { page } from '$app/stores';
     let commentList:any;
     let userId:number;
     let heartSelected = false;
-    let comments:any[]=[];
     let commentsEditor:any[]=[];
     let items:any[];
+
+    let bindText:string;
 
     let commentValues = {
         userId :0,
@@ -53,27 +56,6 @@ import { page } from '$app/stores';
     $:if(commentList){
         items = commentList.content;
         paginatedItems = paginate({ items, pageSize, currentPage});
-        for (let i=0; i<paginatedItems.length; i++){
-            let comment = comments[i];
-            if(comment){
-                new Viewer({
-                    el: comment,
-                    initialValue: convertHtml(paginatedItems[i].content),
-                    customHTMLRenderer: {
-                            htmlBlock: {
-                            iframe(node) {
-                                return [
-                                { type: 'openTag', tagName: 'iframe', outerNewLine: true, attributes: node.attrs },
-                                { type: 'html', content: node.childrenHTML },
-                                { type: 'closeTag', tagName: 'iframe', outerNewLine: true },
-                                ];
-                            },
-                        }
-                        },
-                });
-
-            }
-        }
     }
 
     
@@ -123,76 +105,44 @@ import { page } from '$app/stores';
             console.log(error);
         }
 
-        editor = new Viewer({
-            el: container,
-            initialValue: convertHtml(board.content),
-            customHTMLRenderer: {
-                            htmlBlock: {
-                            iframe(node) {
-                                return [
-                                { type: 'openTag', tagName: 'iframe', outerNewLine: true, attributes: node.attrs },
-                                { type: 'html', content: node.childrenHTML },
-                                { type: 'closeTag', tagName: 'iframe', outerNewLine: true },
-                                ];
-                            },
-                        }
-                        },
-        });
-
         let number = Math.floor(Math.random()*5);
-        commentEditor = new Editor({
-            el: commentContainer,
-            initialValue: commentValues.content,
-            placeholder: placeHolderList[number],
-            initialEditType: "wysiwyg",
-            previewStyle: "vertical",
-            hideModeSwitch: true,
+        console.log(placeHolderList[number])
+        commentEditor = suneditor.create('commentContainer',{
+            lang: ko,
             height: "16vh",
-            toolbarItems: [
-                ["heading", "bold", "italic", "strike"],
-                ["ul", "ol"],
-                ["image", "link"],
-            ],
+            width: "100%",
+            plugins: plugins,
+            value: commentValues.content,
+            videoWidth:'100%',
+            youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
+            buttonList: [
+            ['undo', 'redo', 'font', 'fontSize'],
+            ['bold', 'underline', 'italic', 'strike'], 
+            ['removeFormat','image', 'video','codeView']],
+            placeholder: placeHolderList[number]
         });
 
-        for (let i=0; i<commentList.content.length; i++){
-                let number = Math.floor(Math.random()*5);
-                let comment = comments[i];
-                let commentChildEditor = commentsEditor[i];
-                if(comment){
-                    new Viewer({
-                        el: comment,
-                        initialValue: convertHtml(commentList.content[i].content),
-                        customHTMLRenderer: {
-                            htmlBlock: {
-                            iframe(node) {
-                                return [
-                                { type: 'openTag', tagName: 'iframe', outerNewLine: true, attributes: node.attrs },
-                                { type: 'html', content: node.childrenHTML },
-                                { type: 'closeTag', tagName: 'iframe', outerNewLine: true },
-                                ];
-                            },
-                        }
-                        },
-                    });
-
-                    commentsEditor[i] = new Editor({
-                        el: commentChildEditor,
-                        initialValue: commentValues.content,
-                        placeholder: placeHolderList[number],
-                        initialEditType: "wysiwyg",
-                        previewStyle: "vertical",
-                        hideModeSwitch: true,
-                        height: "16vh",
-                        toolbarItems: [
-                            ["heading", "bold", "italic", "strike"],
-                            ["ul", "ol"],
-                            ["image", "link"],
-                        ],
-                    });
-                }
+        for (let i=0; i<paginatedItems.length; i++){
+            let number = Math.floor(Math.random()*5);
+            if(paginatedItems.length > 0){
+                console.log(paginatedItems[i].id);
+                
+                commentsEditor[i] = suneditor.create('commentsEditor'+i,{
+                    mode: "inline",
+                    lang: ko,
+                    height: "10vh",
+                    width: "100%",
+                    plugins: plugins,
+                    value: commentValues.content,
+                    videoWidth:'100%',
+                    youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
+                    buttonList: [
+                    ['font'],
+                    ['removeFormat','image', 'video','codeView']],
+                    placeholder: placeHolderList[number]
+                });
             }
-        
+        }
     })
 
     const boardTypeName = (boardType:string) => {
@@ -323,10 +273,10 @@ import { page } from '$app/stores';
 
     const onSubmitAddComment = async () => {
         try {
-            if(commentEditor.getHTML()=="<p><br></p>"|| commentEditor.getHTML()==""){
+            if(commentEditor.getContents()=="<p><br></p>"|| commentEditor.getContents()==""){
                 commentValues.content = '';
             }else{
-                commentValues.content = commentEditor.getHTML();
+                commentValues.content = commentEditor.getContents();
             }
             commentValues.userId = userId;
             if(userId > 0){
@@ -382,10 +332,10 @@ import { page } from '$app/stores';
 
     const onSubmitAddChildComment = async (index:number, commentId:number, parentId:number) => {
         try {
-            if(commentsEditor[index].getHTML()=="<p><br></p>"|| commentsEditor[index].getHTML()==""){
+            if(commentsEditor[index].getContents()=="<p><br></p>"|| commentsEditor[index].getContents()==""){
                 commentValues.content = '';
             }else{
-                commentValues.content = commentsEditor[index].getHTML();
+                commentValues.content = commentsEditor[index].getContents();
             }
             commentValues.userId = userId;
             commentValues.commentId = commentId;
@@ -520,7 +470,7 @@ import { page } from '$app/stores';
             <div class="remirror-theme">
                 <div class="remirror-editor-wrapper">
                     <div class="remirror-theme relative">
-                        <div id="container" bind:this={container} />
+                        <div>{@html `${convertHtml(board.content)}`}</div>
                     </div>
                 </div>
             </div>
@@ -558,7 +508,7 @@ import { page } from '$app/stores';
     <div class="flex">
         <div class="min-w-0 flex-1">
             <form>
-                <div id="commentContainer" bind:this={commentContainer} />
+                <textarea id="commentContainer" bind:this={commentContainer} ></textarea>
                 <div class="mt-3 flex items-center justify-end gap-x-4">
                     <button
                         type="button"
@@ -607,11 +557,11 @@ import { page } from '$app/stores';
                             <div class="remirror-theme">
                                 <div class="remirror-editor-wrapper">
                                     <div class="md:text-base">
-                                        <div id="comments{index}" bind:this={comments[index]}></div>
+                                        <div>{@html `${convertHtml(comment.content)}`}</div>
                                     </div>
                                     <div class:hidden={!commentsShow[index]}>
                                         <button class="text-xs text-gray-400 hover:text-blue-500 dark:hover:text-blue-200 sm:text-sm" on:click={()=>onToogleComments(index)} >댓글 창 닫기</button>
-                                        <div id="commentsEditor{index}" bind:this={commentsEditor[index]} />
+                                            <textarea id="commentsEditor{index}"></textarea>
                                         <div class="mt-3 flex items-center justify-end gap-x-4">
                                             <button
                                             type="button"

@@ -1,19 +1,19 @@
 <script lang="ts">
     import type { PageData } from './$types';
     import Create from "$components/button/group/Create.svelte";
-    import Editor from "@toast-ui/editor";
+    import suneditor from "suneditor";
+    import {ko} from 'suneditor/src/lang';
+    import plugins from 'suneditor/src/plugins';
     import { extractErrors, noticeValidateSchema } from '$utils/validates';
     import { auth } from '$stores';
     import axios from 'axios';
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
     import Swal from "sweetalert2";
-    import { Checkbox } from 'flowbite-svelte'
+    import { Checkbox } from 'flowbite-svelte';
     import { LECTURE } from '$lib/utils/constans';
 
     export let data: PageData;
-    let editor:any;
-    let container: HTMLElement;
     const cancelLink = "/lecture";
 
     let errors:any = {};
@@ -21,6 +21,8 @@
     // 해시태그
     let tag = '';
     let tags:string[] = [];
+
+    let editor:any;
 
     let addValues = {
         categoryId: '',
@@ -44,14 +46,18 @@
     }
     
     onMount(() => {
-        editor = new Editor({
-            el: container,
-            initialValue: addValues.content,
-            placeholder: '내용을 입력해주세요.',
+        editor = suneditor.create('editor',{
+            lang: ko,
             height: "50vh",
-            initialEditType: "wysiwyg",
-            previewStyle: "vertical",
-            hideModeSwitch: true,
+            width: "100%",
+            plugins: plugins,
+            videoWidth:'100%',
+            youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
+            buttonList: [
+            ['undo', 'redo', 'font', 'fontSize'],
+            ['bold', 'underline', 'italic', 'strike'], 
+            ['removeFormat','image', 'video','codeView']],
+            placeholder: '내용을 입력해주세요.'
         });
     })
 
@@ -76,10 +82,10 @@
 
     const onSubmitAddBoard = async () => {
         try {
-            if(editor.getHTML()=="<p><br></p>"|| editor.getHTML()==""){
+            if(editor.getContents()=="<p><br></p>"|| editor.getContents()==""){
                 addValues.content = '';
             }else{
-                addValues.content = editor.getHTML();
+                addValues.content = editor.getContents();
             }
             addValues.userId = Number($auth._id);
             addValues.email = $auth.email;
@@ -256,7 +262,7 @@
                     >본문</label>
                 <div class="remirror-theme relative z-0 rounded-md border border-gray-500/30 shadow-sm dark:border-gray-500/70" class:border-red-500={errors.content}>
                     <div class="min-h-[50vh]">
-                        <div id="editor" bind:this={container} />
+                        <textarea id="editor" bind:this={editor}></textarea>
                     </div>
                 </div>
                 {#if errors.content}
