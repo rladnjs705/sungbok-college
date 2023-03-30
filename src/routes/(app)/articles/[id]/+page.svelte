@@ -1,26 +1,22 @@
 <script lang="ts">
 import { page } from '$app/stores';
     import { onMount } from "svelte";
-    import Viewer from "@toast-ui/editor/dist/toastui-editor-viewer";
     import suneditor from "suneditor";
     import {ko} from 'suneditor/src/lang';
     import plugins from 'suneditor/src/plugins';
-    import { auth, authToken } from '$stores';
+    import { auth, authToken, isDark } from '$stores';
     import { error } from '@sveltejs/kit';
     import { goto } from '$app/navigation';
     import { extractErrors, commentValidateSchema } from '$utils/validates';
     import Swal from "sweetalert2";
     import axios from 'axios';
-    import { paginate, LightPaginationNav } from 'svelte-paginate'
+    import { paginate, LightPaginationNav, DarkPaginationNav } from 'svelte-paginate'
 
+    let commentCount:number;
     let paginatedItems:any;
     let currentPage = 1
     let pageSize:number = 10
-
-    let editor:any;
-    let container: HTMLElement;
     let commentEditor:any;
-    let commentContainer:HTMLElement;
     let data: any;
     let board:any;
     let errors:any = {};
@@ -28,19 +24,27 @@ import { page } from '$app/stores';
     let userId:number;
     let heartSelected = false;
     let commentsEditor:any[]=[];
+    let commentsUpdateEditor:any[]=[];
     let items:any[];
-
-    let bindText:string;
+    let toggleMenu = true;
 
     let commentValues = {
         userId :0,
         content : '',
         commentId: null as number | null,
         parentId: null as number | null
-
     }
 
+
+    //댓글쓰기/닫기
     let commentsShow:any[] = [];
+    //댓글수정/삭제토글
+    let commentsEdit:any[] = [];
+    //댓글의댓글 보이기/닫기
+    let commentsChildToggle:any[] = [];
+
+    //댓글수정시 내용,에디터 보이기용 토글
+    let commentsUpdateToggle:any[] = [];
     
 
     let placeHolderList = [
@@ -51,15 +55,13 @@ import { page } from '$app/stores';
         '서로 다른 경험과 관점을 존중해요.'
     ]
 
-    
-
     $:if(commentList){
+        console.log(commentList.content)
         items = commentList.content;
         paginatedItems = paginate({ items, pageSize, currentPage});
     }
 
-    
-
+    $:paginatedItems;
 
     onMount(async ()=> {
         userId = Number($auth._id);
@@ -75,7 +77,10 @@ import { page } from '$app/stores';
                         commentList = board.commentResponseDTOList;
                         for (let i=0; i<commentList.content.length; i++){
                             commentsShow[commentsShow.length] = false;
+                            commentList.content[i].isShow = true;
+                            commentsUpdateToggle[commentsUpdateToggle.length] = false;
                         }
+
                     })
                     .catch(error => console.log(error));
                 }else {
@@ -87,6 +92,8 @@ import { page } from '$app/stores';
                         commentList = board.commentResponseDTOList;
                         for (let i=0; i<commentList.content.length; i++){
                             commentsShow[commentsShow.length] = false;
+                            commentList.content[i].isShow = true;
+                            commentsUpdateToggle[commentsUpdateToggle.length] = false;
                         }
                         
                     }else{
@@ -106,7 +113,6 @@ import { page } from '$app/stores';
         }
 
         let number = Math.floor(Math.random()*5);
-        console.log(placeHolderList[number])
         commentEditor = suneditor.create('commentContainer',{
             lang: ko,
             height: "16vh",
@@ -125,8 +131,6 @@ import { page } from '$app/stores';
         for (let i=0; i<paginatedItems.length; i++){
             let number = Math.floor(Math.random()*5);
             if(paginatedItems.length > 0){
-                console.log(paginatedItems[i].id);
-                
                 commentsEditor[i] = suneditor.create('commentsEditor'+i,{
                     mode: "inline",
                     lang: ko,
@@ -141,6 +145,22 @@ import { page } from '$app/stores';
                     ['removeFormat','image', 'video','codeView']],
                     placeholder: placeHolderList[number]
                 });
+                
+                commentsUpdateEditor[i] = suneditor.create('commentUpdateContainer'+i,{
+                    mode: "inline",
+                    lang: ko,
+                    height: "10vh",
+                    width: "100%",
+                    plugins: plugins,
+                    value: commentValues.content,
+                    videoWidth:'100%',
+                    youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
+                    buttonList: [
+                    ['font'],
+                    ['removeFormat','image', 'video','codeView']],
+                    placeholder: placeHolderList[number]
+                });
+                
             }
         }
     })
@@ -255,7 +275,7 @@ import { page } from '$app/stores';
                 location.reload();
 
                 const comment = response.data.response;
-                commentList.content = [comment, ...commentList.content];
+                commentList.content = [...commentList.content, comment];
                 commentEditor.setHTML("");
 
             }else{
@@ -296,27 +316,26 @@ import { page } from '$app/stores';
         }
     }
 
-    const onAddChildComment = async (parentId:number) => {
+    const onAddChildComment = async (index:number,parentId:number) => {
         try {
             const response = await axios.post("/api/user/comment/"+board.id, commentValues);
             if(response.status == 200){
                 location.reload();
 
                 const comment = response.data.response;
-                let index = commentList.content.findIndex((data:any) => data.ref == comment.ref);
-                if(parentId > 0){
-                    index = [...commentList.content].reverse().findIndex((data:any) => data.parentId == parentId);
-                }
+                // let index = commentList.content.findIndex((data:any) => data.ref == comment.ref);
+                // if(parentId > 0){
+                //     index = [...commentList.content].reverse().findIndex((data:any) => data.parentId == parentId);
+                // }
+                comment.isShow=true;
 
                 commentList.content = [
-                    ...commentList.content.slice(0, index-1),
+                    ...commentList.content.slice(0, index),
                     comment,
-                    ...commentList.content.slice(index),
+                    ...commentList.content.slice(index+1),
                 ]
 
-                for(let i=0; i<commentsShow.length; i++){
-                    commentsShow[i] = false;
-                }
+                clearArticleForm();
             }else{
                 console.log(response);
                 Swal.fire({
@@ -346,7 +365,7 @@ import { page } from '$app/stores';
             }
             if(userId > 0){
                 await commentValidateSchema.validate(commentValues, {abortEarly: false});
-                await onAddChildComment(parentId);
+                await onAddChildComment(index,parentId);
             }else {
                 Swal.fire({
                     icon: 'error',
@@ -376,10 +395,125 @@ import { page } from '$app/stores';
         }
     }
 
-    function setPage(e:any) {
-        currentPage = e.detail.page;
+    const onEditComments = (index:number) => {
+        if (commentsEdit[index]) {
+        // clicked on the same comment that is already open, so close it
+        commentsEdit[index] = false;
+        } else {
+            // clicked on a different comment, so close the currently open comment (if there is one)
+            const openIndex = commentsEdit.findIndex((isOpen, i) => isOpen && i !== index);
+            if (openIndex !== -1) {
+                commentsEdit[openIndex] = false;
+            }
+            // open the clicked comment
+            commentsEdit[index] = true;
+        }
+    }
+
+    const onChildCommentsShow = (index:number, ref:number) => {
+        
+        commentsChildToggle[index] = !commentsChildToggle[index];
+        for (let i=0; i<commentList.content.length; i++){
+            if(commentList.content[i].ref == ref && commentList.content[i].parentId > 0){
+                commentList.content[i].isShow = true;
+            }
+        }
         for(let i=0; i<commentsShow.length; i++){
             commentsShow[i] = false;
+            commentsEdit[i] = false;
+        }
+    }
+
+    const onChildCommentsHide = (index:number, ref:number) => {
+        
+        commentsChildToggle[index] = !commentsChildToggle[index];
+        for (let i=0; i<commentList.content.length; i++){
+            if(commentList.content[i].ref == ref && commentList.content[i].parentId > 0){
+                commentList.content[i].isShow = false;
+            }
+        }
+        for(let i=0; i<commentsShow.length; i++){
+            commentsShow[i] = false;
+            commentsEdit[i] = false;
+        }
+    }
+
+
+    function setPage(e:any) {
+        currentPage = e.detail.page;
+        clearArticleForm();
+    }
+
+    function clearArticleForm() {
+        for(let i=0; i<commentsShow.length; i++){
+            commentsShow[i] = false;
+            commentsEdit[i] = false;
+            commentsChildToggle[i] = false;
+        }
+    }
+
+    function onUpdateComments(index:number, content:string ) {
+        commentsEdit[index] = !commentsEdit[index];
+        commentsUpdateEditor[index].setContents(content);
+        commentsUpdateToggle[index] = !commentsUpdateToggle[index]
+        
+    }
+
+    const onSubmitUpdateChildComment = async (index:number,commentId:number) => {
+        try {
+            console.log(index)
+            if(commentsUpdateEditor[index].getContents()=="<p><br></p>"|| commentsUpdateEditor[index].getContents()==""){
+                commentValues.content = '';
+            }else{
+                commentValues.content = commentsUpdateEditor[index].getContents();
+            }
+            commentValues.userId = userId;
+            commentValues.commentId = commentId;
+            if(userId > 0){
+                await commentValidateSchema.validate(commentValues, {abortEarly: false});
+                await onUpdateChildComment(index,commentId);
+            }else {
+                Swal.fire({
+                    icon: 'error',
+                    text: "로그인이 되어있지 않습니다. 로그인 후 이용해주세요",
+                    timer: 3000, // 3초 후 자동으로 닫힘
+                });
+                goto("/login");
+            }
+        } catch (error) {
+            console.log(error);
+            errors = extractErrors(error);
+        }
+    }
+
+    const onUpdateChildComment = async (index:number,commentId:number) => {
+        try {
+            const response = await axios.put("/api/user/comment/"+commentId, commentValues);
+            if(response.status == 200){
+                //location.reload();
+
+                const comment = response.data.response;
+                comment.isShow = true;
+
+                commentList.content = [
+                    ...commentList.content.slice(0, index),
+                    comment,
+                    ...commentList.content.slice(index+1)
+                ]
+
+                console.log(commentList.content)
+
+                commentsUpdateToggle[index] = !commentsUpdateToggle[index];
+            }else{
+                console.log(response);
+                Swal.fire({
+                    icon: 'error',
+                    text: "에러가 발생했습니다. 관리자에게 문의해주세요.",
+                    timer: 3000, // 3초 후 자동으로 닫힘
+                });
+            }
+        } catch(error) {
+            errors = extractErrors(error);
         }
     }
 
@@ -458,6 +592,33 @@ import { page } from '$app/stores';
                     </div>
                 </div>
             </div>
+            <div class="ml-auto flex items-center gap-x-4 text-sm text-gray-700 dark:text-gray-300 sm:gap-x-5">
+                <span class="sr-only">더보기</span>
+                <div class="relative">
+                    <div class="flex items-center">
+                        <button type="button" on:click={() => toggleMenu = !toggleMenu}>
+                            <span class="sr-only">작성자 메뉴</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-6 w-6 text-gray-400 hover:text-blue-500 focus:outline-0 focus:ring-0 dark:hover:text-blue-200">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class:hidden={toggleMenu} class="absolute right-0 mt-2 w-40 space-y-2 rounded-lg border border-gray-500/30 bg-white p-3 shadow-lg dark:border-gray-500/70 dark:bg-gray-800 transform opacity-100 scale-100">
+                        <button class="text-gray-700 dark:text-gray-300 group flex items-center space-x-2 px-2 hover:text-blue-500 dark:hover:text-blue-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-5 w-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
+                            </svg>
+                            <span class="font-medium">수정하기</span>
+                        </button>
+                        <button class="text-gray-700 dark:text-gray-300 group flex items-center space-x-2 px-2 hover:text-blue-500 dark:hover:text-blue-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-5 w-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path>
+                            </svg>
+                            <span class="font-medium">삭제하기</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
         <h1
             class="block break-all text-xl font-semibold"
@@ -508,7 +669,7 @@ import { page } from '$app/stores';
     <div class="flex">
         <div class="min-w-0 flex-1">
             <form>
-                <textarea id="commentContainer" bind:this={commentContainer} ></textarea>
+                <textarea id="commentContainer" ></textarea>
                 <div class="mt-3 flex items-center justify-end gap-x-4">
                     <button
                         type="button"
@@ -526,15 +687,15 @@ import { page } from '$app/stores';
         <ul class="divide-y divide-gray-500/30 dark:divide-gray-500/70">
             {#if paginatedItems}
             {#each paginatedItems as comment, index}
-                <li class="py-6" style="padding-left: {comment.step*10}px; border-block-style: {comment.step>0 ? "dashed" : "solid"};">
+                <li class:hidden={!comment.isShow} class="py-6" style="padding-left: {comment.step*10}px; border-block-style: {comment.step>0 ? "dashed" : "solid"};">
                     <div class="flex items-center space-x-2">
                         <div class="flex-shrink-0">
                             <a href="/users/{comment.writer.userId}">
                                 <img class="h-8 w-8 rounded-full sm:h-12 sm:w-12" src="/dummy-avatar.jpg" alt="프로필 사진">
                             </a>
                         </div>
-                        <div class="flex flex-1 flex-col text-sm font-medium md:text-base">
-                            <a class="w-fit pl-0.5 text-gray-900 hover:text-blue-500 dark:text-gray-100 dark:hover:text-blue-200" href="/users/{comment.writer.userId}">{comment.writer.nickName}</a>
+                        <div class="flex flex-1 flex-col font-medium">
+                            <a class="w-fit pl-0.5 text-gray-900 hover:text-blue-500 dark:text-gray-100 dark:hover:text-blue-200 text-xs md:text-base" href="/users/{comment.writer.userId}">{comment.writer.nickName}</a>
                             <div class="flex items-center space-x-1 text-xs font-normal text-gray-700 dark:text-gray-300">
                                 <!-- <span>
                                     <svg class="inline h-3 w-3" width="9" height="12" viewBox="0 1 9 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -543,35 +704,91 @@ import { page } from '$app/stores';
                                     </svg>875
                                 </span> -->
                                 <span>·</span>
-                                <p class="text-gray-700 dark:text-gray-300 md:text-sm"> {displayedAt(comment.createDate)}</p>
+                                <p class="text-gray-700 dark:text-gray-300 text-xs"> {displayedAt(comment.createDate)}</p>
                             </div>
                         </div>
-                        <!-- <div class="relative flex items-center space-x-3 sm:space-x-7">
+                        <div class="relative flex items-center space-x-3 sm:space-x-7">
                             <div class="flex">
-                                좋아요
+                                <div class="relative" data-headlessui-state="">
+                                    <div class="flex items-center">
+                                        <button type="button" on:click={()=>onEditComments(index)}>
+                                            <span class="sr-only">작성자 메뉴</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-5 w-5 text-gray-400 hover:text-blue-500 focus:outline-0 focus:ring-0 dark:hover:text-blue-200">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class:hidden={!commentsEdit[index]} class="absolute right-0 z-10 mt-2 space-y-2 rounded-lg border border-gray-500/30 bg-white p-1 py-2 shadow-lg dark:border-gray-500/70 dark:bg-gray-800 transform opacity-100 scale-100">
+                                        <button on:click={() => onUpdateComments(index, convertHtml(comment.content))} class="text-gray-700 dark:text-gray-300 group flex w-24 items-center space-x-2 px-2 text-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-4 w-4">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
+                                            </svg>
+                                            <span class="font-medium">수정하기</span>
+                                        </button>
+                                        <button on:click={() => onSubmitDeleteComments(comment.commentId)} class="text-gray-700 dark:text-gray-300 group flex items-center space-x-2 px-2 text-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-4 w-4">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path>
+                                            </svg>
+                                            <span class="font-medium">삭제하기</span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                        </div> -->
+                        </div>
                     </div>
                     <div class="flex">
-                        <div class="remirror-editor mb-2 mt-2 flex-1 break-all text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+                        <div class="remirror-editor mt-2 flex-1 break-all text-sm leading-relaxed text-gray-700 dark:text-gray-300">
                             <div class="remirror-theme">
                                 <div class="remirror-editor-wrapper">
                                     <div class="md:text-base">
-                                        <div>{@html `${convertHtml(comment.content)}`}</div>
-                                    </div>
-                                    <div class:hidden={!commentsShow[index]}>
-                                        <button class="text-xs text-gray-400 hover:text-blue-500 dark:hover:text-blue-200 sm:text-sm" on:click={()=>onToogleComments(index)} >댓글 창 닫기</button>
-                                            <textarea id="commentsEditor{index}"></textarea>
-                                        <div class="mt-3 flex items-center justify-end gap-x-4">
-                                            <button
-                                            type="button"
-                                            class="inline-flex items-center space-x-2 rounded-md bg-blue-500 px-8 py-2 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-600 disabled:bg-blue-500 disabled:opacity-40"
-                                                on:click={() => onSubmitAddChildComment(index,comment.id,comment.parentId)}
-                                                >댓글 쓰기</button
-                                                >
+                                        <div class:hidden={commentsUpdateToggle[index]} class="text-xs md:text-sm">{@html `${convertHtml(comment.content)}`}</div>
+                                        <div class:hidden={!commentsUpdateToggle[index]}>
+                                            <textarea id="commentUpdateContainer{index}"></textarea>
+                                            <div class="mt-3 flex items-center justify-end gap-x-4">
+                                                <button
+                                                type="button"
+                                                class="inline-flex items-center space-x-2 rounded-md bg-blue-500 px-8 py-2 text-xs font-semibold leading-6 text-white shadow-sm hover:bg-blue-600 disabled:bg-blue-500 disabled:opacity-40"
+                                                    on:click={() => onSubmitUpdateChildComment(index,comment.id)}
+                                                    >댓글 수정</button
+                                                    >
+                                            </div>
                                         </div>
                                     </div>
-                                    <button class="text-xs text-gray-400 hover:text-blue-500 dark:hover:text-blue-200 sm:text-sm" on:click={()=>onToogleComments(index)} class:hidden={commentsShow[index]} >댓글 쓰기</button>
+                                    <div class="mt-2" class:hidden={commentsUpdateToggle[index]}>
+                                        <div class="flex">
+                                            {#if comment.answerNum > 0 && !commentsChildToggle[index]}
+                                            <button on:click={()=>onChildCommentsHide(index,comment.ref)} class="flex items-center justify-start gap-x-1 bg-white text-xs font-medium text-blue-500 hover:text-blue-300 hover:no-underline focus:outline-none dark:bg-gray-800" type="button">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-4 w-4">
+                                                    <path fill-rule="evenodd" d="M11.47 7.72a.75.75 0 011.06 0l7.5 7.5a.75.75 0 11-1.06 1.06L12 9.31l-6.97 6.97a.75.75 0 01-1.06-1.06l7.5-7.5z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                <div class="font-medium">댓글 모두 숨기기</div>
+                                            </button>
+                                            {:else if comment.answerNum > 0}
+                                            <button  on:click={()=>onChildCommentsShow(index,comment.ref)} class="flex items-center justify-start gap-x-1 bg-white text-xs font-medium text-blue-500 hover:text-blue-300 hover:no-underline focus:outline-none dark:bg-gray-800" type="button">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="rotate-180 transform h-4 w-4">
+                                                    <path fill-rule="evenodd" d="M11.47 7.72a.75.75 0 011.06 0l7.5 7.5a.75.75 0 11-1.06 1.06L12 9.31l-6.97 6.97a.75.75 0 01-1.06-1.06l7.5-7.5z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                <div class="font-medium">댓글 보기</div>
+                                            </button>
+                                            {/if}
+                                            <div class:ml-4={comment.answerNum > 0}>
+                                                <button class:hidden={commentsShow[index]} class="text-xs text-gray-500 hover:text-blue-500 dark:hover:text-blue-200" on:click={()=>onToogleComments(index)} >댓글 쓰기</button>
+                                                <button class:hidden={!commentsShow[index]} class="text-xs text-gray-400 hover:text-blue-500 dark:hover:text-blue-200" on:click={()=>onToogleComments(index)} >댓글 창 닫기</button>
+                                            </div>
+                                        </div>
+                                        <div class:hidden={!commentsShow[index]} class="mt-2">
+                                                <textarea id="commentsEditor{index}"></textarea>        
+                                            <div class="mt-3 flex items-center justify-end gap-x-4">
+                                                <button
+                                                type="button"
+                                                class="inline-flex items-center space-x-2 rounded-md bg-blue-500 px-8 py-2 text-xs font-semibold leading-6 text-white shadow-sm hover:bg-blue-600 disabled:bg-blue-500 disabled:opacity-40"
+                                                    on:click={() => onSubmitAddChildComment(index,comment.id,comment.parentId)}
+                                                    >댓글 쓰기</button
+                                                    >
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -581,7 +798,7 @@ import { page } from '$app/stores';
                             <button class="text-xs font-normal text-gray-500 hover:text-blue-500 hover:no-underline focus:outline-none dark:text-gray-400 dark:hover:text-blue-200">댓글 쓰기</button>
                         </div> -->
                         <div class="ml-2.5 border-l-2 pl-4">
-                            <section class="mt-5 text-sm" id="headlessui-disclosure-panel-:r2a:" data-headlessui-state="">
+                            <section class="mt-5 text-sm">
                                 <ul class="divide-y divide-dashed divide-gray-500/30 dark:divide-gray-500/70"></ul>
                             </section>
                         </div>
@@ -589,15 +806,28 @@ import { page } from '$app/stores';
                 </li>
                 {/each}
                 <!-- Pagination -->
-                {#if commentList.totalElements > 0}
-                    <LightPaginationNav
+                {#if $isDark}
+                    {#if commentList.totalElements > 0}
+                    <DarkPaginationNav
                     totalItems="{commentList.totalElements}"
-                    pageSize="{pageSize}"
-                    currentPage="{currentPage}"
-                    limit="{1}"
-                    showStepOptions="{true}"
-                    on:setPage="{setPage}"
+                        pageSize="{pageSize}"
+                        currentPage="{currentPage}"
+                        limit="{1}"
+                        showStepOptions="{true}"
+                        on:setPage="{setPage}"
                     />
+                    {/if}
+                    {:else}
+                    {#if commentList.totalElements > 0}
+                        <LightPaginationNav
+                        totalItems="{commentList.totalElements}"
+                        pageSize="{pageSize}"
+                        currentPage="{currentPage}"
+                        limit="{1}"
+                        showStepOptions="{true}"
+                        on:setPage="{setPage}"
+                        />
+                    {/if}
                 {/if}
             {/if}
         </ul>

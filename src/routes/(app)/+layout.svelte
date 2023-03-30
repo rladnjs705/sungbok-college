@@ -9,7 +9,7 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   import { itemFooterSelected, itemCategorySelected,boardDetailList, pageNumber } from '$stores';
-  import { authToken, auth } from '$stores';
+  import { authToken, auth, isDark } from '$stores';
   import { ALL, FREE, LECTURE, NOTICE, QUESTIONS } from "$lib/utils/constans";
 
   $: {
@@ -40,7 +40,7 @@
       return typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     };
     
-  let isDark = getTheme();
+  $isDark = getTheme();
 
   const setTheme = (value:any) => {
       localStorage.setItem('dark', value);
@@ -48,8 +48,8 @@
 
 
   const toggleTheme = () => {
-      isDark = !isDark;
-      setTheme(isDark);
+      $isDark = !$isDark;
+      setTheme($isDark);
   };
 
   onMount(() => {
@@ -89,13 +89,13 @@
 
 </script>
 {#await initAuth() then initAuth}
-<div class:dark={isDark} class:loading={loading} class:scrollbar-hidden={isMobile} class:sidebar-open={isSidebar}>
+<div class:dark={$isDark} class:loading={loading} class:scrollbar-hidden={isMobile} class:sidebar-open={isSidebar}>
 
   <!-- 사이드바 dim처리 -->
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div class="bg-[rgba(0,0,0,0.3)] top-0 left-0 absolute h-full w-full z-10 md:hidden" class:hidden={!isSidebar} on:click={closedSidebar}></div>
 
-  <Header isDark={isDark} toggleTheme={toggleTheme} onSideBar={onSideBar} />
+  <Header isDark={$isDark} toggleTheme={toggleTheme} onSideBar={onSideBar} />
   <Sidebar isSidebar={isSidebar} onSideBar={onSideBar} closedSidebar={closedSidebar}/>
 
   <!-- svelte-ignore a11y-click-events-have-key-events -->

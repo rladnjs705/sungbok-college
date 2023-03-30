@@ -2,9 +2,9 @@
     import axios from 'axios';
     import Swal from "sweetalert2";
     import { extractErrors, attendanceValidateSchema } from '$utils/validates';
-    import { paginate, LightPaginationNav } from 'svelte-paginate'
+    import { paginate, LightPaginationNav, DarkPaginationNav } from 'svelte-paginate'
     import { onMount } from 'svelte';
-    import { auth } from '$stores';
+    import { auth, isDark } from '$stores';
     import { goto } from '$app/navigation';
 
     let paginatedItems:any;
@@ -153,15 +153,28 @@
                       </table>
                     </div>
                     <!-- Pagination -->
-                    {#if attendanceList && attendanceList.totalElements > 0}
-                      <LightPaginationNav
-                      totalItems="{attendanceList.totalElements}"
-                      pageSize="{pageSize}"
-                      currentPage="{currentPage}"
-                      limit="{1}"
-                      showStepOptions="{true}"
-                      on:setPage="{(e) => currentPage = e.detail.page}"
-                      />
+                    {#if $isDark}
+                      {#if attendanceList && attendanceList.totalElements > 0}
+                        <DarkPaginationNav
+                          totalItems="{attendanceList.totalElements}"
+                          pageSize="{pageSize}"
+                          currentPage="{currentPage}"
+                          limit="{1}"
+                          showStepOptions="{true}"
+                          on:setPage="{(e) => currentPage = e.detail.page}"
+                        />
+                      {/if}
+                      {:else}
+                      {#if attendanceList && attendanceList.totalElements > 0}
+                        <LightPaginationNav
+                          totalItems="{attendanceList.totalElements}"
+                          pageSize="{pageSize}"
+                          currentPage="{currentPage}"
+                          limit="{1}"
+                          showStepOptions="{true}"
+                          on:setPage="{(e) => currentPage = e.detail.page}"
+                        />
+                      {/if}
                     {/if}
                   </div>
         </div>

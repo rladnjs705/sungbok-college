@@ -171,3 +171,4 @@ export const sidebarOpen = writable(0);
 export const itemCategorySelected = setItemCategorySelected();
 export const pageNumber = writable(1);
 export const boardDetailList = setBoardDetailList();
+export const isDark = writable(false);

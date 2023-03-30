@@ -1,8 +1,8 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import { boardDetailList, pageNumber, itemCategorySelected } from '$stores';
+    import { boardDetailList, pageNumber, itemCategorySelected, isDark } from '$stores';
     import Category from './Category.svelte';
-    import { paginate, LightPaginationNav } from 'svelte-paginate'
+    import { paginate, LightPaginationNav, DarkPaginationNav } from 'svelte-paginate'
     
     export let list:any;
     export let categories:any=[];
@@ -200,15 +200,25 @@
                 </div>
             </li>
             {/each}
-            <!-- Pagination -->
-            <LightPaginationNav
-            totalItems="{response.totalElements}"
-            pageSize="{pageSize}"
-            currentPage="{currentPage}"
-            limit="{1}"
-            showStepOptions="{true}"
-            on:setPage="{(e) => currentPage = e.detail.page}"
+            {#if $isDark}
+            <DarkPaginationNav
+                totalItems="{response.totalElements}"
+                pageSize="{pageSize}"
+                currentPage="{currentPage}"
+                limit="{1}"
+                showStepOptions="{true}"
+                on:setPage="{(e) => currentPage = e.detail.page}"
             />
+            {:else}
+            <LightPaginationNav
+                totalItems="{response.totalElements}"
+                pageSize="{pageSize}"
+                currentPage="{currentPage}"
+                limit="{1}"
+                showStepOptions="{true}"
+                on:setPage="{(e) => currentPage = e.detail.page}"
+            />
+            {/if}
             {:else}
             <li>
                 <div class="text-center">게시물이 없습니다.</div>
