@@ -4,7 +4,7 @@
     import { extractErrors, attendanceValidateSchema } from '$utils/validates';
     import { paginate, LightPaginationNav, DarkPaginationNav } from 'svelte-paginate'
     import { onMount } from 'svelte';
-    import { auth, isDark } from '$stores';
+    import { auth, authToken, isDark } from '$stores';
     import { goto } from '$app/navigation';
 
     let paginatedItems:any;
@@ -25,7 +25,7 @@
             .then(response => response.json())
             .then(item => {
               attendanceList = item.response;
-              console.log(attendanceList.content)
+              console.log(attendanceList)
             })
             .catch(error => console.log(error));
     });
@@ -112,6 +112,7 @@
                 {#if errors.content}
                     <div class="text-red-500">{errors.content}</div>
                 {/if}
+                {#if $authToken}
                 <div class="flex justify-end">
                     <button 
                     type="submit" 
@@ -119,8 +120,9 @@
                     on:click={() => submitAttendance()}
                     >출석하기</button>
                 </div>
-                    <div class="w-full overflow-x-auto">
-                      <table class="table-auto w-full p-6 text-xs text-left whitespace-nowrap">
+                {/if}
+                    <div class="w-full overflow-x-auto scroll">
+                      <table class="table-auto w-full p-6 mt-2 text-xs text-left whitespace-nowrap">
                         <thead>
                           <!-- <tr>
                             <th class="px-4 py-2"></th>
@@ -130,24 +132,30 @@
                         </thead>
                         <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
                         {#if paginatedItems}
-                          {#each paginatedItems as data}
+                          {#each paginatedItems as data, index}
                           <tr class="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-700 dark:text-gray-400">
-                            <td class="px-4 py-3 w-2/12">
+                            <td class="px-4 py-3 w-1/12">
                               <div class="flex items-center text-sm">
                                 <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
                                   <img class="object-cover w-full h-full rounded-full" src="/dummy-avatar.jpg" alt="" loading="lazy">
                                   <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
                                 </div>
-                                <div>
-                                  <p class="font-semibold">{data.writer.nickName}</p>
+                                <div class="flex items-center">
+                                  {#if index == 0}
+                                  <span class="text-xs mr-2 p-0.5 px-1.5 text-yellow-300 border border-yellow-300 rounded-full">★ 1등</span>
+                                  {:else if index == 1}
+                                  <span class="text-xs mr-2 p-0.5 px-1.5 text-gray-300 border border-gray-300 rounded-full">★ 2등</span>
+                                  {:else if index == 2}
+                                  <span class="text-xs mr-2 p-0.5 px-1.5 text-amber-800 border border-amber-800 rounded-full">★ 3등</span>
+                                  {/if}
+                                  <p class="font-semibold text-xs">{data.writer.nickName}</p>
                                 </div>
                               </div>
                             </td>
-                            <td class="px-8 py-3 text-sm w-8/12"><p class="w-24 md:w-72 lg:w-96 overflow-ellipsis overflow-hidden">{data.content}</p></td>
+                            <td class="px-4 py-3 text-sm w-8/12"><p class="w-16 md:w-72 lg:w-96 text-xs overflow-ellipsis overflow-hidden">{data.content}</p></td>
                             <td class="px-4 py-3 text-xs text-gray-400 w-2/12">{dateFommater(data.createDate)}</td>
                           </tr>
                           {/each}
-                          
                         {/if}
                         </tbody>
                       </table>

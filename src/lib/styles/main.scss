@@ -216,3 +216,32 @@
 .pagination-nav{
   box-shadow: none !important;
 }
+
+.remirror-editor span.remirror-mention-atom.remirror-mention-atom-at {
+  cursor: pointer;
+}
+
+.remirror-editor .ProseMirror-selectednode {
+  outline: 2px solid transparent!important;
+  outline-offset: 2px!important;
+}
+
+.remirror-mention-atom {
+  background: #e9ecef!important;
+  font-weight: 700!important;
+  font-size: .9em!important;
+  font-style: normal!important;
+  border-radius: 0.25!important;
+  padding: 0.2rem 0.5rem!important;
+  white-space: nowrap!important;
+  color: rgb(121, 99, 210)!important;
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

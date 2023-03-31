@@ -75,8 +75,12 @@
             새벽이슬에 오신것을 환영합니다.
         </h2>
         <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-            새벽이슬은 성복교회 청년부를 위한 컨텐츠 공유 플랫폼입니다.
+            새벽이슬은 성복교회 청년부를 위한
         </p>
+        <p class="text-center text-sm text-gray-600 dark:text-gray-400">
+            컨텐츠 공유 플랫폼입니다.
+        </p>
+
         <div class="mx-4 sm:mx-0">
             <div class="relative my-6">
                 <div class="absolute inset-0 flex items-center">

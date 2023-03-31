@@ -67,6 +67,7 @@
                 href="/free">커뮤니티</a
             >
           </div>
+        {#if $authToken}
           <div class="h-3 w-[1px] bg-gray-400 dark:bg-gray-400/70" />
           <div class="shrink-0">
               <a  on:click={() => itemHeaderselected(REPORTCARD)}
@@ -74,6 +75,7 @@
                   href="/reportCard">성적</a
               >
           </div>
+        {/if}
           <div class="h-3 w-[1px] bg-gray-400 dark:bg-gray-400/70" />
           <div class="shrink-0">
             <a  on:click={() => itemHeaderselected(QUESTIONS)}

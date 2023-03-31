@@ -30,7 +30,7 @@ import { page } from '$app/stores';
 
     let commentValues = {
         userId :0,
-        content : '',
+        content: null as any,
         commentId: null as number | null,
         parentId: null as number | null
     }
@@ -56,12 +56,9 @@ import { page } from '$app/stores';
     ]
 
     $:if(commentList){
-        console.log(commentList.content)
         items = commentList.content;
         paginatedItems = paginate({ items, pageSize, currentPage});
     }
-
-    $:paginatedItems;
 
     onMount(async ()=> {
         userId = Number($auth._id);
@@ -122,27 +119,28 @@ import { page } from '$app/stores';
             videoWidth:'100%',
             youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
             buttonList: [
-            ['undo', 'redo', 'font', 'fontSize'],
-            ['bold', 'underline', 'italic', 'strike'], 
-            ['removeFormat','image', 'video','codeView']],
+            ['undo', 'redo', 'font'],
+            ['image', 'video','codeView'],
+            ['bold', 'underline', 'italic', 'strike']],
             placeholder: placeHolderList[number]
         });
 
         for (let i=0; i<paginatedItems.length; i++){
             let number = Math.floor(Math.random()*5);
             if(paginatedItems.length > 0){
+                
                 commentsEditor[i] = suneditor.create('commentsEditor'+i,{
                     mode: "inline",
                     lang: ko,
                     height: "10vh",
                     width: "100%",
                     plugins: plugins,
-                    value: commentValues.content,
+                    value: '<p><span class="remirror-mention-atom remirror-mention-atom-at ProseMirror-selectednode" style="color: rgb(121, 99, 210)">@'+paginatedItems[i].writer.nickName+'</span><br></p><br/>',
                     videoWidth:'100%',
                     youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
                     buttonList: [
                     ['font'],
-                    ['removeFormat','image', 'video','codeView']],
+                    ['image', 'video','codeView']],
                     placeholder: placeHolderList[number]
                 });
                 
@@ -152,15 +150,14 @@ import { page } from '$app/stores';
                     height: "10vh",
                     width: "100%",
                     plugins: plugins,
-                    value: commentValues.content,
+                    value: convertHtml(paginatedItems[i].content),
                     videoWidth:'100%',
                     youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
                     buttonList: [
                     ['font'],
-                    ['removeFormat','image', 'video','codeView']],
+                    ['image', 'video','codeView']],
                     placeholder: placeHolderList[number]
                 });
-                
             }
         }
     })
@@ -315,27 +312,23 @@ import { page } from '$app/stores';
             errors = extractErrors(error);
         }
     }
+    
 
     const onAddChildComment = async (index:number,parentId:number) => {
         try {
+            console.log(commentList.content)
             const response = await axios.post("/api/user/comment/"+board.id, commentValues);
             if(response.status == 200){
                 location.reload();
 
-                const comment = response.data.response;
-                // let index = commentList.content.findIndex((data:any) => data.ref == comment.ref);
-                // if(parentId > 0){
-                //     index = [...commentList.content].reverse().findIndex((data:any) => data.parentId == parentId);
-                // }
-                comment.isShow=true;
-
-                commentList.content = [
-                    ...commentList.content.slice(0, index),
-                    comment,
-                    ...commentList.content.slice(index+1),
-                ]
-
-                clearArticleForm();
+                // const comment = response.data.response;
+                // comment.isShow=true;
+                // let arr = [...commentList.content].reverse();
+                // let idx = arr.findIndex((data:any) => data.ref == comment.ref);
+                // arr.splice(idx,0,comment);
+                // commentList.content = arr.reverse();
+                
+                // clearArticleForm();
             }else{
                 console.log(response);
                 Swal.fire({
@@ -452,16 +445,13 @@ import { page } from '$app/stores';
         }
     }
 
-    function onUpdateComments(index:number, content:string ) {
+    function onUpdateComments(index:number) {
         commentsEdit[index] = !commentsEdit[index];
-        commentsUpdateEditor[index].setContents(content);
         commentsUpdateToggle[index] = !commentsUpdateToggle[index]
-        
     }
 
     const onSubmitUpdateChildComment = async (index:number,commentId:number) => {
         try {
-            console.log(index)
             if(commentsUpdateEditor[index].getContents()=="<p><br></p>"|| commentsUpdateEditor[index].getContents()==""){
                 commentValues.content = '';
             }else{
@@ -516,7 +506,6 @@ import { page } from '$app/stores';
             errors = extractErrors(error);
         }
     }
-
 </script>
 {#if board}
 <div>
@@ -669,7 +658,7 @@ import { page } from '$app/stores';
     <div class="flex">
         <div class="min-w-0 flex-1">
             <form>
-                <textarea id="commentContainer" ></textarea>
+                <textarea id="commentContainer"></textarea>
                 <div class="mt-3 flex items-center justify-end gap-x-4">
                     <button
                         type="button"
@@ -687,7 +676,7 @@ import { page } from '$app/stores';
         <ul class="divide-y divide-gray-500/30 dark:divide-gray-500/70">
             {#if paginatedItems}
             {#each paginatedItems as comment, index}
-                <li class:hidden={!comment.isShow} class="py-6" style="padding-left: {comment.step*10}px; border-block-style: {comment.step>0 ? "dashed" : "solid"};">
+                <li class:hidden={!comment.isShow} class="py-6" style="padding-left: {comment.step > 0 ? "30" : "0"}px; border-block-style: {comment.step>0 ? "dashed" : "solid"};">
                     <div class="flex items-center space-x-2">
                         <div class="flex-shrink-0">
                             <a href="/users/{comment.writer.userId}">
@@ -719,7 +708,7 @@ import { page } from '$app/stores';
                                         </button>
                                     </div>
                                     <div class:hidden={!commentsEdit[index]} class="absolute right-0 z-10 mt-2 space-y-2 rounded-lg border border-gray-500/30 bg-white p-1 py-2 shadow-lg dark:border-gray-500/70 dark:bg-gray-800 transform opacity-100 scale-100">
-                                        <button on:click={() => onUpdateComments(index, convertHtml(comment.content))} class="text-gray-700 dark:text-gray-300 group flex w-24 items-center space-x-2 px-2 text-sm">
+                                        <button on:click={() => onUpdateComments(index)} class="text-gray-700 dark:text-gray-300 group flex w-24 items-center space-x-2 px-2 text-sm">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-4 w-4">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
                                             </svg>
@@ -743,7 +732,7 @@ import { page } from '$app/stores';
                                     <div class="md:text-base">
                                         <div class:hidden={commentsUpdateToggle[index]} class="text-xs md:text-sm">{@html `${convertHtml(comment.content)}`}</div>
                                         <div class:hidden={!commentsUpdateToggle[index]}>
-                                            <textarea id="commentUpdateContainer{index}"></textarea>
+                                            <textarea id="commentUpdateContainer{index}">흠</textarea>
                                             <div class="mt-3 flex items-center justify-end gap-x-4">
                                                 <button
                                                 type="button"
@@ -777,7 +766,7 @@ import { page } from '$app/stores';
                                             </div>
                                         </div>
                                         <div class:hidden={!commentsShow[index]} class="mt-2">
-                                                <textarea id="commentsEditor{index}"></textarea>        
+                                                <textarea id="commentsEditor{index}"></textarea>
                                             <div class="mt-3 flex items-center justify-end gap-x-4">
                                                 <button
                                                 type="button"

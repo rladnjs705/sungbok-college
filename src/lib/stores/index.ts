@@ -63,6 +63,7 @@ function setAuth() {
     role: '',
     nickName: '',
     userName: '',
+    avatarUrl: '',
   }
 
   let data = { 
