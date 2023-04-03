@@ -106,7 +106,7 @@
                 </div>
             {/each}
             {:else}
-            <div class="text-center">게시물이 없습니다.</div>
+                    <div class="text-center">게시물이 없습니다.</div>
         {/if}
     </div>
 </div>

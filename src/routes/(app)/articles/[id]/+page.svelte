@@ -10,7 +10,12 @@ import { page } from '$app/stores';
     import { extractErrors, commentValidateSchema } from '$utils/validates';
     import Swal from "sweetalert2";
     import axios from 'axios';
-    import { paginate, LightPaginationNav, DarkPaginationNav } from 'svelte-paginate'
+    import { paginate, LightPaginationNav, DarkPaginationNav } from 'svelte-paginate';
+    import {
+    Menu,
+    MenuButton,
+    MenuItems
+  } from "@rgossiaux/svelte-headlessui";
 
     let commentCount:number;
     let paginatedItems:any;
@@ -480,20 +485,51 @@ import { page } from '$app/stores';
         try {
             const response = await axios.put("/api/user/comment/"+commentId, commentValues);
             if(response.status == 200){
-                //location.reload();
+                location.reload();
 
-                const comment = response.data.response;
-                comment.isShow = true;
+                // const comment = response.data.response;
+                // comment.isShow = true;
 
-                commentList.content = [
-                    ...commentList.content.slice(0, index),
-                    comment,
-                    ...commentList.content.slice(index+1)
-                ]
+                // commentList.content = [
+                //     ...commentList.content.slice(0, index),
+                //     comment,
+                //     ...commentList.content.slice(index+1)
+                // ]
 
-                console.log(commentList.content)
+                // console.log(commentList.content)
 
-                commentsUpdateToggle[index] = !commentsUpdateToggle[index];
+                // commentsUpdateToggle[index] = !commentsUpdateToggle[index];
+            }else{
+                console.log(response);
+                Swal.fire({
+                    icon: 'error',
+                    text: "에러가 발생했습니다. 관리자에게 문의해주세요.",
+                    timer: 3000, // 3초 후 자동으로 닫힘
+                });
+            }
+        } catch(error) {
+            errors = extractErrors(error);
+        }
+    }
+
+    const onSubmitDeleteComments = async (index:number,commentId:number) => {
+        try {
+            const response = await axios.delete("/api/user/comment/"+commentId);
+            if(response.status == 200){
+                location.reload();
+
+                // const comment = response.data.response;
+                // comment.isShow = true;
+
+                // commentList.content = [
+                //     ...commentList.content.slice(0, index),
+                //     comment,
+                //     ...commentList.content.slice(index+1)
+                // ]
+
+                // console.log(commentList.content)
+
+                // commentsUpdateToggle[index] = !commentsUpdateToggle[index];
             }else{
                 console.log(response);
                 Swal.fire({
@@ -583,30 +619,28 @@ import { page } from '$app/stores';
             </div>
             <div class="ml-auto flex items-center gap-x-4 text-sm text-gray-700 dark:text-gray-300 sm:gap-x-5">
                 <span class="sr-only">더보기</span>
-                <div class="relative">
-                    <div class="flex items-center">
-                        <button type="button" on:click={() => toggleMenu = !toggleMenu}>
-                            <span class="sr-only">작성자 메뉴</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-6 w-6 text-gray-400 hover:text-blue-500 focus:outline-0 focus:ring-0 dark:hover:text-blue-200">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class:hidden={toggleMenu} class="absolute right-0 mt-2 w-40 space-y-2 rounded-lg border border-gray-500/30 bg-white p-3 shadow-lg dark:border-gray-500/70 dark:bg-gray-800 transform opacity-100 scale-100">
-                        <button class="text-gray-700 dark:text-gray-300 group flex items-center space-x-2 px-2 hover:text-blue-500 dark:hover:text-blue-200">
+                <Menu class="relative">
+                    <MenuButton class="flex items-center">
+                        <span class="sr-only">작성자 메뉴</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-6 w-6 text-gray-400 hover:text-blue-500 focus:outline-0 focus:ring-0 dark:hover:text-blue-200">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"></path>
+                        </svg>
+                    </MenuButton>
+                    <MenuItems class="absolute right-0 mt-2 w-40 space-y-2 rounded-lg border border-gray-500/30 bg-white p-3 shadow-lg dark:border-gray-500/70 dark:bg-gray-800 transform opacity-100 scale-100">
+                        <MenuButton class="text-gray-700 dark:text-gray-300 group flex items-center space-x-2 px-2 hover:text-blue-500 dark:hover:text-blue-200">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-5 w-5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
                             </svg>
                             <span class="font-medium">수정하기</span>
-                        </button>
-                        <button class="text-gray-700 dark:text-gray-300 group flex items-center space-x-2 px-2 hover:text-blue-500 dark:hover:text-blue-200">
+                        </MenuButton>
+                        <MenuButton class="text-gray-700 dark:text-gray-300 group flex items-center space-x-2 px-2 hover:text-blue-500 dark:hover:text-blue-200">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-5 w-5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path>
                             </svg>
                             <span class="font-medium">삭제하기</span>
-                        </button>
-                    </div>
-                </div>
+                        </MenuButton>
+                    </MenuItems>
+                </Menu>
             </div>
         </div>
         <h1
@@ -698,30 +732,28 @@ import { page } from '$app/stores';
                         </div>
                         <div class="relative flex items-center space-x-3 sm:space-x-7">
                             <div class="flex">
-                                <div class="relative" data-headlessui-state="">
-                                    <div class="flex items-center">
-                                        <button type="button" on:click={()=>onEditComments(index)}>
-                                            <span class="sr-only">작성자 메뉴</span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-5 w-5 text-gray-400 hover:text-blue-500 focus:outline-0 focus:ring-0 dark:hover:text-blue-200">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"></path>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <div class:hidden={!commentsEdit[index]} class="absolute right-0 z-10 mt-2 space-y-2 rounded-lg border border-gray-500/30 bg-white p-1 py-2 shadow-lg dark:border-gray-500/70 dark:bg-gray-800 transform opacity-100 scale-100">
-                                        <button on:click={() => onUpdateComments(index)} class="text-gray-700 dark:text-gray-300 group flex w-24 items-center space-x-2 px-2 text-sm">
+                                <Menu class="relative">
+                                    <MenuButton class="flex items-center" on:click={()=>onEditComments(index)}>
+                                        <span class="sr-only">작성자 메뉴</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-5 w-5 text-gray-400 hover:text-blue-500 focus:outline-0 focus:ring-0 dark:hover:text-blue-200">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"></path>
+                                        </svg>
+                                    </MenuButton>
+                                    <MenuItems class="absolute right-0 z-10 mt-2 space-y-2 rounded-lg border border-gray-500/30 bg-white p-1 py-2 shadow-lg dark:border-gray-500/70 dark:bg-gray-800 transform opacity-100 scale-100">
+                                        <MenuButton on:click={() => onUpdateComments(index)} class="text-gray-700 dark:text-gray-300 group flex w-24 items-center space-x-2 px-2 text-sm">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-4 w-4">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
                                             </svg>
                                             <span class="font-medium">수정하기</span>
-                                        </button>
-                                        <button on:click={() => onSubmitDeleteComments(comment.commentId)} class="text-gray-700 dark:text-gray-300 group flex items-center space-x-2 px-2 text-sm">
+                                        </MenuButton>
+                                        <MenuButton on:click={() => onSubmitDeleteComments(index,comment.id)} class="text-gray-700 dark:text-gray-300 group flex items-center space-x-2 px-2 text-sm">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-4 w-4">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path>
                                             </svg>
                                             <span class="font-medium">삭제하기</span>
-                                        </button>
-                                    </div>
-                                </div>
+                                        </MenuButton>
+                                    </MenuItems>
+                                </Menu>
                             </div>
                         </div>
                     </div>
@@ -823,3 +855,6 @@ import { page } from '$app/stores';
     </div>
 </div>
 {/if}
+
+
+  
