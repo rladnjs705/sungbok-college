@@ -1,5 +1,5 @@
 <script lang="ts">
-import { page } from '$app/stores';
+    import { page } from '$app/stores';
     import { onMount } from "svelte";
     import suneditor from "suneditor";
     import {ko} from 'suneditor/src/lang';
@@ -12,10 +12,11 @@ import { page } from '$app/stores';
     import axios from 'axios';
     import { paginate, LightPaginationNav, DarkPaginationNav } from 'svelte-paginate';
     import {
-    Menu,
-    MenuButton,
-    MenuItems
-  } from "@rgossiaux/svelte-headlessui";
+        Menu,
+        MenuButton,
+        MenuItems
+    } from "@rgossiaux/svelte-headlessui";
+    import { ADMIN } from '$lib/utils/constans';
 
     let commentCount:number;
     let paginatedItems:any;
@@ -63,6 +64,7 @@ import { page } from '$app/stores';
     $:if(commentList){
         items = commentList.content;
         paginatedItems = paginate({ items, pageSize, currentPage});
+        console.log(paginatedItems)
     }
 
     onMount(async ()=> {
@@ -542,6 +544,26 @@ import { page } from '$app/stores';
             errors = extractErrors(error);
         }
     }
+
+    const removeArticle = async (id:number) => {
+        try {
+            const response = await axios.delete("/api/user/board/"+id);
+            if(response.status == 200){
+                console.log("들어옴?")
+                goto(`/${board.boardType.toLowerCase()}/${board.category.categoryEng}`)
+            }else{
+                console.log(response);
+                Swal.fire({
+                    icon: 'error',
+                    text: "에러가 발생했습니다. 관리자에게 문의해주세요.",
+                    timer: 3000, // 3초 후 자동으로 닫힘
+                });
+            }
+        } catch(error) {
+            errors = extractErrors(error);
+        }
+    }
+
 </script>
 {#if board}
 <div>
@@ -580,7 +602,7 @@ import { page } from '$app/stores';
                 <div class="ml-2 flex flex-1 flex-col text-base font-normal">
                     <a
                         class="pl-0.5 text-gray-900 hover:text-blue-500 dark:text-gray-100 dark:hover:text-blue-200"
-                        href="#null">{board.writer.nickName}</a
+                        href="#null">{board.isSecret === false ? board.writer.nickName : "익명"}</a
                     >
                     <div
                         class="flex items-center gap-x-1 text-sm font-normal text-gray-700 dark:text-gray-300"
@@ -617,6 +639,7 @@ import { page } from '$app/stores';
                     </div>
                 </div>
             </div>
+            {#if $auth.role == ADMIN || $authToken && $auth._id === board.writer.userId}
             <div class="ml-auto flex items-center gap-x-4 text-sm text-gray-700 dark:text-gray-300 sm:gap-x-5">
                 <span class="sr-only">더보기</span>
                 <Menu class="relative">
@@ -627,13 +650,13 @@ import { page } from '$app/stores';
                         </svg>
                     </MenuButton>
                     <MenuItems class="absolute right-0 mt-2 w-40 space-y-2 rounded-lg border border-gray-500/30 bg-white p-3 shadow-lg dark:border-gray-500/70 dark:bg-gray-800 transform opacity-100 scale-100">
-                        <MenuButton class="text-gray-700 dark:text-gray-300 group flex items-center space-x-2 px-2 hover:text-blue-500 dark:hover:text-blue-200">
+                        <MenuButton on:click={() => goto(board.id+"/edit")} class="text-gray-700 dark:text-gray-300 group flex items-center space-x-2 px-2 hover:text-blue-500 dark:hover:text-blue-200">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-5 w-5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
                             </svg>
                             <span class="font-medium">수정하기</span>
                         </MenuButton>
-                        <MenuButton class="text-gray-700 dark:text-gray-300 group flex items-center space-x-2 px-2 hover:text-blue-500 dark:hover:text-blue-200">
+                        <MenuButton on:click={() => removeArticle(board.id)} class="text-gray-700 dark:text-gray-300 group flex items-center space-x-2 px-2 hover:text-blue-500 dark:hover:text-blue-200">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-5 w-5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path>
                             </svg>
@@ -642,6 +665,7 @@ import { page } from '$app/stores';
                     </MenuItems>
                 </Menu>
             </div>
+            {/if}
         </div>
         <h1
             class="block break-all text-xl font-semibold"
@@ -654,7 +678,7 @@ import { page } from '$app/stores';
             <div class="remirror-theme">
                 <div class="remirror-editor-wrapper">
                     <div class="remirror-theme relative">
-                        <div>{@html `${convertHtml(board.content)}`}</div>
+                        <div class="overflow-auto md:w-full">{@html `${convertHtml(board.content)}`}</div>
                     </div>
                 </div>
             </div>
@@ -688,7 +712,7 @@ import { page } from '$app/stores';
             </div>
         </div>
     </div>
-    {#if authToken}
+    {#if $authToken}
     <div class="flex">
         <div class="min-w-0 flex-1">
             <form>
@@ -730,6 +754,7 @@ import { page } from '$app/stores';
                                 <p class="text-gray-700 dark:text-gray-300 text-xs"> {displayedAt(comment.createDate)}</p>
                             </div>
                         </div>
+                        {#if $auth.role == ADMIN || $authToken && $auth._id === comment.writer.userId  && !comment.isDeleted}
                         <div class="relative flex items-center space-x-3 sm:space-x-7">
                             <div class="flex">
                                 <Menu class="relative">
@@ -756,15 +781,17 @@ import { page } from '$app/stores';
                                 </Menu>
                             </div>
                         </div>
+                        {/if}
                     </div>
                     <div class="flex">
                         <div class="remirror-editor mt-2 flex-1 break-all text-sm leading-relaxed text-gray-700 dark:text-gray-300">
                             <div class="remirror-theme">
                                 <div class="remirror-editor-wrapper">
                                     <div class="md:text-base">
+                                        {#if !comment.isDeleted}
                                         <div class:hidden={commentsUpdateToggle[index]} class="text-xs md:text-sm">{@html `${convertHtml(comment.content)}`}</div>
                                         <div class:hidden={!commentsUpdateToggle[index]}>
-                                            <textarea id="commentUpdateContainer{index}">흠</textarea>
+                                            <textarea id="commentUpdateContainer{index}"></textarea>
                                             <div class="mt-3 flex items-center justify-end gap-x-4">
                                                 <button
                                                 type="button"
@@ -774,6 +801,9 @@ import { page } from '$app/stores';
                                                     >
                                             </div>
                                         </div>
+                                        {:else}
+                                            <div class="test-xs md:text-sm">삭제된 댓글입니다.</div>
+                                        {/if}
                                     </div>
                                     <div class="mt-2" class:hidden={commentsUpdateToggle[index]}>
                                         <div class="flex">
@@ -792,11 +822,14 @@ import { page } from '$app/stores';
                                                 <div class="font-medium">댓글 보기</div>
                                             </button>
                                             {/if}
+                                            {#if $authToken && !comment.isDeleted}
                                             <div class:ml-4={comment.answerNum > 0}>
                                                 <button class:hidden={commentsShow[index]} class="text-xs text-gray-500 hover:text-blue-500 dark:hover:text-blue-200" on:click={()=>onToogleComments(index)} >댓글 쓰기</button>
                                                 <button class:hidden={!commentsShow[index]} class="text-xs text-gray-400 hover:text-blue-500 dark:hover:text-blue-200" on:click={()=>onToogleComments(index)} >댓글 창 닫기</button>
                                             </div>
+                                            {/if}
                                         </div>
+                                        {#if $authToken && !comment.isDeleted}
                                         <div class:hidden={!commentsShow[index]} class="mt-2">
                                                 <textarea id="commentsEditor{index}"></textarea>
                                             <div class="mt-3 flex items-center justify-end gap-x-4">
@@ -808,7 +841,7 @@ import { page } from '$app/stores';
                                                     >
                                             </div>
                                         </div>
-                                        
+                                        {/if}
                                     </div>
                                 </div>
                             </div>
