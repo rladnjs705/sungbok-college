@@ -78,7 +78,7 @@
                         class="line-clamp-1 w-full break-all rounded-md bg-gray-50 hover:cursor-pointer"
                         ><img
                             class="h-40 w-full rounded-md border border-gray-300 object-contain"
-                            src="https://file.okky.kr/images/1676944537180.jpg"
+                            src={lecture.thumbnailPath}
                             alt=""
                         /></a
                     >

@@ -12,6 +12,15 @@
     import Swal from "sweetalert2";
     import { Checkbox } from 'flowbite-svelte';
     import { LECTURE } from '$lib/utils/constans';
+    import { Notyf } from 'notyf';
+    import 'notyf/notyf.min.css';
+    const notyf = new Notyf({
+        duration: 3000,
+        position: {
+        x: 'right',
+        y: 'top',
+        }
+    });
 
     export let data: PageData;
     const cancelLink = "/lecture";
@@ -29,6 +38,7 @@
         title: '',
         content: '',
         boardType: LECTURE,
+        teacher:'',
 
         //태그정보
         hashTag: tags,
@@ -174,6 +184,49 @@
     }
 
     $:tag = tag.trim();
+
+    const onUploadFile = async (e:any) => {
+        const { files } = e.target;
+        try {
+        if(!files || files.length === 0){
+            return;
+        }
+
+        const file = files[0];
+
+        // Check file extension
+        const allowedExtensions = ["bmp", "jpg", "jpeg", "png", "webp"];
+        const fileExtension = file.name.split(".").pop().toLowerCase();
+        if (!allowedExtensions.includes(fileExtension)) {
+            notyf.error('이미지 파일만 업로드 가능합니다.');
+            return;
+        }
+
+        // Check file size (in bytes)
+        const allowedSize = 256000; // 250kb
+        if (file.size > allowedSize) {
+            notyf.error('파일 크기가 큽니다. 250kb아래로 업로드 해주세요.');
+            return;
+        }
+
+        const formData = new FormData();
+        const upload = formData.append('file', files[0]);
+        const response =  await axios.post('/api/admin/upload/files', formData, {
+            headers: {
+            'Content-Type': 'multipart/form-data'
+            }
+        });
+        if(response.status == 200){
+            addValues.thumbnailPath = response.data.data.link+"?format=webp&width=170&height=160";
+            return upload;
+        } else{
+            notyf.error('서버 에러입니다. 관리자에게 문의해 주세요.');
+        }
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
 </script>
 
 <div class="md:mx-8">
@@ -197,6 +250,26 @@
                 </select>
                 {#if errors.categoryId}
                     <div class="text-red-500">{errors.categoryId}</div>
+                {/if}
+            </div>
+            <div class="space-y-1">
+                <label
+                    for="teacher"
+                    class="text-sm font-medium text-gray-700 dark:text-gray-200"
+                    >강사 이름</label>
+                <!-- svelte-ignore a11y-autofocus -->
+                <input
+                    type="text"
+                    id="teacher"
+                    placeholder="강사 이름을 입력해주세요."
+                    class="block w-full appearance-none rounded-md border border-gray-500/30 pl-3 pr-10 text-base placeholder-gray-500/80 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-0 dark:bg-gray-500/20"
+                    name="teacher"
+                    class:border-red-500={errors.teacher}
+                    bind:value={addValues.teacher}
+                    maxlength="20"
+                     />
+                {#if errors.teacher}
+                    <div class="text-red-500">{errors.teacher}</div>
                 {/if}
             </div>
             <div class="space-y-1">
@@ -267,6 +340,16 @@
                 </div>
                 {#if errors.content}
                     <div class="text-red-500">{errors.content}</div>
+                {/if}
+            </div>
+            <div class="space-y-1">
+                <label
+                    for="thumbnailPath"
+                    class="text-sm font-medium text-gray-700 dark:text-gray-200"
+                    >썸네일</label>
+                <input type="file" id="thumbnailPath" class="block w-full appearance-none rounded-md border border-gray-500/30 pl-3 pr-10 text-base placeholder-gray-500/80 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-0 dark:bg-gray-500/20" on:change={onUploadFile} class:inputError={errors.thumbnailPath} accept="image/*">
+                {#if errors.thumbnailPath}
+                    <div class="invalid-feedback was-validated">{errors.thumbnailPath}</div>
                 {/if}
             </div>
             <div class="flex items center space-y-1">
