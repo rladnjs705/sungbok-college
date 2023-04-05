@@ -2,8 +2,18 @@
 	import { page } from '$app/stores';
   import { onMount } from 'svelte';
   import { ALL, NOTICE, QUESTIONS, LECTURE, FREE, REPORTCARD, PROFILE, ATTENDANCE} from '$utils/constans';
-  import { auth, itemFooterSelected,itemCategorySelected, pageNumber, authToken } from '$stores';
+  import { auth, itemFooterSelected,itemCategorySelected, pageNumber, authToken, isProfileOpen } from '$stores';
   import { goto } from '$app/navigation';
+  import axios from 'axios';
+  import { Notyf } from 'notyf';
+  import 'notyf/notyf.min.css';
+  const notyf = new Notyf({
+    duration: 3000,
+    position: {
+      x: 'right',
+      y: 'top',
+    }
+  });
 
   export let isSidebar: boolean;
   export let onSideBar:any;
@@ -31,6 +41,7 @@
     try {
       auth.resetAuth();
       onSideBar(ALL)
+      clearFile();
       itemCategorySelected.selectCategory(ALL);
       $pageNumber = 1;
       
@@ -40,6 +51,82 @@
     }
   }
 
+  const profileUpload = async (e:any) => {
+    const { files } = e.target;
+    try {
+      if(!files || files.length === 0){
+        clearFile()
+        return;
+      }
+
+      const file = files[0];
+
+      // Check file extension
+      const allowedExtensions = ["bmp", "jpg", "jpeg", "png", "webp"];
+      const fileExtension = file.name.split(".").pop().toLowerCase();
+      if (!allowedExtensions.includes(fileExtension)) {
+        notyf.error('이미지 파일만 업로드 가능합니다.');
+        clearFile()
+        return;
+      }
+
+      // Check file size (in bytes)
+      const allowedSize = 256000; // 250kb
+      if (file.size > allowedSize) {
+        notyf.error('파일 크기가 큽니다. 250kb아래로 업로드 해주세요.');
+        clearFile()
+        return;
+      }
+
+      const formData = new FormData();
+      const upload = formData.append('file', files[0]);
+      const response =  await axios.post('/api/admin/upload/files', formData, {
+        headers: {
+           'Content-Type': 'multipart/form-data'
+         }
+      });
+      if(response.status == 200){
+        await profileUpdate(response.data.data.link);
+        return upload;
+      }
+
+    } catch (error) {
+      clearFile()
+      console.log(error);
+    }
+  }
+
+  const profileUpdate = async (link:string) => {
+
+    let params = {
+      userId : $auth._id,
+      profileUrl : link+"?format=webp&width=80&height=80"
+    }
+
+    try {
+      const response = await axios.put('/api/admin/user/update', params);
+      if(response.status == 200){
+        $auth.profileUrl = link;
+        clearFile()
+      }
+
+    } catch (error) {
+      console.log(error);
+      clearFile()
+    }
+  }
+
+  function clearFile() {
+    $isProfileOpen = false;
+    profileFile.value = "";
+  }
+
+  let profileFile:any;
+  function isProfileOpenToggle() { 
+    $isProfileOpen = !$isProfileOpen
+  }
+
+console.log($isProfileOpen)
 </script>
 <!-- Sidebar -->
 {#if isMobile}
@@ -52,17 +139,61 @@
               </div>
             </li>
             {#if $authToken}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <li class="grid grid-row-2 justify-items-center h-40 border-b-2">
               <div class="flex flex-row items-center h-8 py-10">
-                {#if $auth.avatarUrl}
-                  <div class="relative my-1 overflow-hidden rounded-full">
-                    <img class="w-20 h-20 rounded-full overflow-hidden processing" src="/{$auth.avatarUrl}" alt="profile" />
-                    <button class="absolute inset-0" id="headlessui-popover-button-:rq:" type="button" aria-expanded="false" data-headlessui-state=""><label for="desktop-user-photo" class="flex h-full w-full items-center justify-center bg-gray-900 bg-opacity-75 text-sm font-medium text-gray-100 opacity-0 focus-within:opacity-100 hover:opacity-100"><span>변경</span><span class="sr-only">프로필 사진</span><input id="desktop-user-photo" name="user-photo" class="absolute inset-0 h-full w-full cursor-pointer rounded-md border-gray-300 opacity-0"></label></button>
+                {#if $auth.profileUrl}
+                <div class="relative">
+                  <div class="flex items-center">
+                      <button on:click={() => isProfileOpenToggle()}><img class="w-20 h-20 rounded-full overflow-hidden processing" src={$auth.profileUrl} alt="profile" /></button>
+                      {#if $isProfileOpen}
+                      <div class="absolute inset-x-0 top-0 z-10 w-full h-full origin-top transform transition opacity-100 scale-100">
+                        <div class="overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-gray-900 ring-opacity-5 dark:bg-black">
+                          <div class="flex flex-col -space-y-2">
+                            <div class="group relative flex-1 cursor-pointer px-2 py-2">
+                              <div class="flex items-center space-x-2">
+                                <label for="user-photo" class="relative flex h-full w-full items-center justify-center rounded-md bg-blue-500 text-white shadow-sm hover:bg-blue-600">
+                                  <p class="flex flex-col text-center px-1 py-1">
+                                    <span class="text-xs font-semibold">이미지<br>업로드</span>
+                                    <span class="text-xs"><br>권장 사이즈 80px<br>최대 250KB</span>
+                                  </p>
+                                  <input type="file" on:change={profileUpload} accept="image/bmp, image/jpg, image/jpeg, image/png, image/webp" id="user-photo" name="user-photo" class="hidden" bind:this={profileFile}>
+                                  <!-- <button type="button" class="absolute inset-0 h-full w-full cursor-pointer border-gray-300 opacity-80" on:click={profileUpload}></button> -->
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {/if}
+                    </div>
                   </div>
                   {:else}
-                  <div class="relative my-1 overflow-hidden rounded-full">
-                    <img class="w-20 h-20 rounded-full overflow-hidden processing" src="/dummy-avatar.jpg" alt="profile" />
-                    <button class="absolute inset-0" id="headlessui-popover-button-:rq:" type="button" aria-expanded="false" data-headlessui-state=""><label for="desktop-user-photo" class="flex h-full w-full items-center justify-center bg-gray-900 bg-opacity-75 text-sm font-medium text-gray-100 opacity-0 focus-within:opacity-100 hover:opacity-100"><span>변경</span><span class="sr-only">프로필 사진</span><input id="desktop-user-photo" name="user-photo" class="absolute inset-0 h-full w-full cursor-pointer rounded-md border-gray-300 opacity-0"></label></button>
+                  <!-- svelte-ignore a11y-click-events-have-key-events -->
+                  <div class="relative">
+                    <div class="flex items-center">
+                      <button on:click={() => isProfileOpenToggle()}><img class="w-20 h-20 rounded-full overflow-hidden processing" src="/dummy-avatar.jpg" alt="profile" /></button>
+                      {#if $isProfileOpen}
+                      <div class="absolute inset-x-0 top-0 z-10 w-full h-full origin-top transform transition opacity-100 scale-100">
+                        <div class="overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-gray-900 ring-opacity-5 dark:bg-black">
+                          <div class="flex flex-col -space-y-2">
+                            <div class="group relative flex-1 cursor-pointer px-2 py-2">
+                              <div class="flex items-center space-x-2">
+                                <label for="user-photo" class="relative flex h-full w-full items-center justify-center rounded-md bg-blue-500 text-white shadow-sm hover:bg-blue-600">
+                                  <p class="flex flex-col text-center px-1 py-1">
+                                    <span class="text-xs font-semibold">이미지<br>업로드</span>
+                                    <span class="text-xs"><br>권장 사이즈 150px<br>최대 250KB</span>
+                                  </p>
+                                  <input type="file" on:change={profileUpload} accept="image/bmp, image/jpg, image/jpeg, image/png, image/webp" id="user-photo" name="user-photo" class="hidden" bind:this={profileFile}>
+                                  <!-- <button type="button" class="absolute inset-0 h-full w-full cursor-pointer border-gray-300 opacity-80" on:click={profileUpload}></button> -->
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {/if}
+                    </div>
                   </div>
                 {/if}
               </div>

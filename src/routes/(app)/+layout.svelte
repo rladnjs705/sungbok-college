@@ -8,7 +8,7 @@
   import Footer from "$components/Footer.svelte";
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
-  import { itemFooterSelected, itemCategorySelected,boardDetailList, pageNumber } from '$stores';
+  import { itemFooterSelected, itemCategorySelected,boardDetailList, pageNumber, isProfileOpen } from '$stores';
   import { authToken, auth, isDark } from '$stores';
   import { ALL, FREE, LECTURE, NOTICE, QUESTIONS } from "$lib/utils/constans";
 
@@ -57,10 +57,12 @@
       window.addEventListener('resize', checkMobile);
       loading = false;
       isSidebar = false;
+      $isProfileOpen = false;
   });
 
   const onSideBar = (_id:string) => {
       isSidebar = !isSidebar;
+      $isProfileOpen = false;
       if(isSidebar){
         document.body.classList.add("sidebar-open");
       } else{
@@ -84,6 +86,7 @@
 
   function closedSidebar() {
     isSidebar = false;
+    $isProfileOpen = false;
     document.body.classList.remove("sidebar-open");
   }
 

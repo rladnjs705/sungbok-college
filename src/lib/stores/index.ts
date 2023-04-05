@@ -63,7 +63,7 @@ function setAuth() {
     role: '',
     nickName: '',
     userName: '',
-    avatarUrl: '',
+    profileUrl: '',
   }
 
   let data = { 
@@ -86,8 +86,9 @@ function setAuth() {
       const role = userInfo.role;
       const nickName = userInfo.nickName;
       const userName = userInfo.userName;
+      const profileUrl = userInfo.profileUrl;
 
-      set({_id, email, role, nickName, userName});
+      set({_id, email, role, nickName, userName, profileUrl});
       return;
     }
     catch(error) {
@@ -109,7 +110,7 @@ function setAuth() {
   return {
     subscribe,
     createAuth,
-    resetAuth,
+    resetAuth
   }
 }
 
@@ -173,3 +174,4 @@ export const itemCategorySelected = setItemCategorySelected();
 export const pageNumber = writable(1);
 export const boardDetailList = setBoardDetailList();
 export const isDark = writable(false);
+export const isProfileOpen = writable(false);
