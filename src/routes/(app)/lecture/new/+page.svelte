@@ -43,7 +43,7 @@
         //태그정보
         hashTag: tags,
 
-        //파일정보
+        //이미지 파일정보
         thumbnailPath: '',
 
         //유저정보
@@ -185,7 +185,7 @@
 
     $:tag = tag.trim();
 
-    const onUploadFile = async (e:any) => {
+    const onUploadImageFile = async (e:any) => {
         const { files } = e.target;
         try {
         if(!files || files.length === 0){
@@ -347,7 +347,7 @@
                     for="thumbnailPath"
                     class="text-sm font-medium text-gray-700 dark:text-gray-200"
                     >썸네일</label>
-                <input type="file" id="thumbnailPath" class="block w-full appearance-none rounded-md border border-gray-500/30 pl-3 pr-10 text-base placeholder-gray-500/80 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-0 dark:bg-gray-500/20" on:change={onUploadFile} class:inputError={errors.thumbnailPath} accept="image/*">
+                <input type="file" id="thumbnailPath" class="block w-full appearance-none rounded-md border border-gray-500/30 pl-3 pr-10 text-base placeholder-gray-500/80 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-0 dark:bg-gray-500/20" on:change={onUploadImageFile} class:inputError={errors.thumbnailPath} accept="image/*">
                 {#if errors.thumbnailPath}
                     <div class="invalid-feedback was-validated">{errors.thumbnailPath}</div>
                 {/if}

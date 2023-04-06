@@ -3,11 +3,18 @@
     import { authToken, auth } from '$stores';
     import { extractErrors, loginValidateSchema } from '$utils/validates.js';
     import Swal from 'sweetalert2';
+    import logo from "$lib/images/logo.png";
+    import { onMount } from 'svelte';
   
   let formValues = {
     userEmail: '',
     password: ''
   }
+
+
+  onMount(() => {
+    document.body.classList.remove("sidebar-open");
+  })
   
   let errors:any = {}
   
@@ -69,7 +76,7 @@
 <div class="flex justify-center px-6 pb-16 mt-2">
     <div class="w-full max-w-md">
         <a href="/">
-            <img class="mx-auto h-32 w-auto" src="/logo.png" alt="Sungbok" />
+            <img class="mx-auto h-32 w-auto" src={logo} alt="Sungbok" />
         </a>
         <h2 class="mt-2 text-center text-2xl font-bold sm:text-3xl">
             새벽이슬에 오신것을 환영합니다.

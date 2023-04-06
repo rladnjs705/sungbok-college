@@ -17,6 +17,7 @@
         MenuItems
     } from "@rgossiaux/svelte-headlessui";
     import { ADMIN } from '$lib/utils/constans';
+    import dummyAvatar from "$lib/images/dummy-avatar.jpg";
 
     let commentCount:number;
     let paginatedItems:any;
@@ -64,7 +65,6 @@
     $:if(commentList){
         items = commentList.content;
         paginatedItems = paginate({ items, pageSize, currentPage});
-        console.log(paginatedItems)
     }
 
     onMount(async ()=> {
@@ -595,7 +595,7 @@
                 <a href="/users/155381"
                     ><img
                         class="inline-block h-10 w-10 rounded-full"
-                        src="/dummy-avatar.jpg"
+                        src={dummyAvatar}
                         alt="프로필 사진"
                     /></a
                 >
@@ -673,11 +673,11 @@
             {convertHtml(board.title)}
         </h1>
         <div
-            class="my-6 text-sm text-gray-700 dark:text-gray-300 sm:my-8 sm:text-base"
+            class="my-6 text-sm text-gray-700 dark:text-gray-300 sm:my-8 sm:text-base w-full"
         >
-            <div class="remirror-theme">
-                <div class="remirror-editor-wrapper">
-                    <div class="remirror-theme relative">
+            <div class="remirror-theme w-full">
+                <div class="remirror-editor-wrapper w-full">
+                    <div class="remirror-theme relative w-full">
                         <div class="overflow-auto md:w-full">{@html `${convertHtml(board.content)}`}</div>
                     </div>
                 </div>
@@ -738,7 +738,7 @@
                     <div class="flex items-center space-x-2">
                         <div class="flex-shrink-0">
                             <a href="/users/{comment.writer.userId}">
-                                <img class="h-8 w-8 rounded-full sm:h-12 sm:w-12" src="/dummy-avatar.jpg" alt="프로필 사진">
+                                <img class="h-8 w-8 rounded-full sm:h-12 sm:w-12" src={dummyAvatar} alt="프로필 사진">
                             </a>
                         </div>
                         <div class="flex flex-1 flex-col font-medium">

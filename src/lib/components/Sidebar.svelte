@@ -7,6 +7,8 @@
   import axios from 'axios';
   import { Notyf } from 'notyf';
   import 'notyf/notyf.min.css';
+
+  import dummyAvatar from "$lib/images/dummy-avatar.jpg";
   const notyf = new Notyf({
     duration: 3000,
     position: {
@@ -126,7 +128,9 @@
     $isProfileOpen = !$isProfileOpen
   }
 
-console.log($isProfileOpen)
+  const errorImage = (e:any) => {
+    e.target.src = dummyAvatar;
+  }
 </script>
 <!-- Sidebar -->
 {#if isMobile}
@@ -145,7 +149,7 @@ console.log($isProfileOpen)
                 {#if $auth.profileUrl}
                 <div class="relative">
                   <div class="flex items-center">
-                      <button on:click={() => isProfileOpenToggle()}><img class="w-20 h-20 rounded-full overflow-hidden processing" src={$auth.profileUrl} alt="profile" /></button>
+                      <button on:click={() => isProfileOpenToggle()}><img class="w-20 h-20 rounded-full overflow-hidden processing" src={$auth.profileUrl} alt="profile" on:error|once={errorImage} /></button>
                       {#if $isProfileOpen}
                       <div class="absolute inset-x-0 top-0 z-10 w-full h-full origin-top transform transition opacity-100 scale-100">
                         <div class="overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-gray-900 ring-opacity-5 dark:bg-black">
@@ -172,7 +176,7 @@ console.log($isProfileOpen)
                   <!-- svelte-ignore a11y-click-events-have-key-events -->
                   <div class="relative">
                     <div class="flex items-center">
-                      <button on:click={() => isProfileOpenToggle()}><img class="w-20 h-20 rounded-full overflow-hidden processing" src="/dummy-avatar.jpg" alt="profile" /></button>
+                      <button on:click={() => isProfileOpenToggle()}><img class="w-20 h-20 rounded-full overflow-hidden processing" src={dummyAvatar} alt="profile" /></button>
                       {#if $isProfileOpen}
                       <div class="absolute inset-x-0 top-0 z-10 w-full h-full origin-top transform transition opacity-100 scale-100">
                         <div class="overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-gray-900 ring-opacity-5 dark:bg-black">

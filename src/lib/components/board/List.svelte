@@ -1,5 +1,11 @@
 <script lang="ts">
     export let list:any;
+    import noticeSvg from '$lib/images/checklist-remove.png';
+    import questionSvg from '$lib/images/question-remove.png';
+    import freeSvg from '$lib/images/community-remove.png';
+    import patternSvg from "$lib/images/folk-pattern.png";
+    import profileSvg from "$lib/images/profile.png";
+    import { FREE, NOTICE, QUESTIONS } from '$lib/utils/constans';
 
     function displayedAt(createDate:Array<number>) {
         const milliSeconds = new Date().valueOf() - new Date(dateFommater(createDate)).valueOf();
@@ -49,10 +55,10 @@
             <div class="h-16 w-full rounded-xl bg-blue-50 dark:bg-gray-600">
                 <div
                     class="h-full rounded-xl opacity-10"
-                    style="background-image: url(&quot;pattern.svg&quot;);"
-                    class:bg-bottom={list.boardType==="notice"}
-                    class:bg-right-bottom={list.boardType=="questions"}
-                    class:bg-right-top={list.boardType==""}
+                    style="background-image: url({patternSvg});"
+                    class:bg-bottom={list.boardType===NOTICE}
+                    class:bg-right-bottom={list.boardType==QUESTIONS}
+                    class:bg-right-top={list.boardType==FREE}
                     class:bg-left-top={list.boardType==""}
                     class:bg-left-bottom={list.boardType==""}
                 />
@@ -65,14 +71,14 @@
                     >{list.title}</span
                 >
             </div>
-            <div
-                class="absolute -top-[10px] right-0 mr-10 h-[74px] w-[112px] overflow-y-hidden"
-            >
-                <img class="dark:hidden" src="/notice.svg" alt="notice" /><img
-                    class="hidden dark:block"
-                    src="/darkmode/notice.svg"
-                    alt="notice"
-                />
+            <div class="absolute -top-[34px] right-0 mr-10 h-28 w-28 overflow-y-hidden" class:mt-7={list.boardType === NOTICE}>
+                {#if list.boardType === NOTICE}
+                    <img src={noticeSvg} alt={NOTICE}/>
+                    {:else if list.boardType === QUESTIONS}
+                    <img src={questionSvg} alt={QUESTIONS} />
+                    {:else if list.boardType === FREE}
+                    <img src={freeSvg} alt={FREE} />
+                {/if}
             </div>
         </div></a>
     <div>
@@ -85,7 +91,7 @@
                         <!-- <a href="/users/138400"> -->
                             <img
                                 class="h-5 w-5 rounded-full"
-                                src="/profile.png"
+                                src={profileSvg}
                                 alt="프로필 사진"
                             />
                         <!-- </a> -->

@@ -3,6 +3,10 @@
     import { boardDetailList, pageNumber, itemCategorySelected, isDark } from '$stores';
     import Category from './Category.svelte';
     import { paginate, LightPaginationNav, DarkPaginationNav } from 'svelte-paginate'
+    import lectureSvg from "$lib/images/work_from_home-remove.png";
+    import patternSvg from "$lib/images/pattern.svg";
+    import profileSvg from "$lib/images/profile.png";
+    import { LECTURE } from '$lib/utils/constans';
     
     export let list:any;
     export let categories:any=[];
@@ -86,13 +90,8 @@
         ><div class="group relative">
             <div class="h-16 w-full rounded-xl bg-blue-50 dark:bg-gray-600">
                 <div
-                    class="h-full rounded-xl opacity-10"
-                    style="background-image: url(&quot;pattern.svg&quot;);"
-                    class:bg-bottom={boardType==="notice"}
-                    class:bg-right-bottom={boardType=="questions"}
-                    class:bg-right-top={boardType=="free"}
-                    class:bg-left-top={boardType==""}
-                    class:bg-left-bottom={boardType==""}
+                    class="h-full rounded-xl opacity-10 bg-left-bottom"
+                    style="background-image: url({patternSvg});"
                 />
             </div>
             <div
@@ -103,14 +102,8 @@
                     >{list.title}</span
                 >
             </div>
-            <div
-                class="absolute -top-[10px] right-0 mr-10 h-[74px] w-[112px] overflow-y-hidden"
-            >
-                <img class="dark:hidden" src="/notice.svg" alt="notice" /><img
-                    class="hidden dark:block"
-                    src="/darkmode/notice.svg"
-                    alt="notice"
-                />
+            <div class="absolute -top-[30px] right-0 mr-10 h-28 w-28 overflow-y-hidden">
+                <img src={lectureSvg} alt={LECTURE}/>
             </div>
         </div>
     </a>
@@ -128,7 +121,7 @@
                         <!-- <a href="/users/138400"> -->
                             <img
                                 class="h-5 w-5 rounded-full"
-                                src="/profile.png"
+                                src={profileSvg}
                                 alt="프로필 사진"
                             />
                         <!-- </a> -->

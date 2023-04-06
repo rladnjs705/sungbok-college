@@ -1,6 +1,9 @@
 <script lang="ts">
     export let list: any;
-
+    import patternSvg from "$lib/images/folk-pattern.png";
+    import noImage from "$lib/images/noImage.jpg";
+    import lectureSvg from "$lib/images/work_from_home-remove.png";
+    import { LECTURE } from "$lib/utils/constans";
     let lectureList:any[] = list.list;
 
     function displayedAt(createDate: Array<number>) {
@@ -32,6 +35,10 @@
 
         return yyyy + "-" + MM + "-" + dd + " " + HH + ":" + mm + ":" + ss;
     };
+
+    const errorImage = (e:any) => {
+        e.target.src = noImage;
+    }
 </script>
 
 <div class="w-full mt-5">
@@ -41,13 +48,8 @@
         ><div class="group relative">
             <div class="h-16 w-full rounded-xl bg-blue-50 dark:bg-gray-600">
                 <div
-                    class="h-full rounded-xl opacity-10"
-                    style="background-image: url(&quot;pattern.svg&quot;);"
-                    class:bg-bottom={list.boardType==="notice"}
-                    class:bg-right-bottom={list.boardType=="questions"}
-                    class:bg-right-top={list.boardType=="lecture"}
-                    class:bg-left-top={list.boardType=="free"}
-                    class:bg-left-bottom={list.boardType==""}
+                    class="h-full rounded-xl opacity-10 bg-left-bottom"
+                    style="background-image: url({patternSvg});"
                 />
             </div>
             <div
@@ -58,14 +60,8 @@
                     >{list.title}</span
                 >
             </div>
-            <div
-                class="absolute -top-[10px] right-0 mr-10 h-[74px] w-[112px] overflow-y-hidden"
-            >
-                <img class="dark:hidden" src="/notice.svg" alt="{list.boardType}" /><img
-                    class="hidden dark:block"
-                    src="/darkmode/notice.svg"
-                    alt="{list.boardType}"
-                />
+            <div class="absolute -top-[30px] right-0 mr-10 h-28 w-28 overflow-y-hidden">
+                <img src={lectureSvg} alt={LECTURE}/>
             </div>
         </div></a>
         <div>
@@ -80,6 +76,7 @@
                             class="h-40 w-full rounded-md border border-gray-300 object-contain"
                             src={lecture.thumbnailPath}
                             alt=""
+                            on:error|once={errorImage}
                         /></a
                     >
                     <div class="flex justify-between text-xs font-normal">

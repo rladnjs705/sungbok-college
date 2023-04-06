@@ -6,6 +6,7 @@
     import { onMount } from 'svelte';
     import { auth, authToken, isDark } from '$stores';
     import { goto } from '$app/navigation';
+    import dummyAvatar from "$lib/images/dummy-avatar.jpg";
 
     let paginatedItems:any;
     let currentPage = 1
@@ -137,7 +138,7 @@
                             <td class="px-4 py-3 w-1/12">
                               <div class="flex items-center text-sm">
                                 <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                                  <img class="object-cover w-full h-full rounded-full" src="/dummy-avatar.jpg" alt="" loading="lazy">
+                                  <img class="object-cover w-full h-full rounded-full" src={dummyAvatar} alt="" loading="lazy">
                                   <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
                                 </div>
                                 <div class="flex items-center">
