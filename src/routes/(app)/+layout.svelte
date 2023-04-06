@@ -103,7 +103,7 @@
 
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-white dark:bg-gray-700 text-black dark:text-white" on:click={closedSidebar}>    
-    <div class="mt-16 mb-20 mx-4 lg:ml-80 lg:mr-72">
+    <div class="mt-16 mb-20 mx-4 xl:ml-80 xl:mr-72">
         <slot/>
     </div>
   </div>
