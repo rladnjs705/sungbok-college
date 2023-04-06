@@ -118,7 +118,7 @@
         }
 
         let number = Math.floor(Math.random()*5);
-        commentEditor = suneditor.create('commentContainer',{
+        commentEditor = suneditor.create(commentEditor,{
             lang: ko,
             height: "16vh",
             width: "100%",
