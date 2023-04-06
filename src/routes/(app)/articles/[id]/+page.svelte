@@ -65,6 +65,7 @@
     $:if(commentList){
         items = commentList.content;
         paginatedItems = paginate({ items, pageSize, currentPage});
+        console.log(paginatedItems)
     }
 
     onMount(async ()=> {
@@ -592,13 +593,15 @@
     <div class="mt-8 mb-6 md:mb-14 w-full sm:mt-9">
         <div class="mb-8 flex flex-wrap sm:mb-9">
             <div class="flex items-center justify-center">
-                <a href="/users/155381"
-                    ><img
-                        class="inline-block h-10 w-10 rounded-full"
-                        src={dummyAvatar}
-                        alt="프로필 사진"
-                    /></a
-                >
+                {#if board.writer.profileUrl}
+                <a href="/users/{board.writer.userId}">
+                    <img class="inline-block h-10 w-10 rounded-full" src={board.writer.profileUrl} alt="프로필 사진" />
+                </a>
+                {:else}
+                <a href="#null">
+                    <img class="inline-block h-10 w-10 rounded-full" src={dummyAvatar} alt="프로필 사진" />
+                </a>
+                {/if}
                 <div class="ml-2 flex flex-1 flex-col text-base font-normal">
                     <a
                         class="pl-0.5 text-gray-900 hover:text-blue-500 dark:text-gray-100 dark:hover:text-blue-200"
@@ -673,12 +676,12 @@
             {convertHtml(board.title)}
         </h1>
         <div
-            class="my-6 text-sm text-gray-700 dark:text-gray-300 sm:my-8 sm:text-base w-full"
+            class="my-6 text-sm text-gray-700 dark:text-gray-300 sm:my-8 sm:text-base w-full h-64"
         >
-            <div class="remirror-theme w-full">
-                <div class="remirror-editor-wrapper w-full">
-                    <div class="remirror-theme relative w-full">
-                        <div class="overflow-auto md:w-full">{@html `${convertHtml(board.content)}`}</div>
+            <div class="remirror-theme w-full h-full">
+                <div class="remirror-editor-wrapper w-full h-full">
+                    <div class="remirror-theme relative w-full h-full">
+                        <div class="overflow-auto md:w-full h-full">{@html `${convertHtml(board.content)}`}</div>
                     </div>
                 </div>
             </div>
@@ -716,7 +719,7 @@
     <div class="flex">
         <div class="min-w-0 flex-1">
             <form>
-                <textarea id="commentContainer"></textarea>
+                <textarea id="commentContainer" bind:this={commentEditor}></textarea>
                 <div class="mt-3 flex items-center justify-end gap-x-4">
                     <button
                         type="button"
@@ -738,7 +741,11 @@
                     <div class="flex items-center space-x-2">
                         <div class="flex-shrink-0">
                             <a href="/users/{comment.writer.userId}">
-                                <img class="h-8 w-8 rounded-full sm:h-12 sm:w-12" src={dummyAvatar} alt="프로필 사진">
+                                {#if comment.writer.profileUrl}
+                                    <img class="h-8 w-8 rounded-full sm:h-12 sm:w-12" src={comment.writer.profileUrl} alt="프로필 사진">
+                                    {:else}
+                                    <img class="h-8 w-8 rounded-full sm:h-12 sm:w-12" src={dummyAvatar} alt="프로필 사진">
+                                {/if}
                             </a>
                         </div>
                         <div class="flex flex-1 flex-col font-medium">

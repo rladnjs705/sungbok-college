@@ -65,7 +65,7 @@
             </div>
         </div></a>
         <div>
-    <div class="grid grid-cols-2 gap-4 lg:grid-cols-3 mt-5">
+    <div class="grid grid-cols-2 lg:grid-cols-3 mt-5">
         {#if lectureList.length > 0}
             {#each lectureList as lecture}
                 <div class="w-full space-y-[9px]">
@@ -73,9 +73,9 @@
                     <a
                         class="line-clamp-1 w-full break-all rounded-md bg-gray-50 hover:cursor-pointer"
                         ><img
-                            class="h-40 w-full rounded-md border border-gray-300 object-contain"
+                            class="h-40 w-full rounded-md border border-gray-300 pt-4 pb-4"
                             src={lecture.thumbnailPath}
-                            alt=""
+                            alt="thumbnail"
                             on:error|once={errorImage}
                         /></a
                     >
