@@ -7,8 +7,6 @@
   import axios from 'axios';
   import { Notyf } from 'notyf';
   import 'notyf/notyf.min.css';
-
-  import dummyAvatar from "$lib/images/dummy-avatar.jpg";
   const notyf = new Notyf({
     duration: 3000,
     position: {
@@ -16,6 +14,8 @@
       y: 'top',
     }
   });
+
+  import dummyAvatar from "$lib/images/dummy-avatar.jpg";
 
   export let isSidebar: boolean;
   export let onSideBar:any;
@@ -73,9 +73,9 @@
       }
 
       // Check file size (in bytes)
-      const allowedSize = 256000; // 250kb
+      const allowedSize = 2 * 1024 * 1024; // 2MB
       if (file.size > allowedSize) {
-        notyf.error('파일 크기가 큽니다. 250kb아래로 업로드 해주세요.');
+        notyf.error('파일 크기가 큽니다. 2MB아래로 업로드 해주세요.');
         clearFile()
         return;
       }
@@ -159,7 +159,7 @@
                                 <label for="user-photo" class="relative flex h-full w-full items-center justify-center rounded-md bg-blue-500 text-white shadow-sm hover:bg-blue-600">
                                   <p class="flex flex-col text-center px-1 py-1">
                                     <span class="text-xs font-semibold">이미지<br>업로드</span>
-                                    <span class="text-xs"><br>권장 사이즈 80px<br>최대 250KB</span>
+                                    <span class="text-xs"><br>권장 사이즈 80px<br>최대 2MB</span>
                                   </p>
                                   <input type="file" on:change={profileUpload} accept="image/bmp, image/jpg, image/jpeg, image/png, image/webp" id="user-photo" name="user-photo" class="hidden" bind:this={profileFile}>
                                   <!-- <button type="button" class="absolute inset-0 h-full w-full cursor-pointer border-gray-300 opacity-80" on:click={profileUpload}></button> -->
@@ -186,7 +186,7 @@
                                 <label for="user-photo" class="relative flex h-full w-full items-center justify-center rounded-md bg-blue-500 text-white shadow-sm hover:bg-blue-600">
                                   <p class="flex flex-col text-center px-1 py-1">
                                     <span class="text-xs font-semibold">이미지<br>업로드</span>
-                                    <span class="text-xs"><br>권장 사이즈 150px<br>최대 250KB</span>
+                                    <span class="text-xs"><br>권장 사이즈 150px<br>최대 2MB</span>
                                   </p>
                                   <input type="file" on:change={profileUpload} accept="image/bmp, image/jpg, image/jpeg, image/png, image/webp" id="user-photo" name="user-photo" class="hidden" bind:this={profileFile}>
                                   <!-- <button type="button" class="absolute inset-0 h-full w-full cursor-pointer border-gray-300 opacity-80" on:click={profileUpload}></button> -->

@@ -272,9 +272,9 @@
         }
 
         // Check file size (in bytes)
-        const allowedSize = 256000; // 250kb
+        const allowedSize = 2 * 1024 * 1024; // 2MB
         if (file.size > allowedSize) {
-            notyf.error('파일 크기가 큽니다. 250kb아래로 업로드 해주세요.');
+            notyf.error('파일 크기가 큽니다. 2MB아래로 업로드 해주세요.');
             return;
         }
 

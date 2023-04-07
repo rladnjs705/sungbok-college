@@ -1,6 +1,14 @@
 <script lang="ts">
-    import Swal from "sweetalert2";
-  
+    import { Notyf } from 'notyf';
+    import 'notyf/notyf.min.css';
+    const notyf = new Notyf({
+      duration: 3000,
+      position: {
+        x: 'right',
+        y: 'top',
+      }
+    });
+
     let formData = {
       email: '',
       userName: '',
@@ -19,16 +27,12 @@
         },
         body: JSON.stringify(formData)
       });
-  
+
       if (response.ok) {
         formData.content ='';
         formData.userName ='';
         formData.email ='';
-        Swal.fire({
-            icon: 'success',
-            text: "이메일이 전송되었습니다.",
-            timer: 3000, // 3초 후 자동으로 닫힘
-        });
+        notyf.success("이메일이 전송되었습니다.");
       } else {
         const error = await response.json();
         errorMessage = error.message;
@@ -48,7 +52,7 @@
         <label class="block text-gray-700 font-bold mb-2" for="email">
             이메일
         </label>
-            <input class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" bind:value={formData.email} required type="email" placeholder="john.doe@example.com">
+            <input class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" bind:value={formData.email} required type="email" placeholder="이메일">
         </div>
         <div class="mb-4">
         <label class="block text-gray-700 font-bold mb-2" for="message">

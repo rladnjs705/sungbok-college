@@ -6,10 +6,11 @@
     import noticeSvg from '$lib/images/checklist-remove.png';
     import questionSvg from '$lib/images/question-remove.png';
     import freeSvg from '$lib/images/community-remove.png';
-    import lectureSvg from "$lib/images/work_from_home-remove.png";
+    import lectureSvg from "$lib/images/lecture-remove.png";
     import patternSvg from "$lib/images/pattern.svg";
     import profileSvg from "$lib/images/profile.png";
-    import { FREE, LECTURE, NOTICE, QUESTIONS } from '$lib/utils/constans';
+    import reportSvg from "$lib/images/work_from_home-remove.png";
+    import { FREE, LECTURE, NOTICE, QUESTIONS, REPORT } from '$lib/utils/constans';
     
     export let list:any;
     export let categories:any=[];
@@ -99,7 +100,7 @@
                     class:bg-right-bottom={boardType==QUESTIONS}
                     class:bg-right-top={boardType==FREE}
                     class:bg-left-top={boardType==LECTURE}
-                    class:bg-left-bottom={boardType==""}
+                    class:bg-left-bottom={boardType==REPORT}
                 />
             </div>
             <div
@@ -119,6 +120,8 @@
                     <img src={freeSvg} alt={FREE} />
                     {:else if list.boardType === LECTURE}
                     <img src={lectureSvg} alt={LECTURE} />
+                    {:else if list.boardType === REPORT}
+                    <img src={reportSvg} alt={REPORT}/>
                 {/if}
             </div>
         </div>

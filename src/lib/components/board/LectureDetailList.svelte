@@ -3,7 +3,7 @@
     import { boardDetailList, pageNumber, itemCategorySelected, isDark } from '$stores';
     import Category from './Category.svelte';
     import { paginate, LightPaginationNav, DarkPaginationNav } from 'svelte-paginate'
-    import lectureSvg from "$lib/images/work_from_home-remove.png";
+    import lectureSvg from "$lib/images/lecture-remove.png";
     import patternSvg from "$lib/images/pattern.svg";
     import profileSvg from "$lib/images/profile.png";
     import noImage from "$lib/images/noImage.jpg";
@@ -90,7 +90,7 @@
                     >{list.title}</span
                 >
             </div>
-            <div class="absolute -top-[30px] right-0 mr-10 h-28 w-28 overflow-y-hidden">
+            <div class="absolute -top-[5px] right-0 mr-10 h-28 w-28 overflow-y-hidden">
                 <img src={lectureSvg} alt={LECTURE}/>
             </div>
         </div>

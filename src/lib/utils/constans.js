@@ -7,6 +7,7 @@ export const FREE = 'free';
 export const REPORTCARD = 'reportcard';
 export const ATTENDANCE = 'attendance';
 export const PROFILE = 'profile';
+export const REPORT = 'report';
 
 export const ORDER_ADDED = 'ORDER_ADDED';
 export const ADMIN = 'ADMIN';

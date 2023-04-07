@@ -2,7 +2,7 @@
     export let list: any;
     import patternSvg from "$lib/images/folk-pattern.png";
     import noImage from "$lib/images/noImage.jpg";
-    import lectureSvg from "$lib/images/work_from_home-remove.png";
+    import lectureSvg from "$lib/images/lecture-remove.png";
     import { LECTURE } from "$lib/utils/constans";
     let lectureList:any[] = list.list;
 
@@ -68,7 +68,7 @@
                     >{list.title}</span
                 >
             </div>
-            <div class="absolute -top-[30px] right-0 mr-10 h-28 w-28 overflow-y-hidden">
+            <div class="absolute -top-[5px] right-0 mr-10 h-28 w-28 overflow-y-hidden">
                 <img src={lectureSvg} alt={LECTURE}/>
             </div>
         </div></a>
@@ -121,7 +121,7 @@
                 </div>
             {/each}
             {:else}
-                    <div class="text-center">게시물이 없습니다.</div>
+            <div class="text-center">게시물이 없습니다.</div>
         {/if}
     </div>
 </div>
