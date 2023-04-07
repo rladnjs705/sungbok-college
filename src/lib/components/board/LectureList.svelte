@@ -81,19 +81,19 @@
                     >
                     <div class="flex justify-between text-xs font-normal">
                         <div class="flex items-center space-x-1">
-                            <a
-                                class="line-clamp-1 break-all text-gray-700 hover:text-blue-500 dark:text-gray-300 dark:hover:text-blue-200"
-                                href="/users/{lecture.writer.userId}">{lecture.writer.nickName}</a
-                            ><span
-                                class="h-0.5 w-0.5 rounded-full bg-gray-700 dark:bg-gray-300"
-                            /><span
-                                class="line-clamp-1 break-all text-gray-700 dark:text-gray-300"
-                                >{displayedAt(lecture.createDate)}</span
-                            >
+                            <!-- <a class="line-clamp-1 break-all text-gray-700 hover:text-blue-500 dark:text-gray-300 dark:hover:text-blue-200"
+                                href="/users/{lecture.writer.userId}">{lecture.writer.nickName}</a> -->
+                            <div class="line-clamp-1 break-all text-gray-700 hover:text-blue-500 dark:text-gray-300 dark:hover:text-blue-200">
+                                {lecture.teacher}
+                            </div>
+                            <span class="h-0.5 w-0.5 rounded-full bg-gray-700 dark:bg-gray-300" />
+                            <span class="line-clamp-1 break-all text-gray-700 dark:text-gray-300">
+                                {displayedAt(lecture.createDate)}
+                            </span>
                         </div>
-                        <div class="text-gray-700 dark:text-gray-300">
+                        <!-- <div class="line-clamp-1 break-all text-gray-700 hover:text-blue-500 dark:text-gray-300 dark:hover:text-blue-200">
                             {lecture.teacher}
-                        </div>
+                        </div> -->
                     </div>
                     <a
                         class="block truncate font-semibold text-gray-900 hover:text-blue-500 dark:text-gray-100 dark:hover:text-blue-200"

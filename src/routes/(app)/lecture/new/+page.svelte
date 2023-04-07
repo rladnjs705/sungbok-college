@@ -274,6 +274,16 @@
             </div>
             <div class="space-y-1">
                 <label
+                    for="thumbnailPath"
+                    class="text-sm font-medium text-gray-700 dark:text-gray-200"
+                    >썸네일</label>
+                <input type="file" id="thumbnailPath" class="block w-full appearance-none rounded-md border border-gray-500/30 pl-3 pr-10 text-base placeholder-gray-500/80 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-0 dark:bg-gray-500/20" on:change={onUploadImageFile} class:inputError={errors.thumbnailPath} accept="image/*">
+                {#if errors.thumbnailPath}
+                    <div class="invalid-feedback was-validated">{errors.thumbnailPath}</div>
+                {/if}
+            </div>
+            <div class="space-y-1">
+                <label
                     for="title"
                     class="text-sm font-medium text-gray-700 dark:text-gray-200"
                     >제목</label>
@@ -340,16 +350,6 @@
                 </div>
                 {#if errors.content}
                     <div class="text-red-500">{errors.content}</div>
-                {/if}
-            </div>
-            <div class="space-y-1">
-                <label
-                    for="thumbnailPath"
-                    class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                    >썸네일</label>
-                <input type="file" id="thumbnailPath" class="block w-full appearance-none rounded-md border border-gray-500/30 pl-3 pr-10 text-base placeholder-gray-500/80 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-0 dark:bg-gray-500/20" on:change={onUploadImageFile} class:inputError={errors.thumbnailPath} accept="image/*">
-                {#if errors.thumbnailPath}
-                    <div class="invalid-feedback was-validated">{errors.thumbnailPath}</div>
                 {/if}
             </div>
             <div class="flex items center space-y-1">

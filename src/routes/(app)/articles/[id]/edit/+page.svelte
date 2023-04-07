@@ -325,26 +325,6 @@
                     <div class="text-red-500">{errors.categoryId}</div>
                 {/if}
             </div>
-            <div class="space-y-1">
-                <label
-                    for="title"
-                    class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                    >제목</label>
-                <!-- svelte-ignore a11y-autofocus -->
-                <input
-                    type="text"
-                    id="title"
-                    placeholder="제목을 입력해주세요."
-                    class="block w-full appearance-none rounded-md border border-gray-500/30 pl-3 pr-10 text-base placeholder-gray-500/80 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-0 dark:bg-gray-500/20"
-                    name="title"
-                    class:border-red-500={errors.title}
-                    bind:value={addValues.title}
-                    maxlength="50"
-                     />
-                {#if errors.title}
-                    <div class="text-red-500">{errors.title}</div>
-                {/if}
-            </div>
             {#if addValues.boardType == LECTURE}
             <div class="space-y-1">
                 <label
@@ -367,6 +347,48 @@
                 {/if}
             </div>
             {/if}
+            {#if addValues.boardType == LECTURE}
+            <div class="space-y-1">
+                <label
+                    for="thumbnailPath"
+                    class="text-sm font-medium text-gray-700 dark:text-gray-200"
+                    >썸네일</label>
+                <input type="file" id="thumbnailPath" class="block w-full appearance-none rounded-md border border-gray-500/30 pl-3 pr-10 text-base placeholder-gray-500/80 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-0 dark:bg-gray-500/20" on:change={onUploadImageFile} class:inputError={errors.thumbnailPath} accept="image/*">
+                {#if errors.thumbnailPath}
+                    <div class="invalid-feedback was-validated">{errors.thumbnailPath}</div>
+                {/if}
+                {#if addValues.thumbnailPath}
+                <img
+                    class="h-40 w-40 rounded-md border border-gray-300 object-contain"
+                    src={addValues.thumbnailPath}
+                    alt="thumbnail"
+                    on:error|once={errorImage}
+                />
+                {:else}
+                <img alt=""/>
+                {/if}
+            </div>
+            {/if}
+            <div class="space-y-1">
+                <label
+                    for="title"
+                    class="text-sm font-medium text-gray-700 dark:text-gray-200"
+                    >제목</label>
+                <!-- svelte-ignore a11y-autofocus -->
+                <input
+                    type="text"
+                    id="title"
+                    placeholder="제목을 입력해주세요."
+                    class="block w-full appearance-none rounded-md border border-gray-500/30 pl-3 pr-10 text-base placeholder-gray-500/80 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-0 dark:bg-gray-500/20"
+                    name="title"
+                    class:border-red-500={errors.title}
+                    bind:value={addValues.title}
+                    maxlength="50"
+                     />
+                {#if errors.title}
+                    <div class="text-red-500">{errors.title}</div>
+                {/if}
+            </div>
             <div class="space-y-1">
                 <label for="tag" class="text-sm font-medium text-gray-700 dark:text-gray-200">태그 - 
                     <span class="rounded-sm text-sm text-blue-500">내용을 대표하는 태그 3개 정도 입력해주세요.</span>
@@ -429,28 +451,6 @@
                     <div class="text-red-500">{errors.content}</div>
                 {/if}
             </div>
-            {#if addValues.boardType == LECTURE}
-            <div class="space-y-1">
-                <label
-                    for="thumbnailPath"
-                    class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                    >썸네일</label>
-                <input type="file" id="thumbnailPath" class="block w-full appearance-none rounded-md border border-gray-500/30 pl-3 pr-10 text-base placeholder-gray-500/80 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-0 dark:bg-gray-500/20" on:change={onUploadImageFile} class:inputError={errors.thumbnailPath} accept="image/*">
-                {#if errors.thumbnailPath}
-                    <div class="invalid-feedback was-validated">{errors.thumbnailPath}</div>
-                {/if}
-                {#if addValues.thumbnailPath}
-                <img
-                    class="h-40 w-40 rounded-md border border-gray-300 object-contain"
-                    src={addValues.thumbnailPath}
-                    alt="thumbnail"
-                    on:error|once={errorImage}
-                />
-                {:else}
-                <img alt=""/>
-                {/if}
-            </div>
-            {/if}
             <div class="flex items center space-y-1">
                 <div class="flex flex-1 flex-wrap items-center"></div>
                 <div class="inline-flex rounded">
