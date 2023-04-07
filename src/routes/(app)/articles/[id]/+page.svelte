@@ -109,7 +109,7 @@
                 }
                 heartSelected = board.isHeart;
                 let number = Math.floor(Math.random()*5);
-                commentEditor = suneditor.create('commentContainer',{
+                commentEditor = suneditor.create('commentEditor',{
                     lang: ko,
                     height: "16vh",
                     width: "100%",
@@ -677,12 +677,12 @@
             {convertHtml(board.title)}
         </h1>
         <div
-            class="my-6 text-sm text-gray-700 dark:text-gray-300 sm:my-8 sm:text-base w-full h-64"
+            class="my-6 text-sm text-gray-700 dark:text-gray-300 sm:my-8 sm:text-base w-full"
         >
             <div class="remirror-theme w-full h-full">
                 <div class="remirror-editor-wrapper w-full h-full">
                     <div class="remirror-theme relative w-full h-full">
-                        <div class="overflow-auto md:w-full h-full">{@html `${convertHtml(board.content)}`}</div>
+                        <div class="overflow-y-hidden w-full h-full">{@html `${convertHtml(board.content)}`}</div>
                     </div>
                 </div>
             </div>
@@ -719,7 +719,7 @@
     {#if $authToken}
     <div class="flex">
         <div class="min-w-0 flex-1">
-            <div id="commentContainer"></div>
+            <div id="commentEditor" bind:this={commentEditor}></div>
             <div class="mt-3 flex items-center justify-end gap-x-4">
                 <button
                     type="button"
