@@ -67,7 +67,7 @@
         <div>
     <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
         {#if lectureList.length > 0}
-            {#each lectureList as lecture}
+            {#each lectureList.reverse() as lecture}
                 <div class="w-full space-y-[9px]">
                     <a
                         href="/articles/{lecture.id}"

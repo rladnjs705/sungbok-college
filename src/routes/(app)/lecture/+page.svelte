@@ -1,5 +1,5 @@
 <script lang="ts">
-    import DetailList from '$components/board/DetailList.svelte';
+    import LectureDetailList from '$components/board/LectureDetailList.svelte';
     import type { PageData } from './$types';
     import { LECTURE } from '$utils/constans';
 
@@ -15,4 +15,4 @@
     }
 </script>
 
-<DetailList list={list} categories={categories} boardType={boardType} response={response}/>
+<LectureDetailList list={list} categories={categories} boardType={boardType} response={response}/>

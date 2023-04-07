@@ -83,7 +83,7 @@
     
 </script>
 
-<div class="w-full">
+<div class="w-full mt-5">
     <a
         class="relative mb-2 text-gray-900 no-underline dark:text-gray-100"
         href={boardType}
@@ -127,14 +127,14 @@
                         <!-- </a> -->
                         <div
                             class="inline pl-1 text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-200 dark:hover:text-blue-200 sm:text-sm"
-                            >{board.isSecret === false ? board.writer.nickName : "익명"}</div
+                            >{board.teacher}</div
                         >
                         <div
                             class="text-xs font-normal leading-5 text-gray-700 dark:text-gray-200 sm:text-sm flex"
                         >
                             <span class="mr-1">·</span>
                             <span>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline w-3 h-3 md:w-4 md:h-4 text-red-500 fill-red-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline w-3 h-3 md:w-4 md:h-4 text-red-500 fill-red-500 mb-0.5 mr-0.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                                 </svg>
                             </span>
