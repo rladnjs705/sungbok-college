@@ -18,6 +18,7 @@
     } from "@rgossiaux/svelte-headlessui";
     import { ADMIN } from '$lib/utils/constans';
     import dummyAvatar from "$lib/images/dummy-avatar.jpg";
+    import SunEditor from 'suneditor/src/lib/core';
 
     let commentCount:number;
     let paginatedItems:any;
@@ -87,7 +88,7 @@
 
                     })
                     .catch(error => console.log(error));
-                }else {
+                } else {
                     const response = await fetch("/api/user/board/detail/"+id);
                     const item = await response.json();
                     if(item.success == true){
@@ -107,6 +108,21 @@
                     }
                 }
                 heartSelected = board.isHeart;
+                let number = Math.floor(Math.random()*5);
+                commentEditor = suneditor.create('commentContainer',{
+                    lang: ko,
+                    height: "16vh",
+                    width: "100%",
+                    plugins: plugins,
+                    value: "",
+                    videoWidth:'100%',
+                    youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
+                    buttonList: [
+                    ['undo', 'redo', 'font'],
+                    ['image', 'video','codeView'],
+                    ['bold', 'underline', 'italic', 'strike']],
+                    placeholder: placeHolderList[number]
+                });
             } else{
                 throw error(404, {
                     message: 'Not found'
@@ -116,57 +132,43 @@
             console.log(error);
         }
 
-        let number = Math.floor(Math.random()*5);
-        commentEditor = suneditor.create('commentContainer',{
-            lang: ko,
-            height: "16vh",
-            width: "100%",
-            plugins: plugins,
-            value: commentValues.content,
-            videoWidth:'100%',
-            youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
-            buttonList: [
-            ['undo', 'redo', 'font'],
-            ['image', 'video','codeView'],
-            ['bold', 'underline', 'italic', 'strike']],
-            placeholder: placeHolderList[number]
-        });
+        
 
-        for (let i=0; i<paginatedItems.length; i++){
-            let number = Math.floor(Math.random()*5);
-            if(paginatedItems.length > 0){
+        // for (let i=0; i<paginatedItems.length; i++){
+        //     let number = Math.floor(Math.random()*5);
+        //     if(paginatedItems.length > 0){
                 
-                commentsEditor[i] = suneditor.create('commentsEditor'+i,{
-                    mode: "inline",
-                    lang: ko,
-                    height: "10vh",
-                    width: "100%",
-                    plugins: plugins,
-                    value: '<p><span class="remirror-mention-atom remirror-mention-atom-at ProseMirror-selectednode" style="color: rgb(121, 99, 210)">@'+paginatedItems[i].writer.nickName+'</span><br></p><br/>',
-                    videoWidth:'100%',
-                    youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
-                    buttonList: [
-                    ['font'],
-                    ['image', 'video','codeView']],
-                    placeholder: placeHolderList[number]
-                });
+        //         commentsEditor[i] = suneditor.create('commentsEditor'+i,{
+        //             mode: "inline",
+        //             lang: ko,
+        //             height: "10vh",
+        //             width: "100%",
+        //             plugins: plugins,
+        //             value: '<p><span class="remirror-mention-atom remirror-mention-atom-at ProseMirror-selectednode" style="color: rgb(121, 99, 210)">@'+paginatedItems[i].writer.nickName+'</span><br></p><br/>',
+        //             videoWidth:'100%',
+        //             youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
+        //             buttonList: [
+        //             ['font'],
+        //             ['image', 'video','codeView']],
+        //             placeholder: placeHolderList[number]
+        //         });
                 
-                commentsUpdateEditor[i] = suneditor.create('commentUpdateContainer'+i,{
-                    mode: "inline",
-                    lang: ko,
-                    height: "10vh",
-                    width: "100%",
-                    plugins: plugins,
-                    value: convertHtml(paginatedItems[i].content),
-                    videoWidth:'100%',
-                    youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
-                    buttonList: [
-                    ['font'],
-                    ['image', 'video','codeView']],
-                    placeholder: placeHolderList[number]
-                });
-            }
-        }
+        //         commentsUpdateEditor[i] = suneditor.create('commentUpdateContainer'+i,{
+        //             mode: "inline",
+        //             lang: ko,
+        //             height: "10vh",
+        //             width: "100%",
+        //             plugins: plugins,
+        //             value: convertHtml(paginatedItems[i].content),
+        //             videoWidth:'100%',
+        //             youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
+        //             buttonList: [
+        //             ['font'],
+        //             ['image', 'video','codeView']],
+        //             placeholder: placeHolderList[number]
+        //         });
+        //     }
+        // }
     })
 
     const boardTypeName = (boardType:string) => {
@@ -717,17 +719,15 @@
     {#if $authToken}
     <div class="flex">
         <div class="min-w-0 flex-1">
-            <form>
-                <textarea id="commentContainer"></textarea>
-                <div class="mt-3 flex items-center justify-end gap-x-4">
-                    <button
-                        type="button"
-                        class="inline-flex items-center space-x-2 rounded-md bg-blue-500 px-8 py-2 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-600 disabled:bg-blue-500 disabled:opacity-40"
-                        on:click={onSubmitAddComment}
-                        >댓글 쓰기</button
-                    >
-                </div>
-            </form>
+            <div id="commentContainer"></div>
+            <div class="mt-3 flex items-center justify-end gap-x-4">
+                <button
+                    type="button"
+                    class="inline-flex items-center space-x-2 rounded-md bg-blue-500 px-8 py-2 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-600 disabled:bg-blue-500 disabled:opacity-40"
+                    on:click={onSubmitAddComment}
+                    >댓글 쓰기</button
+                >
+            </div>
         </div>
     </div>
     {/if}
