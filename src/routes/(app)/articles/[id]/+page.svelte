@@ -18,9 +18,7 @@
     } from "@rgossiaux/svelte-headlessui";
     import { ADMIN, LECTURE } from '$lib/utils/constans';
     import dummyAvatar from "$lib/images/dummy-avatar.jpg";
-    import SunEditor from 'suneditor/src/lib/core';
 
-    let commentCount:number;
     let paginatedItems:any;
     let currentPage = 1
     let pageSize:number = 10
@@ -109,21 +107,8 @@
                     }
                 }
                 heartSelected = board.isHeart;
-                let number = Math.floor(Math.random()*5);
-                commentEditor = suneditor.create('commentEditor',{
-                    lang: ko,
-                    height: "16vh",
-                    width: "100%",
-                    plugins: plugins,
-                    value: "",
-                    videoWidth:'100%',
-                    youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
-                    buttonList: [
-                    ['undo', 'redo', 'font'],
-                    ['image', 'video','codeView'],
-                    ['bold', 'underline', 'italic', 'strike']],
-                    placeholder: placeHolderList[number]
-                });
+                
+                
             } else{
                 throw error(404, {
                     message: 'Not found'
@@ -133,43 +118,57 @@
             console.log(error);
         }
 
-        
+        let number = Math.floor(Math.random()*5);
+        commentEditor = suneditor.create('commentEditor',{
+            lang: ko,
+            height: "16vh",
+            width: "100%",
+            plugins: plugins,
+            value: "",
+            videoWidth:'100%',
+            youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
+            buttonList: [
+            ['undo', 'redo', 'font'],
+            ['image', 'video','codeView'],
+            ['bold', 'underline', 'italic', 'strike']],
+            placeholder: placeHolderList[number]
+        });
 
-        // for (let i=0; i<paginatedItems.length; i++){
-        //     let number = Math.floor(Math.random()*5);
-        //     if(paginatedItems.length > 0){
+        for (let i=0; i<paginatedItems.length; i++){
+            let number = Math.floor(Math.random()*5);
+            if(paginatedItems.length > 0){
                 
-        //         commentsEditor[i] = suneditor.create('commentsEditor'+i,{
-        //             mode: "inline",
-        //             lang: ko,
-        //             height: "10vh",
-        //             width: "100%",
-        //             plugins: plugins,
-        //             value: '<p><span class="remirror-mention-atom remirror-mention-atom-at ProseMirror-selectednode" style="color: rgb(121, 99, 210)">@'+paginatedItems[i].writer.nickName+'</span><br></p><br/>',
-        //             videoWidth:'100%',
-        //             youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
-        //             buttonList: [
-        //             ['font'],
-        //             ['image', 'video','codeView']],
-        //             placeholder: placeHolderList[number]
-        //         });
+                commentsEditor[i] = suneditor.create('commentsEditor'+i,{
+                    mode: "inline",
+                    lang: ko,
+                    height: "10vh",
+                    width: "100%",
+                    plugins: plugins,
+                    value: '<p><span class="remirror-mention-atom remirror-mention-atom-at ProseMirror-selectednode" style="color: rgb(121, 99, 210)">@'+paginatedItems[i].writer.nickName+'</span><br></p><br/>',
+                    videoWidth:'100%',
+                    youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
+                    buttonList: [
+                    ['font'],
+                    ['image', 'video','codeView']],
+                    placeholder: placeHolderList[number]
+                });
                 
-        //         commentsUpdateEditor[i] = suneditor.create('commentUpdateContainer'+i,{
-        //             mode: "inline",
-        //             lang: ko,
-        //             height: "10vh",
-        //             width: "100%",
-        //             plugins: plugins,
-        //             value: convertHtml(paginatedItems[i].content),
-        //             videoWidth:'100%',
-        //             youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
-        //             buttonList: [
-        //             ['font'],
-        //             ['image', 'video','codeView']],
-        //             placeholder: placeHolderList[number]
-        //         });
-        //     }
-        // }
+                commentsUpdateEditor[i] = suneditor.create('commentUpdateContainer'+i,{
+                    mode: "inline",
+                    lang: ko,
+                    height: "10vh",
+                    width: "100%",
+                    plugins: plugins,
+                    value: convertHtml(paginatedItems[i].content),
+                    videoWidth:'100%',
+                    youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
+                    buttonList: [
+                    ['font'],
+                    ['image', 'video','codeView']],
+                    placeholder: placeHolderList[number]
+                });
+            }
+        }
     })
 
     const boardTypeName = (boardType:string) => {
