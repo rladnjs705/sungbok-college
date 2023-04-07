@@ -1,6 +1,6 @@
 <script lang="ts">
     import { page } from '$app/stores';
-    import { onMount } from "svelte";
+    import { afterUpdate, onMount } from "svelte";
     import suneditor from "suneditor";
     import {ko} from 'suneditor/src/lang';
     import plugins from 'suneditor/src/plugins';
@@ -16,7 +16,7 @@
         MenuButton,
         MenuItems
     } from "@rgossiaux/svelte-headlessui";
-    import { ADMIN } from '$lib/utils/constans';
+    import { ADMIN, LECTURE } from '$lib/utils/constans';
     import dummyAvatar from "$lib/images/dummy-avatar.jpg";
     import SunEditor from 'suneditor/src/lib/core';
 
@@ -79,6 +79,7 @@
                     .then(item => {
                         data = {item};
                         board = data.item.response;
+                        console.log(board)
                         commentList = board.commentResponseDTOList;
                         for (let i=0; i<commentList.content.length; i++){
                             commentsShow[commentsShow.length] = false;
@@ -566,6 +567,17 @@
         }
     }
 
+    afterUpdate(() => {
+        document.querySelectorAll("iframe").forEach(function(node) {
+            if (/^https?:\/\/www.youtube.com\/embed\//g.test(node.src)) {
+                node.style.width = "100%";
+                node.style.height = "100%";
+                node.style.top = "0";
+                node.style.left = "0";
+                node.style.position = "absolute";
+            }
+        });
+    });
 </script>
 {#if board}
 <div>
@@ -676,17 +688,31 @@
         >
             {convertHtml(board.title)}
         </h1>
+        {#if board.boardType.toLowerCase() === LECTURE}
         <div
-            class="my-6 text-sm text-gray-700 dark:text-gray-300 sm:my-8 sm:text-base w-full"
+            class="my-6 text-sm text-gray-700 dark:text-gray-300 sm:my-8 sm:text-base h-full"
         >
             <div class="remirror-theme w-full h-full">
                 <div class="remirror-editor-wrapper w-full h-full">
                     <div class="remirror-theme relative w-full h-full">
-                        <div class="overflow-y-hidden w-full h-full">{@html `${convertHtml(board.content)}`}</div>
+                        <div class="overflow-auto w-full h-full">{@html `${convertHtml(board.content)}`}</div>
                     </div>
                 </div>
             </div>
         </div>
+        {:else}
+        <div
+            class="my-6 text-sm text-gray-700 dark:text-gray-300 sm:my-8 sm:text-base"
+        >
+            <div class="remirror-theme">
+                <div class="remirror-editor-wrapper">
+                    <div class="remirror-theme relative">
+                        <div class="overflow-auto">{@html `${convertHtml(board.content)}`}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {/if}
         <div class="flex items-center space-x-1">
             <div class="flex flex-1 flex-wrap items-center">
                 {#if board.hashTag}
