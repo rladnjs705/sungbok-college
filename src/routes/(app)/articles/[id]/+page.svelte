@@ -745,7 +745,7 @@
     {#if $authToken}
     <div class="flex">
         <div class="min-w-0 flex-1">
-            <div id="commentEditor" bind:this={commentEditor}></div>
+            <textarea id="commentEditor" bind:this={commentEditor}></textarea>
             <div class="mt-3 flex items-center justify-end gap-x-4">
                 <button
                     type="button"
