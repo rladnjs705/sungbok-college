@@ -100,7 +100,7 @@
         <Category boardType={boardType} categories={categories} />
     {/if}
     <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
-        {#if paginatedItems.length > 0}
+        {#if paginatedItems}
             {#each paginatedItems.reverse() as lecture}
                 <div class="w-full space-y-[9px]">
                     <a
