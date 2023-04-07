@@ -12,6 +12,7 @@
     import Swal from "sweetalert2";
     import { Checkbox } from 'flowbite-svelte';
     import { LECTURE } from '$lib/utils/constans';
+    import noImage from "$lib/images/noImage.jpg";
     import { Notyf } from 'notyf';
     import 'notyf/notyf.min.css';
     const notyf = new Notyf({
@@ -227,6 +228,10 @@
             console.log(error);
         }
     }
+
+    const errorImage = (e:any) => {
+        e.target.src = noImage;
+    }
 </script>
 
 <div class="md:mx-8">
@@ -280,6 +285,16 @@
                 <input type="file" id="thumbnailPath" class="block w-full appearance-none rounded-md border border-gray-500/30 pl-3 pr-10 text-base placeholder-gray-500/80 shadow-sm focus:border-gray-500 focus:outline-none focus:ring-0 dark:bg-gray-500/20" on:change={onUploadImageFile} class:inputError={errors.thumbnailPath} accept="image/*">
                 {#if errors.thumbnailPath}
                     <div class="invalid-feedback was-validated">{errors.thumbnailPath}</div>
+                {/if}
+                {#if addValues.thumbnailPath}
+                <img
+                    class="h-40 w-40 rounded-md border border-gray-300 object-contain"
+                    src={addValues.thumbnailPath}
+                    alt="thumbnail"
+                    on:error|once={errorImage}
+                />
+                {:else}
+                <img alt=""/>
                 {/if}
             </div>
             <div class="space-y-1">
