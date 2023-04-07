@@ -71,12 +71,17 @@
     onMount(async ()=> {
         userId = Number($auth._id);
         const id = Number($page.params.id);
+        console.log(userId);
+        console.log(id)
         try {
             if(!isNaN(id)){
                 if(userId > 0){
+                    console.log("들어옴?1")
                     await fetch("/api/user/board/detail/"+id+"/"+$auth._id)
                     .then(response => response.json())
                     .then(item => {
+                        console.log("들어옴?2")
+                        console.log(item)
                         data = {item};
                         board = data.item.response;
                         commentList = board.commentResponseDTOList;
@@ -89,8 +94,10 @@
                     })
                     .catch(error => console.log(error));
                 }else {
+                    console.log("들어옴?3")
                     const response = await fetch("/api/user/board/detail/"+id);
                     const item = await response.json();
+                    console.log(item)
                     if(item.success == true){
                         data = {item};
                         board = data.item.response;
@@ -116,9 +123,11 @@
         } catch (error) {
             console.log(error);
         }
+    })
 
+    onMount(() => {
         let number = Math.floor(Math.random()*5);
-        commentEditor = suneditor.create(commentEditor,{
+        commentEditor = suneditor.create('commentContainer',{
             lang: ko,
             height: "16vh",
             width: "100%",
@@ -719,7 +728,7 @@
     <div class="flex">
         <div class="min-w-0 flex-1">
             <form>
-                <textarea id="commentContainer" bind:this={commentEditor}></textarea>
+                <textarea id="commentContainer"></textarea>
                 <div class="mt-3 flex items-center justify-end gap-x-4">
                     <button
                         type="button"
