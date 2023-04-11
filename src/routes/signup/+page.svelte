@@ -371,12 +371,12 @@
                 </div>
                 <div class="flex items-center justify-center">
                     <div class="flex items-center p-1 leading-none">
-                        <a
+                        <!-- <a
                             class="px-6 font-medium text-xs text-blue-500 hover:text-blue-400"
                             target="_blank"
                             href="/terms">서비스이용약관</a
-                        >
-                        <div class="inline-block h-3 w-0.5 bg-gray-200" />
+                        > -->
+                        <!-- <div class="inline-block h-3 w-0.5 bg-gray-200" /> -->
                         <a
                             class="px-6 font-medium text-xs text-blue-500 hover:text-blue-400"
                             target="_blank"
