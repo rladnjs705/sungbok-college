@@ -1,6 +1,7 @@
 <script lang="ts">
     import { Notyf } from 'notyf';
     import 'notyf/notyf.min.css';
+    import {authToken} from "$stores";
     const notyf = new Notyf({
       duration: 3000,
       position: {
@@ -39,23 +40,24 @@
       }
     }
 </script>
-<div class="bg-gray-100 py-8">
-    <form class="mx-auto max-w-xl shadow-lg p-8 bg-white rounded-lg" on:submit={handleSubmit}>
+{#if $authToken}
+<div class="bg-gray-100 py-8 dark:bg-gray-500">
+    <form class="mx-auto max-w-xl shadow-lg p-8 bg-white dark:bg-gray-600 rounded-lg" on:submit={handleSubmit}>
         <h2 class="text-2xl font-bold mb-6">이메일 보내기</h2>
         <div class="mb-4">
-        <label class="block text-gray-700 font-bold mb-2" for="name">
+        <label class="block text-gray-700 font-bold mb-2 dark:text-white" for="name">
             이름
         </label>
             <input class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="userName" bind:value={formData.userName}  required type="text" placeholder="이름">
         </div>
         <div class="mb-4">
-        <label class="block text-gray-700 font-bold mb-2" for="email">
-            이메일
+        <label class="block text-gray-700 font-bold mb-2 dark:text-white" for="email">
+            받을 이메일 주소
         </label>
             <input class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" bind:value={formData.email} required type="email" placeholder="이메일">
         </div>
         <div class="mb-4">
-        <label class="block text-gray-700 font-bold mb-2" for="message">
+        <label class="block text-gray-700 font-bold mb-2 dark:text-white" for="message">
             내용
         </label>
             <textarea class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="content" bind:value={formData.content} placeholder="내용을 입력하세요." required></textarea>
@@ -68,3 +70,4 @@
         </button>
     </form>
 </div>
+{/if}

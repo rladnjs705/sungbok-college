@@ -4,6 +4,7 @@
     import Swal from 'sweetalert2';
     import logo from "$lib/images/logo.png";
     import { onMount } from 'svelte';
+    import 'sweetalert2/src/sweetalert2.scss';
 
     let formValues = {
         email: '',
@@ -369,27 +370,15 @@
                     </div>
                 </div>
                 <div class="flex items-center justify-center">
-                    <div class="sr-only flex items-center">
-                        <input
-                            id="remember-me"
-                            name="remember-me"
-                            type="checkbox"
-                            class="h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
-                        /><label
-                            for="remember-me"
-                            class="ml-2 block text-sm text-gray-900"
-                            >로그인 유지</label
-                        >
-                    </div>
-                    <div class="flex items-center p-1 text-sm leading-none">
+                    <div class="flex items-center p-1 leading-none">
                         <a
-                            class="px-6 font-medium text-blue-500 hover:text-blue-400"
+                            class="px-6 font-medium text-xs text-blue-500 hover:text-blue-400"
                             target="_blank"
                             href="/terms">서비스이용약관</a
                         >
                         <div class="inline-block h-3 w-0.5 bg-gray-200" />
                         <a
-                            class="px-6 font-medium text-blue-500 hover:text-blue-400"
+                            class="px-6 font-medium text-xs text-blue-500 hover:text-blue-400"
                             target="_blank"
                             href="/privacy">개인정보처리방침</a
                         >

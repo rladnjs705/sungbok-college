@@ -27,8 +27,8 @@
     const cancelLink = "/notice";
 
     let errors:any = {};
-    let filePath:string[] = [];
-    let fileName:string[] = [];
+
+    let arr:any = [];
 
     let addValues = {
         categoryId: '',
@@ -36,8 +36,7 @@
         content: '',
         boardType: REPORT,
 
-        filePath: filePath,
-        fileName: fileName,
+        media : arr,
 
         //유저정보
         userId: 0,
@@ -109,48 +108,63 @@
     }
 
     const onUploadFile = async (e:any) => {
-        const { files } = e.target;
+        const files  = e.target.files;
         try {
-        if(!files || files.length === 0){
-            return;
-        }
-
-        for (let i = 0; i < files.length; i++){
-            const file = files[i];
-
-            console.log(file.name);
-            // Check file extension
-            const allowedExtensions = ["pdf", "hwp", "docs", "png", "jpg", "jpeg", "xls", "xlsx", "word"];
-            const fileExtension = file.name.split(".").pop().toLowerCase();
-            if (!allowedExtensions.includes(fileExtension)) {
-                notyf.error('이미지 및 문서 파일만 업로드 가능합니다.');
+            if(!files || files.length === 0){
                 return;
             }
+            for (let i = 0; i < files.length; i++){
+                const file = files[i];
 
-            // Check file size (in bytes)
-            const allowedSize = 5 * 1024 * 1024; // 5mb
-            if (file.size > allowedSize) {
-                notyf.error('파일 크기가 큽니다. 5mb아래로 업로드 해주세요.');
-                return;
+                // Check file extension
+                const allowedExtensions = ["pdf", "hwp", "docs", "png", "jpg", "jpeg", "xls", "xlsx", "word"];
+                const fileExtension = file.name.split(".").pop().toLowerCase();
+                if (!allowedExtensions.includes(fileExtension)) {
+                    notyf.error('이미지 및 문서 파일만 업로드 가능합니다.');
+                    return;
+                }
+
+                // Check file size (in bytes)
+                const allowedSize = 5 * 1024 * 1024; // 5mb
+                if (file.size > allowedSize) {
+                    notyf.error('파일 크기가 큽니다. 5mb아래로 업로드 해주세요.');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('file', files[i]);
+                await axios.post('/api/admin/upload/files', formData, {
+                    headers: {
+                    'Content-Type': 'multipart/form-data'
+                    }
+                }).then((res) => {
+                    if(res.status == 200){
+                        let media = {
+                            refType : '100',
+                            refSeq : 0,
+                            mediaOrder : 0,
+                            originalFileName : '',
+                            savedFileName : '',
+                            mediaSize : 0,
+                            mediaPath : '',
+                            delYn : 'N',
+                            registerId: '',
+                            updateId: ''
+                        }
+                        media.originalFileName = file.name;
+                        media.savedFileName = res.data.data.savedFileName;
+                        media.mediaPath = res.data.data.link;
+                        media.mediaSize = file.size;
+                        media.registerId = $auth.email;
+                        media.updateId = $auth.email;
+                        addValues.media[i] = media;
+                        
+                    } else{
+                        notyf.error('서버 에러입니다. 관리자에게 문의해 주세요.');
+                    }
+                });
+                console.log(addValues);
             }
-
-            const formData = new FormData();
-            const upload = formData.append('file', files[i]);
-            // const response =  await axios.post('/api/admin/upload/files', formData, {
-            //     headers: {
-            //     'Content-Type': 'multipart/form-data'
-            //     }
-            // });
-            // if(response.status == 200){
-            //     addValues.fileName[i] = file.name;
-            //     addValues.filePath[i] = response.data.data.link;
-            //     return upload;
-            // } else{
-            //     notyf.error('서버 에러입니다. 관리자에게 문의해 주세요.');
-            // }
-
-        }
-
         } catch (error) {
             console.log(error);
         }
@@ -191,13 +205,17 @@
                 {#if errors.filePath}
                     <div class="invalid-feedback was-validated">{errors.filePath}</div>
                 {/if}
-                {#if addValues.filePath}
-                <div class="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                    <span class="text-gray-600">{addValues.fileName}</span>
-                  </div>
+                {#if addValues.media}
+                    {#each addValues.media as media}
+                        {#if media.mediaPath}
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                            <span class="text-gray-600">{media.originalFileName}</span>
+                        </div>
+                        {/if}
+                    {/each}
                 {/if}
             </div>
             <div class="space-y-1">

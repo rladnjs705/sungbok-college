@@ -1,5 +1,5 @@
 import { writable, derived } from 'svelte/store';
-import { ALL, ADMIN } from '$utils/constans';
+import { ALL, ADMIN, REPORT } from '$utils/constans';
 import { browser } from '$app/environment';
 import axios from 'axios';
 import { goto } from '$app/navigation';
@@ -137,7 +137,15 @@ function setBoardDetailList() :any {
   const getBoardDetailList = async (boardType:string,categoryEng:string) => {
     if(boardType == ALL){
       goto("/")
-    }else{ 
+    } else if (boardType == REPORT) {
+      try {
+        const response = await fetch("/api/user/board/"+boardType);
+        const item = await response.json();
+        set(item);
+      } catch (error) {
+        console.log(error);
+      }
+    } else { 
       if(categoryEng == ALL){
         try {
           const response = await fetch("/api/user/board/"+boardType);
@@ -165,6 +173,26 @@ function setBoardDetailList() :any {
     }
 }
 
+function setAttendanceList() :any {
+  const { subscribe, update, set } = writable();
+  const getAttendanceList = async () => {
+    try {
+      const response = await fetch("/api/user/attendance");
+      const item = await response.json();
+      console.log(item.response);
+      set(item.response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+    return {
+      subscribe,
+      update,
+      set,
+      getAttendanceList,
+    }
+}
+
 export const authToken = setAuthToken();
 export const auth = setAuth();
 export const isAdmin = setIsAdmin();
@@ -175,3 +203,4 @@ export const pageNumber = writable(1);
 export const boardDetailList = setBoardDetailList();
 export const isDark = writable(false);
 export const isProfileOpen = writable(false);
+export const attendanceList = setAttendanceList();

@@ -5,7 +5,8 @@
     import Swal from 'sweetalert2';
     import logo from "$lib/images/logo.png";
     import { onMount } from 'svelte';
-  
+    import 'sweetalert2/src/sweetalert2.scss';
+
   let formValues = {
     userEmail: '',
     password: ''
@@ -53,7 +54,6 @@
           goto("/");
         } else {
           const result = await response.json();
-          console.log(result.data.error);
           Swal.fire({
             icon: 'error',
             text: result.data.error

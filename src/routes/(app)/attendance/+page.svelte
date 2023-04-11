@@ -4,15 +4,13 @@
     import { extractErrors, attendanceValidateSchema } from '$utils/validates';
     import { paginate, LightPaginationNav, DarkPaginationNav } from 'svelte-paginate'
     import { onMount } from 'svelte';
-    import { auth, authToken, isDark } from '$stores';
+    import { auth, authToken, isDark, attendanceList } from '$stores';
     import { goto } from '$app/navigation';
     import dummyAvatar from "$lib/images/dummy-avatar.jpg";
 
     let paginatedItems:any;
     let currentPage = 1
     let pageSize:number = 10
-
-    let attendanceList:any;
     let items;
 
     let addValues:any={
@@ -21,18 +19,12 @@
 
     let errors:any = {};
 
-    onMount(async () => {
-      await fetch("/api/user/attendance")
-            .then(response => response.json())
-            .then(item => {
-              attendanceList = item.response;
-              console.log(attendanceList)
-            })
-            .catch(error => console.log(error));
+    onMount(() => {
+      attendanceList.getAttendanceList();
     });
 
-    $:if(attendanceList){
-      items = attendanceList.content;
+    $:if($attendanceList){
+      items = $attendanceList.content;
       paginatedItems = paginate({ items, pageSize, currentPage});
     }
 
@@ -93,13 +85,15 @@
     }
 
 </script>
+
 <div class="md:mx-24">
     <div class="space-y-11">
         <div class="grid grid-cols-1 gap-y-7">
             <div class="space-y-2 mt-3">
-                <h3 class="text-xl font-medium sm:text-3xl sm:leading-10">출석하기</h3>
+                <h3 class="text-xl font-medium sm:text-3xl sm:leading-10">출석체크</h3>
             </div>
             <div class="space-y-1">
+              {#if $authToken}
                 <input
                     type="text"
                     id="content"
@@ -113,7 +107,6 @@
                 {#if errors.content}
                     <div class="text-red-500">{errors.content}</div>
                 {/if}
-                {#if $authToken}
                 <div class="flex justify-end">
                     <button 
                     type="submit" 
@@ -121,71 +114,71 @@
                     on:click={() => submitAttendance()}
                     >출석하기</button>
                 </div>
+              {/if}
+              <div class="w-full overflow-x-auto scroll">
+                <table class="table-auto w-full p-6 mt-2 text-xs text-left whitespace-nowrap">
+                  <thead>
+                    <!-- <tr>
+                      <th class="px-4 py-2"></th>
+                      <th class="px-4 py-2 "></th>
+                      <th class="px-4 py-2"></th>
+                    </tr> -->
+                  </thead>
+                  <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                  {#if paginatedItems}
+                    {#each paginatedItems as data, index}
+                    <tr class="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-700 dark:text-gray-400">
+                      <td class="px-4 py-3 w-1/12">
+                        <div class="flex items-center text-sm">
+                          <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
+                            <img class="object-cover w-full h-full rounded-full" src={dummyAvatar} alt="" loading="lazy">
+                            <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
+                          </div>
+                          <div class="flex items-center">
+                            {#if index == 0}
+                            <span class="text-xs mr-2 p-0.5 px-1.5 text-yellow-300 border border-yellow-300 rounded-full">★ 1등</span>
+                            {:else if index == 1}
+                            <span class="text-xs mr-2 p-0.5 px-1.5 text-gray-300 border border-gray-300 rounded-full">★ 2등</span>
+                            {:else if index == 2}
+                            <span class="text-xs mr-2 p-0.5 px-1.5 text-amber-800 border border-amber-800 rounded-full">★ 3등</span>
+                            {/if}
+                            <p class="font-semibold text-xs">{data.writer.nickName}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-4 py-3 text-sm w-8/12"><p class="w-16 md:w-72 lg:w-96 text-xs overflow-ellipsis overflow-hidden">{data.content}</p></td>
+                      <td class="px-4 py-3 text-xs text-gray-400 w-2/12">{dateFommater(data.createDate)}</td>
+                    </tr>
+                    {/each}
+                  {/if}
+                  </tbody>
+                </table>
+              </div>
+              <!-- Pagination -->
+              {#if $isDark}
+                {#if $attendanceList && $attendanceList.totalElements > 0}
+                  <DarkPaginationNav
+                    totalItems="{$attendanceList.totalElements}"
+                    pageSize="{pageSize}"
+                    currentPage="{currentPage}"
+                    limit="{1}"
+                    showStepOptions="{true}"
+                    on:setPage="{(e) => currentPage = e.detail.page}"
+                  />
                 {/if}
-                    <div class="w-full overflow-x-auto scroll">
-                      <table class="table-auto w-full p-6 mt-2 text-xs text-left whitespace-nowrap">
-                        <thead>
-                          <!-- <tr>
-                            <th class="px-4 py-2"></th>
-                            <th class="px-4 py-2 "></th>
-                            <th class="px-4 py-2"></th>
-                          </tr> -->
-                        </thead>
-                        <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-                        {#if paginatedItems}
-                          {#each paginatedItems as data, index}
-                          <tr class="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-700 dark:text-gray-400">
-                            <td class="px-4 py-3 w-1/12">
-                              <div class="flex items-center text-sm">
-                                <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                                  <img class="object-cover w-full h-full rounded-full" src={dummyAvatar} alt="" loading="lazy">
-                                  <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
-                                </div>
-                                <div class="flex items-center">
-                                  {#if index == 0}
-                                  <span class="text-xs mr-2 p-0.5 px-1.5 text-yellow-300 border border-yellow-300 rounded-full">★ 1등</span>
-                                  {:else if index == 1}
-                                  <span class="text-xs mr-2 p-0.5 px-1.5 text-gray-300 border border-gray-300 rounded-full">★ 2등</span>
-                                  {:else if index == 2}
-                                  <span class="text-xs mr-2 p-0.5 px-1.5 text-amber-800 border border-amber-800 rounded-full">★ 3등</span>
-                                  {/if}
-                                  <p class="font-semibold text-xs">{data.writer.nickName}</p>
-                                </div>
-                              </div>
-                            </td>
-                            <td class="px-4 py-3 text-sm w-8/12"><p class="w-16 md:w-72 lg:w-96 text-xs overflow-ellipsis overflow-hidden">{data.content}</p></td>
-                            <td class="px-4 py-3 text-xs text-gray-400 w-2/12">{dateFommater(data.createDate)}</td>
-                          </tr>
-                          {/each}
-                        {/if}
-                        </tbody>
-                      </table>
-                    </div>
-                    <!-- Pagination -->
-                    {#if $isDark}
-                      {#if attendanceList && attendanceList.totalElements > 0}
-                        <DarkPaginationNav
-                          totalItems="{attendanceList.totalElements}"
-                          pageSize="{pageSize}"
-                          currentPage="{currentPage}"
-                          limit="{1}"
-                          showStepOptions="{true}"
-                          on:setPage="{(e) => currentPage = e.detail.page}"
-                        />
-                      {/if}
-                      {:else}
-                      {#if attendanceList && attendanceList.totalElements > 0}
-                        <LightPaginationNav
-                          totalItems="{attendanceList.totalElements}"
-                          pageSize="{pageSize}"
-                          currentPage="{currentPage}"
-                          limit="{1}"
-                          showStepOptions="{true}"
-                          on:setPage="{(e) => currentPage = e.detail.page}"
-                        />
-                      {/if}
-                    {/if}
-                  </div>
+                {:else}
+                {#if $attendanceList && $attendanceList.totalElements > 0}
+                  <LightPaginationNav
+                    totalItems="{$attendanceList.totalElements}"
+                    pageSize="{pageSize}"
+                    currentPage="{currentPage}"
+                    limit="{1}"
+                    showStepOptions="{true}"
+                    on:setPage="{(e) => currentPage = e.detail.page}"
+                  />
+                {/if}
+              {/if}
+            </div>
         </div>
     </div>
 </div>

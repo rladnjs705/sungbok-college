@@ -2,6 +2,7 @@
   import "../../app.css";
   import "$lib/styles/main.scss";
   import "suneditor/dist/css/suneditor.min.css"
+  import 'sweetalert2/src/sweetalert2.scss';
 
   import Sidebar from '$components/Sidebar.svelte';
   import Header from "$components/Header.svelte";

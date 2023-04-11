@@ -1,6 +1,6 @@
 <script lang="ts">
     import { itemFooterSelected, boardDetailList, itemCategorySelected } from "$lib/stores";
-    import { ALL, FREE, LECTURE, NOTICE, QUESTIONS, REPORTCARD, ATTENDANCE } from "$lib/utils/constans";
+    import { ALL, FREE, LECTURE, NOTICE, QUESTIONS, REPORTCARD, ATTENDANCE, REPORT } from "$lib/utils/constans";
     import { authToken, auth, isAdmin, pageNumber } from '$stores';
     import { goto } from '$app/navigation';
     import logoWhite2 from "$lib/images/logo_white2.png";
@@ -51,29 +51,29 @@
           <div class="shrink-0">
               <a  on:click={() => itemHeaderselected(NOTICE)}
                   class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-200 text-sm font-medium"
-                  href="/notice"><span class="hover:no-underline">공지사항</span></a
+                  href="/{NOTICE}"><span class="hover:no-underline">공지사항</span></a
               >
           </div>
           <div class="h-3 w-[1px] bg-gray-400 dark:bg-gray-400/70" />
           <div class="shrink-0">
               <a  on:click={() => itemHeaderselected(LECTURE)}
                   class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-100 text-sm font-medium hover:no-underline"
-                  href="/lecture">강의콘텐츠</a
+                  href="/{LECTURE}">강의콘텐츠</a
               >
           </div>
           <div class="h-3 w-[1px] bg-gray-400 dark:bg-gray-400/70" />
           <div class="shrink-0">
             <a  on:click={() => itemHeaderselected(FREE)}
                 class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-100 text-sm font-medium hover:no-underline"
-                href="/free">커뮤니티</a
+                href="/{FREE}">커뮤니티</a
             >
           </div>
         {#if $authToken}
           <div class="h-3 w-[1px] bg-gray-400 dark:bg-gray-400/70" />
           <div class="shrink-0">
-              <a  on:click={() => itemHeaderselected(REPORTCARD)}
+              <a  on:click={() => itemHeaderselected(REPORT)}
                   class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-100 text-sm font-medium hover:no-underline"
-                  href="/reportCard">성적</a
+                  href="/{REPORT}">성적</a
               >
           </div>
         {/if}
@@ -81,14 +81,14 @@
           <div class="shrink-0">
             <a  on:click={() => itemHeaderselected(QUESTIONS)}
                 class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-100 text-sm font-medium hover:no-underline"
-                href="/questions">Q&amp;A</a
+                href="/{QUESTIONS}">Q&amp;A</a
             >
           </div> 
           <div class="h-3 w-[1px] bg-gray-400 dark:bg-gray-400/70" />
           <div class="shrink-0">
             <a  on:click={() => itemHeaderselected(ATTENDANCE)}
                 class="hover:text-blue-100 dark:text-gray-100 dark:hover:text-blue-100 text-sm font-medium hover:no-underline"
-                href="/attendance">출석부</a
+                href="/{ATTENDANCE}">출석부</a
             >
           </div> 
         </div>

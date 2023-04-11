@@ -180,6 +180,7 @@
             case "LECTURE": boardName = "강의콘텐츠"; break;
             case "REPORTCARD": boardName = "성적"; break;
             case "ATTENDANCE": boardName = "출석"; break;
+            case "REPORT" : boardName = "리포트"; break;
         }
         return boardName;
     }
@@ -577,6 +578,26 @@
             }
         });
     });
+
+    const fileDownload = async (media:any) => {
+        let params = {
+            fileName : media.savedFileName,
+            originalFileName : media.originalFileName
+        }
+
+        await axios.get('/api/admin/download/file', {params, responseType: "blob"})
+        .then((res) => {
+            const name = media.originalFileName;
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", name);
+            link.style.cssText = "display:none";
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        });
+    }
 </script>
 {#if board}
 <div>
@@ -588,7 +609,7 @@
         </div>
         <div class="relative ml-2 flex text-sm font-normal sm:ml-5">
             <div
-                class="bg-white px-2 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
+                class="bg-white px-2 text-gray-500 dark:bg-gray-700 dark:text-gray-400"
             >
                 <a
                     class="text-gray-400 hover:text-blue-500 dark:hover:text-blue-200"
@@ -709,6 +730,26 @@
                         <div class="overflow-auto">{@html `${convertHtml(board.content)}`}</div>
                     </div>
                 </div>
+            </div>
+        </div>
+        {/if}
+        {#if $auth.role == ADMIN || $authToken && $auth._id === board.writer.userId}
+        <div class="space-y-1">
+            <label
+            for="filePath"
+            class="text-sm font-medium text-gray-700 dark:text-gray-200"
+            >파일</label>
+            <div class="grid items-center grid-cols-1">
+            {#each board.media as media}
+                <div class="flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                    <button on:click={() => fileDownload(media)}>
+                        <span class="text-gray-600">{media.originalFileName}</span>
+                    </button>
+                </div>
+            {/each}
             </div>
         </div>
         {/if}
