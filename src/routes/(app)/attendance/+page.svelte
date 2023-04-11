@@ -57,7 +57,7 @@
             console.log(error)
             if(error){
               if(error.response.status == 400){
-                if(error.response.data.resultCode ==1100){
+                if(error.response.data.resultCode == 1100){
                   Swal.fire({
                     icon: 'error',
                     text: error.response.data.resultMsg,

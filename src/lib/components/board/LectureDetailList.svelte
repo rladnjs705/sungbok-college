@@ -101,7 +101,7 @@
     {/if}
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
         {#if paginatedItems}
-            {#each paginatedItems.reverse() as lecture}
+            {#each paginatedItems as lecture}
                 <div class="w-full space-y-[9px]">
                     <a
                         href="/articles/{lecture.id}"
