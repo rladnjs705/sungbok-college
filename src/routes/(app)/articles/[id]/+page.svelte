@@ -16,7 +16,7 @@
         MenuButton,
         MenuItems
     } from "@rgossiaux/svelte-headlessui";
-    import { ADMIN, LECTURE } from '$lib/utils/constans';
+    import { ADMIN, LECTURE, REPORT } from '$lib/utils/constans';
     import dummyAvatar from "$lib/images/dummy-avatar.jpg";
 
     let paginatedItems:any;
@@ -77,7 +77,6 @@
                     .then(item => {
                         data = {item};
                         board = data.item.response;
-                        console.log(board)
                         commentList = board.commentResponseDTOList;
                         for (let i=0; i<commentList.content.length; i++){
                             commentsShow[commentsShow.length] = false;
@@ -552,7 +551,6 @@
         try {
             const response = await axios.delete("/api/user/board/"+id);
             if(response.status == 200){
-                console.log("들어옴?")
                 goto(`/${board.boardType.toLowerCase()}/${board.category.categoryEng}`)
             }else{
                 console.log(response);
@@ -733,7 +731,7 @@
             </div>
         </div>
         {/if}
-        {#if $auth.role == ADMIN || $authToken && $auth._id === board.writer.userId}
+        {#if board.boardType.toLowerCase() == REPORT && ($auth.role == ADMIN || $authToken && $auth._id === board.writer.userId)}
         <div class="space-y-1">
             <label
             for="filePath"
