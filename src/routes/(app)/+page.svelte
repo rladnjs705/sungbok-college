@@ -9,7 +9,7 @@
 
     const notice = {
         title: "공지사항",
-        list: data.noticeList.response.content,
+        list: data.noticeList.response,
         boardType: NOTICE
     };
 
