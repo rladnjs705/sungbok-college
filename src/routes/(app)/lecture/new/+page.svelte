@@ -232,6 +232,11 @@
     const errorImage = (e:any) => {
         e.target.src = noImage;
     }
+
+    import { Keyboard } from '@capacitor/keyboard';
+    Keyboard.addListener('keyboardDidShow', () => {
+        document.addEventListener('keydown', processTagsOnKeyUpEvent);
+    });
 </script>
 
 <div class="md:mx-8">
