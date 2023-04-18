@@ -203,7 +203,7 @@
     function processTagsOnKeyUpEvent(e:any) {
         const keyCode = e.keyCode;
         if(tag != ''){
-            if(keyCode === 13 || keyCode === 32){
+            if(keyCode === 13 || keyCode === 32 || e.code == "Space"){
                 tag = sanitizeTag(tag);
                 if (tags.length+createTagList.length < 5) {
                     if (tag.length > 0) {
