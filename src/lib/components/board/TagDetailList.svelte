@@ -1,8 +1,9 @@
 <script lang="ts">
-    import { isDark } from '$stores';
+    import { itemCategorySelected, pageNumber, isDark } from '$stores';
     import { paginate, LightPaginationNav, DarkPaginationNav } from 'svelte-paginate'
     import patternSvg from "$lib/images/pattern.svg";
     import profileSvg from "$lib/images/profile.png";
+    import { goto } from '$app/navigation';
     
     export let list:any;
     export let boardList:any = list.list;
@@ -61,6 +62,13 @@
     }
 
     $:paginatedItems = paginate({ items, pageSize, currentPage});
+
+    console.log(boardList)
+    const onCategorySelected = (boardType:string,categoryEng:string) =>{
+        $pageNumber = 1;
+        itemCategorySelected.selectCategory(categoryEng);
+        goto(`/${boardType}/${categoryEng}`)
+    }
     
 </script>
 
@@ -130,7 +138,7 @@
                 <div class="flex mt-4">
                     <div class="flex flex-1 items-center gap-x-3">
                         {#if board.category}
-                            <a class="shrink-0 rounded bg-blue-50 py-0.5 px-2.5 text-xs font-medium text-blue-500 hover:text-blue-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:text-blue-200" href="#null" on:click={() => onCategorySelected(board.category.categoryEng)}>{board.category.categoryName}</a>
+                            <a class="shrink-0 rounded bg-blue-50 py-0.5 px-2.5 text-xs font-medium text-blue-500 hover:text-blue-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:text-blue-200" href="#null" on:click={() => onCategorySelected(board.boardType.toLowerCase(),board.category.categoryEng)}>{board.category.categoryName}</a>
                         {/if}
                         <div class="flex items-center gap-x-2 sm:gap-x-2">
                             {#if board.hashTag}
@@ -156,13 +164,6 @@
                             <span class="font-medium">{formatLargeNumber(board.commentCount)}</span>
                             <span class="sr-only">comments</span>
                         </div>
-                        <!-- <div class="inline-flex items-center -space-x-0.5 text-xs sm:text-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-5 w-5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
-                            </svg>
-                            <span class="font-medium">{formatLargeNumber(board.likeCount)}</span>
-                            <span class="sr-only">likes</span>
-                        </div> -->
                     </div>
                 </div>
             </li>
