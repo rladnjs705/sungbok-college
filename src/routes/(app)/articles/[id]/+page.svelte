@@ -19,6 +19,8 @@
     import { ADMIN, LECTURE, REPORT } from '$lib/utils/constans';
     import dummyAvatar from "$lib/images/dummy-avatar.jpg";
 
+    const id = Number($page.params.id);
+
     let paginatedItems:any;
     let currentPage = 1
     let pageSize:number = 10
@@ -31,8 +33,7 @@
     let heartSelected = false;
     let commentsEditor:any[]=[];
     let commentsUpdateEditor:any[]=[];
-    let items:any[];
-    let toggleMenu = true;
+    let items:any[]=[];
 
     let commentValues = {
         userId :0,
@@ -40,7 +41,6 @@
         commentId: null as number | null,
         parentId: null as number | null
     }
-
 
     //댓글쓰기/닫기
     let commentsShow:any[] = [];
@@ -61,14 +61,11 @@
         '서로 다른 경험과 관점을 존중해요.'
     ]
 
-    $:if(commentList){
-        items = commentList.content;
-        paginatedItems = paginate({ items, pageSize, currentPage});
-    }
+    $:paginatedItems = paginate({ items, pageSize, currentPage});
+    
 
     onMount(async ()=> {
         userId = Number($auth._id);
-        const id = Number($page.params.id);
         try {
             if(!isNaN(id)){
                 if(userId > 0){
@@ -78,12 +75,11 @@
                         data = {item};
                         board = data.item.response;
                         commentList = board.commentResponseDTOList;
-                        for (let i=0; i<commentList.content.length; i++){
+                        for (let i=0; i<board.commentResponseDTOList.content.length; i++){
                             commentsShow[commentsShow.length] = false;
-                            commentList.content[i].isShow = true;
+                            board.commentResponseDTOList.content[i].isShow = true;
                             commentsUpdateToggle[commentsUpdateToggle.length] = false;
                         }
-
                     })
                     .catch(error => console.log(error));
                 } else {
@@ -92,10 +88,9 @@
                     if(item.success == true){
                         data = {item};
                         board = data.item.response;
-                        commentList = board.commentResponseDTOList;
-                        for (let i=0; i<commentList.content.length; i++){
+                        for (let i=0; i<board.commentResponseDTOList.content.length; i++){
                             commentsShow[commentsShow.length] = false;
-                            commentList.content[i].isShow = true;
+                            board.commentResponseDTOList.content[i].isShow = true;
                             commentsUpdateToggle[commentsUpdateToggle.length] = false;
                         }
                         
@@ -117,6 +112,8 @@
             console.log(error);
         }
 
+        items = commentList.content;
+
         let number = Math.floor(Math.random()*5);
         commentEditor = suneditor.create('commentEditor',{
             lang: ko,
@@ -132,41 +129,38 @@
             ['bold', 'underline', 'italic', 'strike']],
             placeholder: placeHolderList[number]
         });
-
+        
         for (let i=0; i<paginatedItems.length; i++){
             let number = Math.floor(Math.random()*5);
-            if(paginatedItems.length > 0){
-                
-                commentsEditor[i] = suneditor.create('commentsEditor'+i,{
-                    mode: "inline",
-                    lang: ko,
-                    height: "10vh",
-                    width: "100%",
-                    plugins: plugins,
-                    value: '<p><span class="remirror-mention-atom remirror-mention-atom-at ProseMirror-selectednode" style="color: rgb(121, 99, 210)">@'+paginatedItems[i].writer.nickName+'</span><br></p><br/>',
-                    videoWidth:'100%',
-                    youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
-                    buttonList: [
-                    ['font'],
-                    ['image', 'video','codeView']],
-                    placeholder: placeHolderList[number]
-                });
-                
-                commentsUpdateEditor[i] = suneditor.create('commentUpdateContainer'+i,{
-                    mode: "inline",
-                    lang: ko,
-                    height: "10vh",
-                    width: "100%",
-                    plugins: plugins,
-                    value: convertHtml(paginatedItems[i].content),
-                    videoWidth:'100%',
-                    youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
-                    buttonList: [
-                    ['font'],
-                    ['image', 'video','codeView']],
-                    placeholder: placeHolderList[number]
-                });
-            }
+            commentsEditor[i] = suneditor.create(commentsEditor[i],{
+                mode: "inline",
+                lang: ko,
+                height: "10vh",
+                width: "100%",
+                plugins: plugins,
+                value: '<p><span class="remirror-mention-atom remirror-mention-atom-at ProseMirror-selectednode" style="color: rgb(121, 99, 210)">@'+paginatedItems[i].writer.nickName+'</span><br></p><br/>',
+                videoWidth:'100%',
+                youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
+                buttonList: [
+                ['font'],
+                ['image', 'video','codeView']],
+                placeholder: placeHolderList[number]
+            });
+            
+            commentsUpdateEditor[i] = suneditor.create(commentsUpdateEditor[i],{
+                mode: "inline",
+                lang: ko,
+                height: "10vh",
+                width: "100%",
+                plugins: plugins,
+                value: convertHtml(paginatedItems[i].content),
+                videoWidth:'100%',
+                youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
+                buttonList: [
+                ['font'],
+                ['image', 'video','codeView']],
+                placeholder: placeHolderList[number]
+            });
         }
     })
 
@@ -280,9 +274,12 @@
             if(response.status == 200){
                 location.reload();
 
-                const comment = response.data.response;
-                commentList.content = [...commentList.content, comment];
-                commentEditor.setHTML("");
+                // const data = response.data.response;
+                // commentList.content = [...commentList.content, data];
+                //commentEditor.setHTML("");
+                // let item = commentList.content;
+                // items = [...item];
+                // console.log(items);
 
             }else{
                 console.log(response);
@@ -861,7 +858,7 @@
                                         {#if !comment.isDeleted}
                                         <div class:hidden={commentsUpdateToggle[index]} class="text-xs md:text-sm">{@html `${convertHtml(comment.content)}`}</div>
                                         <div class:hidden={!commentsUpdateToggle[index]}>
-                                            <textarea id="commentUpdateContainer{index}"></textarea>
+                                            <textarea id="commentsUpdateEditor{index}" bind:this={commentsUpdateEditor[index]}></textarea>
                                             <div class="mt-3 flex items-center justify-end gap-x-4">
                                                 <button
                                                 type="button"
@@ -901,7 +898,7 @@
                                         </div>
                                         {#if $authToken && !comment.isDeleted}
                                         <div class:hidden={!commentsShow[index]} class="mt-2">
-                                                <textarea id="commentsEditor{index}"></textarea>
+                                                <textarea id="commentsEditor{index}" bind:this={commentsEditor[index]}></textarea>
                                             <div class="mt-3 flex items-center justify-end gap-x-4">
                                                 <button
                                                 type="button"
@@ -933,7 +930,7 @@
                 {#if $isDark}
                     {#if commentList.totalElements > 0}
                     <DarkPaginationNav
-                    totalItems="{commentList.totalElements}"
+                        totalItems="{commentList.totalElements}"
                         pageSize="{pageSize}"
                         currentPage="{currentPage}"
                         limit="{1}"
@@ -943,7 +940,7 @@
                     {/if}
                     {:else}
                     {#if commentList.totalElements > 0}
-                        <LightPaginationNav
+                    <LightPaginationNav
                         totalItems="{commentList.totalElements}"
                         pageSize="{pageSize}"
                         currentPage="{currentPage}"
