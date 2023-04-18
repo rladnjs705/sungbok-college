@@ -252,7 +252,7 @@
             }
         });
         if(response.status == 200){
-            addValues.thumbnailPath = response.data.data.link+"?format=webp&width=170&height=160";
+            addValues.thumbnailPath = response.data.data.link+"?format=webp";
             return upload;
         } else{
             notyf.error('서버 에러입니다. 관리자에게 문의해 주세요.');
