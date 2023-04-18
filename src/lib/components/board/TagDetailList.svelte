@@ -1,26 +1,18 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
-    import { boardDetailList, pageNumber, itemCategorySelected, isDark } from '$stores';
-    import Category from './Category.svelte';
+    import { isDark } from '$stores';
     import { paginate, LightPaginationNav, DarkPaginationNav } from 'svelte-paginate'
-    import noticeSvg from '$lib/images/checklist-remove.png';
-    import questionSvg from '$lib/images/question-remove.png';
-    import freeSvg from '$lib/images/community-remove.png';
-    import lectureSvg from "$lib/images/lecture-remove.png";
     import patternSvg from "$lib/images/pattern.svg";
     import profileSvg from "$lib/images/profile.png";
-    import reportSvg from "$lib/images/work_from_home-remove.png";
-    import { FREE, LECTURE, NOTICE, QUESTIONS, REPORT } from '$lib/utils/constans';
     
     export let list:any;
-    export let categories:any=[];
-    export let boardType:any;
     export let boardList:any = list.list;
     export let response:any;
     let items:any[];
     let paginatedItems:any;
     let currentPage = 1
     let pageSize:number = 4
+
+    items = boardList;
 
     function displayedAt(createDate:Array<number>) {
         const milliSeconds = new Date().valueOf() - new Date(dateFommater(createDate)).valueOf();
@@ -68,39 +60,19 @@
         return str;
     }
 
-    $:
-    {
-        if($boardDetailList){
-            boardList = $boardDetailList.response.content;
-            response = $boardDetailList.response;
-            items = boardList;
-            paginatedItems = paginate({ items, pageSize, currentPage});
-        }
-    }
-
-    const onCategorySelected = (categoryEng:string) =>{
-        $pageNumber = 1;
-        itemCategorySelected.selectCategory(categoryEng);
-        boardDetailList.getBoardDetailList(boardType,categoryEng);
-        goto(`/${boardType}/${categoryEng}`)
-    }
+    $:paginatedItems = paginate({ items, pageSize, currentPage});
     
 </script>
 
 <div class="w-full mt-5">
     <a
         class="relative mb-2 text-gray-900 no-underline dark:text-gray-100"
-        href={boardType}
+        href="#null"
         ><div class="group relative">
             <div class="h-16 w-full rounded-xl bg-blue-50 dark:bg-gray-600">
                 <div
-                    class="h-full rounded-xl opacity-10"
+                    class="h-full rounded-xl opacity-10 bg-left-bottom"
                     style="background-image: url({patternSvg});"
-                    class:bg-bottom={boardType===NOTICE}
-                    class:bg-right-bottom={boardType==QUESTIONS}
-                    class:bg-right-top={boardType==FREE}
-                    class:bg-left-top={boardType==LECTURE}
-                    class:bg-left-bottom={boardType==REPORT}
                 />
             </div>
             <div
@@ -111,25 +83,8 @@
                     >{list.title}</span
                 >
             </div>
-            <div class="absolute -top-[34px] right-0 mr-10 h-28 w-28 overflow-y-hidden" class:mt-7={list.boardType === NOTICE}>
-                {#if list.boardType === NOTICE}
-                    <img src={noticeSvg} alt={NOTICE}/>
-                    {:else if list.boardType === QUESTIONS}
-                    <img src={questionSvg} alt={QUESTIONS} />
-                    {:else if list.boardType === FREE}
-                    <img src={freeSvg} alt={FREE} />
-                    {:else if list.boardType === LECTURE}
-                    <img src={lectureSvg} alt={LECTURE} />
-                    {:else if list.boardType === REPORT}
-                    <img src={reportSvg} alt={REPORT}/>
-                {/if}
-            </div>
         </div>
     </a>
-
-        {#if categories}
-            <Category boardType={boardType} categories={categories} />
-        {/if}
     <div>
         <ul class="divide-y divide-gray-500/30 dark:divide-gray-500/70">
             {#if paginatedItems}
@@ -180,7 +135,7 @@
                         <div class="flex items-center gap-x-2 sm:gap-x-2">
                             {#if board.hashTag}
                                 {#each board.hashTag as tag}
-                                    <a class=" line-clamp-1 text-xs font-normal leading-5 text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-200 sm:text-sm" href="/tagged/{tag}">#{tag}</a>
+                                    <a class=" line-clamp-1 text-xs font-normal leading-5 text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-200 sm:text-sm" href="#null">#{tag}</a>
                                 {/each}
                             {/if}
                         </div>
