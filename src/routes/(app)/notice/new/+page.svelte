@@ -157,6 +157,38 @@
             }
         }
     }
+
+    function processTagsFocusoutEvent() {
+        if(tag != ''){
+            tag = sanitizeTag(tag);
+            if (tags.length < 5) {
+                if (tag.length > 0) {
+                    if (tag.indexOf(',') > -1) {
+                        let tagList = tag.split(',');
+                        tagList.forEach((tag:any) => {
+                            if (tag.length > 0) {
+                                tags = addIfUnique(tags, parsedTag(tag));
+                            }
+                        });
+                        revertTag();
+                    } else if (/\s/g.test(tag)) {
+                        let tagList = tag.split(' ');
+                        tagList.forEach((tag:any) => {
+                            if (tag.length > 0) {
+                                tags = addIfUnique(tags, parsedTag(tag));
+                            }
+                        });
+                        revertTag();
+                    } else {
+                        tags = addIfUnique(tags, tag);
+                        revertTag();
+                    }
+                }
+            } else {
+                revertTag();
+            }
+        }
+    }
         
     function tagInputDisabled() {
         return tags.length >= 5;
@@ -250,6 +282,7 @@
                             placeholder="Type a tag and press enter"
                             bind:value={tag}
                             on:keydown={processTagsOnKeyUpEvent}
+                            on:focusout={processTagsFocusoutEvent}
                             disabled={tagInputDisabled()}
                             maxlength="10"
                           />

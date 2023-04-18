@@ -235,6 +235,41 @@
             }
         }
     }
+
+    function processTagsFocusoutEvent(e:any) {
+        const keyCode = e.keyCode;
+        if(tag != ''){
+            if(keyCode === 13 || keyCode === 32 || e.code == "Enter" || e.code == "Space"){
+                tag = sanitizeTag(tag);
+                if (tags.length+createTagList.length < 5) {
+                    if (tag.length > 0) {
+                        if (tag.indexOf(',') > -1) {
+                            let tagList = tag.split(',');
+                            tagList.forEach((tag:any) => {
+                                if (tag.length > 0) {
+                                    createTagList = addIfUnique(createTagList, parsedTag(tag));
+                                }
+                            });
+                            revertTag();
+                        } else if (/\s/g.test(tag)) {
+                            let tagList = tag.split(' ');
+                            tagList.forEach((tag:any) => {
+                                if (tag.length > 0) {
+                                    createTagList = addIfUnique(createTagList, parsedTag(tag));
+                                }
+                            });
+                            revertTag();
+                        } else {
+                            createTagList = addIfUnique(createTagList, parsedTag(tag));
+                            revertTag();
+                        }
+                    }
+                } else {
+                    revertTag();
+                }
+            }
+        }
+    }
         
     function tagInputDisabled() {
         return tags.length+createTagList.length >= 5;
@@ -428,7 +463,7 @@
                     </div>
                 </div>
                 <div class="grid grid-cols-6">
-                    <div class="col-span-6">
+                    <div class="col-span-6 relative">
                         <div class="flex relative bg-white overflow-hidden rounded-md shadow-sm focus:outline-none focus:shadow-outline border border-gray-300">
                           <input
                             type="text"
@@ -436,6 +471,7 @@
                             placeholder="Type a tag and press enter"
                             bind:value={tag}
                             on:keydown={processTagsOnKeyUpEvent}
+                            on:focusout={processTagsFocusoutEvent}
                             disabled={tagInputDisabled()}
                             maxlength="10"
                           />
