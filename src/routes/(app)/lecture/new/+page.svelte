@@ -15,6 +15,8 @@
     import noImage from "$lib/images/noImage.jpg";
     import { Notyf } from 'notyf';
     import 'notyf/notyf.min.css';
+    import KoreanAutocomplete from '$components/board/KoreanAutocomplete.svelte';
+
     const notyf = new Notyf({
         duration: 3000,
         position: {
@@ -140,7 +142,7 @@
     function processTagsOnKeyUpEvent(e:any) {
         const keyCode = e.keyCode;
         if(tag != ''){
-            if(keyCode === 13 || keyCode === 32 || e.code == "Space"){
+            if(keyCode === 13 || keyCode === 32 || e.code == "Enter" || e.code == "Space"){
                 tag = sanitizeTag(tag);
                 if (tags.length < 5) {
                     if (tag.length > 0) {
@@ -233,10 +235,10 @@
         e.target.src = noImage;
     }
 
-    import { Keyboard } from '@capacitor/keyboard';
-    Keyboard.addListener('keyboardDidShow', () => {
-        document.addEventListener('keydown', processTagsOnKeyUpEvent);
-    });
+    const addTags = (value:string) => {
+        tags = addIfUnique(tags,value);
+        revertTag();
+    }
 </script>
 
 <div class="md:mx-8">
@@ -324,7 +326,7 @@
             </div>
             <div class="space-y-1">
                 <label for="tag" class="text-sm font-medium text-gray-700 dark:text-gray-200">태그 - 
-                    <span class="rounded-sm text-sm text-blue-500">내용을 대표하는 태그 3개 정도 입력해주세요.</span>
+                    <span class="rounded-sm text-sm text-blue-500">내용을 대표하는 태그 3개 정도 입력해주세요.(최대 5개)</span>
                 </label>
                 <div class="grid grid-cols-5">
                     <div class="col-span-6">
@@ -355,6 +357,7 @@
                             maxlength="10"
                           />
                         </div>
+                        <KoreanAutocomplete inputText={tag} addTags={addTags}/>
                     </div>
                 </div>
             </div>
