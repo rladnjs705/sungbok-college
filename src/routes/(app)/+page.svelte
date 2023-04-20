@@ -41,22 +41,14 @@
 
         const options:BannerAdOptions = {
             adId: 'ca-app-pub-3940256099942544/6300978111',
-            adSize: BannerAdSize.ADAPTIVE_BANNER,
+            adSize: BannerAdSize.BANNER,
             position: BannerAdPosition.BOTTOM_CENTER,
-            margin: 0,
+            margin: 64,
             isTesting: true
             // npa: true
         }
 
         await AdMob.showBanner(options);
-
-        // const options: AdOptions = {
-            // adId: 'ca-app-pub-2423848008470963/2884386236',
-            // isTesting: true
-            // npa: true
-        // };
-        // await AdMob.prepareInterstitial(options);
-        // await AdMob.showInterstitial();
     })
 </script>
 
