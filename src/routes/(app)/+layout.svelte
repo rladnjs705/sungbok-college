@@ -12,6 +12,7 @@
   import { itemFooterSelected, itemCategorySelected,boardDetailList, pageNumber, isProfileOpen } from '$stores';
   import { authToken, auth, isDark } from '$stores';
   import { ALL, FREE, LECTURE, NOTICE, QUESTIONS } from "$lib/utils/constans";
+  import { AdMob } from "@capacitor-community/admob";
 
   $: {
       if($authToken){
@@ -59,6 +60,12 @@
       loading = false;
       isSidebar = false;
       $isProfileOpen = false;
+
+      AdMob.initialize({
+        requestTrackingAuthorization: true,
+        testingDevices: ['YOURTESTDEVICECODE'],
+        initializeForTesting: true,
+      })
   });
 
   const onSideBar = (_id:string) => {
