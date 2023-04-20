@@ -40,7 +40,7 @@
         itemFooterSelected.selectFooter(ALL);
 
         const options:BannerAdOptions = {
-            adId: 'ca-app-pub-3940256099942544/6300978111',
+            adId: 'ca-app-pub-2423848008470963/3518811053',
             adSize: BannerAdSize.ADAPTIVE_BANNER,
             position: BannerAdPosition.BOTTOM_CENTER,
             margin: 64,
