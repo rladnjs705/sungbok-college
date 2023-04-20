@@ -82,12 +82,62 @@
                         }
                     })
                     .catch(error => console.log(error));
+
+                    let number = Math.floor(Math.random()*5);
+                    commentEditor = suneditor.create('commentEditor',{
+                        lang: ko,
+                        height: "16vh",
+                        width: "100%",
+                        plugins: plugins,
+                        value: "",
+                        videoWidth:'100%',
+                        youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
+                        buttonList: [
+                        ['undo', 'redo', 'font'],
+                        ['image', 'video','codeView'],
+                        ['bold', 'underline', 'italic', 'strike']],
+                        placeholder: placeHolderList[number]
+                    });
+                    
+                    for (let i=0; i<paginatedItems.length; i++){
+                        let number = Math.floor(Math.random()*5);
+                        commentsEditor[i] = suneditor.create(commentsEditor[i],{
+                            mode: "inline",
+                            lang: ko,
+                            height: "10vh",
+                            width: "100%",
+                            plugins: plugins,
+                            value: '<p><span class="remirror-mention-atom remirror-mention-atom-at ProseMirror-selectednode" style="color: rgb(121, 99, 210)">@'+paginatedItems[i].writer.nickName+'</span><br></p><br/>',
+                            videoWidth:'100%',
+                            youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
+                            buttonList: [
+                            ['font'],
+                            ['image', 'video','codeView']],
+                            placeholder: placeHolderList[number]
+                        });
+                        
+                        commentsUpdateEditor[i] = suneditor.create(commentsUpdateEditor[i],{
+                            mode: "inline",
+                            lang: ko,
+                            height: "10vh",
+                            width: "100%",
+                            plugins: plugins,
+                            value: convertHtml(paginatedItems[i].content),
+                            videoWidth:'100%',
+                            youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
+                            buttonList: [
+                            ['font'],
+                            ['image', 'video','codeView']],
+                            placeholder: placeHolderList[number]
+                        });
+                    }
                 } else {
                     const response = await fetch("/api/user/board/detail/"+id);
                     const item = await response.json();
                     if(item.success == true){
                         data = {item};
                         board = data.item.response;
+                        commentList = board.commentResponseDTOList;
                         for (let i=0; i<board.commentResponseDTOList.content.length; i++){
                             commentsShow[commentsShow.length] = false;
                             board.commentResponseDTOList.content[i].isShow = true;
@@ -113,55 +163,6 @@
         }
 
         items = commentList.content;
-
-        let number = Math.floor(Math.random()*5);
-        commentEditor = suneditor.create('commentEditor',{
-            lang: ko,
-            height: "16vh",
-            width: "100%",
-            plugins: plugins,
-            value: "",
-            videoWidth:'100%',
-            youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
-            buttonList: [
-            ['undo', 'redo', 'font'],
-            ['image', 'video','codeView'],
-            ['bold', 'underline', 'italic', 'strike']],
-            placeholder: placeHolderList[number]
-        });
-        
-        for (let i=0; i<paginatedItems.length; i++){
-            let number = Math.floor(Math.random()*5);
-            commentsEditor[i] = suneditor.create(commentsEditor[i],{
-                mode: "inline",
-                lang: ko,
-                height: "10vh",
-                width: "100%",
-                plugins: plugins,
-                value: '<p><span class="remirror-mention-atom remirror-mention-atom-at ProseMirror-selectednode" style="color: rgb(121, 99, 210)">@'+paginatedItems[i].writer.nickName+'</span><br></p><br/>',
-                videoWidth:'100%',
-                youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
-                buttonList: [
-                ['font'],
-                ['image', 'video','codeView']],
-                placeholder: placeHolderList[number]
-            });
-            
-            commentsUpdateEditor[i] = suneditor.create(commentsUpdateEditor[i],{
-                mode: "inline",
-                lang: ko,
-                height: "10vh",
-                width: "100%",
-                plugins: plugins,
-                value: convertHtml(paginatedItems[i].content),
-                videoWidth:'100%',
-                youtubeQuery: 'autoplay=1&mute=1&enableisapi=1',
-                buttonList: [
-                ['font'],
-                ['image', 'video','codeView']],
-                placeholder: placeHolderList[number]
-            });
-        }
     })
 
     const boardTypeName = (boardType:string) => {
