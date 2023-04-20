@@ -1,6 +1,6 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import { boardDetailList, pageNumber, itemCategorySelected, isDark } from '$stores';
+    import { auth, boardDetailList, pageNumber, itemCategorySelected, isDark } from '$stores';
     import Category from './Category.svelte';
     import { paginate, LightPaginationNav, DarkPaginationNav } from 'svelte-paginate'
     import noticeSvg from '$lib/images/checklist-remove.png';
@@ -73,10 +73,22 @@
         if($boardDetailList){
             boardList = $boardDetailList.response.content;
             response = $boardDetailList.response;
-            items = boardList;
+            if(boardType == REPORT){
+                let itemList:any[] = [];
+                boardList.forEach((board:any) => {
+                    if(board.writer.email == $auth.email){
+                        itemList.push(board);
+                    }                
+                });
+                items = itemList;
+                response.totalElements = items.length;
+            } else{
+                items = boardList;
+            }
             paginatedItems = paginate({ items, pageSize, currentPage});
         }
     }
+    
 
     const onCategorySelected = (categoryEng:string) =>{
         $pageNumber = 1;
@@ -134,6 +146,7 @@
         <ul class="divide-y divide-gray-500/30 dark:divide-gray-500/70">
             {#if paginatedItems}
             {#each paginatedItems as board}
+            {#if boardType != REPORT}
             <li class="py-4 last:pb-0">
                 <div class="mb-2 flex">
                     <div class="flex flex-1 items-center space-x-1">
@@ -211,6 +224,87 @@
                     </div>
                 </div>
             </li>
+            {:else}
+                {#if $auth.email == board.writer.email}
+                <li class="py-4 last:pb-0">
+                    <div class="mb-2 flex">
+                        <div class="flex flex-1 items-center space-x-1">
+                            <!-- <a href="/users/138400"> -->
+                                <img
+                                    class="h-5 w-5 rounded-full"
+                                    src={profileSvg}
+                                    alt="프로필 사진"
+                                />
+                            <!-- </a> -->
+                            <div
+                                class="inline pl-1 text-xs font-medium text-gray-700 hover:text-blue-500 dark:text-gray-200 dark:hover:text-blue-200 sm:text-sm"
+                                >{board.isSecret === false ? board.writer.nickName : "익명"}</div
+                            >
+                            <div
+                                class="text-xs font-normal leading-5 text-gray-700 dark:text-gray-200 sm:text-sm flex"
+                            >
+                                <span class="mr-1">·</span>
+                                <span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline w-3 h-3 md:w-4 md:h-4 text-red-500 fill-red-500 mb-0.5 mr-0.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                    </svg>
+                                </span>
+                                <span>{formatLargeNumber(board.likeCount)}</span>
+                                <span>
+                                    <span class="ml-1">·</span>
+                                    <span>{displayedAt(board.createDate)}</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <a
+                            class="line-clamp-1 w-fit break-all text-sm font-semibold text-gray-900 hover:text-blue-500 dark:text-gray-100 dark:hover:text-blue-200 sm:text-base sm:leading-5"
+                            href="/articles/{board.id}"
+                            >{convertHtml(board.title)}</a
+                        >
+                    </div>
+                    <div class="flex mt-4">
+                        <div class="flex flex-1 items-center gap-x-3">
+                            {#if board.category}
+                                <a class="shrink-0 rounded bg-blue-50 py-0.5 px-2.5 text-xs font-medium text-blue-500 hover:text-blue-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:text-blue-200" href="#null" on:click={() => onCategorySelected(board.category.categoryEng)}>{board.category.categoryName}</a>
+                            {/if}
+                            <div class="flex items-center gap-x-2 sm:gap-x-2">
+                                {#if board.hashTag}
+                                    {#each board.hashTag as tag}
+                                        <a class=" line-clamp-1 text-xs font-normal leading-5 text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-200 sm:text-sm" href="/tagged/{tag}">#{tag}</a>
+                                    {/each}
+                                {/if}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-x-2 text-gray-700 dark:text-gray-300">
+                            <div class="inline-flex items-center space-x-0.5 text-xs sm:text-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-5 w-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                <span class="font-medium">{formatLargeNumber(board.viewCount)}</span>
+                                <span class="sr-only">views</span>
+                            </div>
+                            <div class="inline-flex items-center space-x-0.5 text-xs sm:text-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-5 w-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"></path>
+                                </svg>
+                                <span class="font-medium">{formatLargeNumber(board.commentCount)}</span>
+                                <span class="sr-only">comments</span>
+                            </div>
+                            <!-- <div class="inline-flex items-center -space-x-0.5 text-xs sm:text-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-5 w-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
+                                </svg>
+                                <span class="font-medium">{formatLargeNumber(board.likeCount)}</span>
+                                <span class="sr-only">likes</span>
+                            </div> -->
+                        </div>
+                    </div>
+                </li>
+                {/if}
+            {/if}
             {/each}
             <!-- Pagination -->
             {#if $isDark}

@@ -3,7 +3,7 @@
     import type { PageData } from './$types';
     import { ADMIN, REPORT } from '$utils/constans';
     import { auth, authToken } from '$stores';
-
+    
     export let data: PageData;
     const boardType = REPORT;
     const boardList = data.list.response.content;
@@ -16,7 +16,7 @@
     }
 </script>
 {#if $auth.role == ADMIN || $authToken}
-<DetailList list={list} categories={categories} boardType={boardType} response={response}/>
+    <DetailList list={list} categories={categories} boardType={boardType} response={response}/>
 {:else}
     <a
         class="text-base font-medium text-blue-500 hover:text-blue-400 dark:hover:text-blue-200"
