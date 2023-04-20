@@ -41,7 +41,7 @@
 
         const options:BannerAdOptions = {
             adId: 'ca-app-pub-3940256099942544/6300978111',
-            adSize: BannerAdSize.BANNER,
+            adSize: BannerAdSize.ADAPTIVE_BANNER,
             position: BannerAdPosition.BOTTOM_CENTER,
             margin: 64,
             isTesting: true
