@@ -5,6 +5,11 @@
     import { onMount } from "svelte";
     import type { PageData } from './$types';
     import LectureList from "$lib/components/board/LectureList.svelte";
+
+
+    import type { AdOptions, BannerAdOptions, AdMobBannerSize } from "@capacitor-community/admob";
+    import { AdMob, BannerAdSize, BannerAdPosition, BannerAdPluginEvents } from "@capacitor-community/admob";
+
     export let data: PageData;
 
     const notice = {
@@ -31,8 +36,27 @@
         boardType: LECTURE
     };
 
-    onMount(() => {
+    onMount(async () => {
         itemFooterSelected.selectFooter(ALL);
+
+        // const options:BannerAdOptions = {
+        //     adId: 'ca-app-pub-3940256099942544/6300978111',
+        //     adSize: BannerAdSize.BANNER,
+        //     position: BannerAdPosition.BOTTOM_CENTER,
+        //     margin: 0,
+        //     //isTesting: true
+        //     // npa: true
+        // }
+
+        // AdMob.showBanner(options);
+
+        const options: AdOptions = {
+            adId: 'ca-app-pub-2423848008470963/2884386236',
+            // isTesting: true
+            // npa: true
+        };
+        await AdMob.prepareInterstitial(options);
+        await AdMob.showInterstitial();
     })
 </script>
 
