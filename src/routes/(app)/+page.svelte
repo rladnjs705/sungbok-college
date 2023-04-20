@@ -7,8 +7,8 @@
     import LectureList from "$lib/components/board/LectureList.svelte";
 
 
-    import type { AdOptions, BannerAdOptions, AdMobBannerSize } from "@capacitor-community/admob";
-    import { AdMob, BannerAdSize, BannerAdPosition, BannerAdPluginEvents } from "@capacitor-community/admob";
+    import type { BannerAdOptions } from "@capacitor-community/admob";
+    import { AdMob, BannerAdSize, BannerAdPosition } from "@capacitor-community/admob";
 
     export let data: PageData;
 
@@ -44,7 +44,7 @@
             adSize: BannerAdSize.ADAPTIVE_BANNER,
             position: BannerAdPosition.BOTTOM_CENTER,
             margin: 64,
-            isTesting: true
+            //isTesting: true
             // npa: true
         }
 

@@ -63,8 +63,8 @@
 
       AdMob.initialize({
         requestTrackingAuthorization: true,
-        testingDevices: ['YOURTESTDEVICECODE'],
-        initializeForTesting: true,
+        //testingDevices: ['YOURTESTDEVICECODE'],
+        //initializeForTesting: true,
       })
   });
 
