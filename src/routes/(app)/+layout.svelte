@@ -98,28 +98,6 @@
     document.body.classList.remove("sidebar-open");
   }
 
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "firebase/app";
-  import { getAnalytics } from "firebase/analytics";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyBkwrNqFCcx2gtCwzJ3hJqs_SsrDBStwwo",
-    authDomain: "sungbok-college.firebaseapp.com",
-    projectId: "sungbok-college",
-    storageBucket: "sungbok-college.appspot.com",
-    messagingSenderId: "721663314281",
-    appId: "1:721663314281:web:af9d891b3d0302555e95f8",
-    measurementId: "G-RR7WGQRW1R"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-
 </script>
 {#await initAuth() then initAuth}
 <div class:dark={$isDark} class:loading={loading} class:scrollbar-hidden={isMobile} class:sidebar-open={isSidebar}>
