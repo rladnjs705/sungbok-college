@@ -6,10 +6,6 @@
     import type { PageData } from './$types';
     import LectureList from "$lib/components/board/LectureList.svelte";
 
-
-    import type { BannerAdOptions } from "@capacitor-community/admob";
-    import { AdMob, BannerAdSize, BannerAdPosition } from "@capacitor-community/admob";
-
     export let data: PageData;
 
     const notice = {
@@ -38,17 +34,6 @@
 
     onMount(async () => {
         itemFooterSelected.selectFooter(ALL);
-
-        const options:BannerAdOptions = {
-            adId: 'ca-app-pub-2423848008470963/3518811053',
-            adSize: BannerAdSize.ADAPTIVE_BANNER,
-            position: BannerAdPosition.BOTTOM_CENTER,
-            margin: 64,
-            //isTesting: true
-            // npa: true
-        }
-
-        await AdMob.showBanner(options);
     })
 </script>
 
