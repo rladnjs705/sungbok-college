@@ -1,0 +1,3 @@
+# https://sungbok-college.site/robotstxt.html
+User-agent: *
+Allow: /

@@ -12,8 +12,6 @@
   import { itemFooterSelected, itemCategorySelected,boardDetailList, pageNumber, isProfileOpen } from '$stores';
   import { authToken, auth, isDark } from '$stores';
   import { ALL, FREE, LECTURE, NOTICE, QUESTIONS } from "$lib/utils/constans";
-  import { AdMob } from "@capacitor-community/admob";
-
   $: {
       if($authToken){
           auth.createAuth();
@@ -60,12 +58,6 @@
       loading = false;
       isSidebar = false;
       $isProfileOpen = false;
-
-      AdMob.initialize({
-        requestTrackingAuthorization: true,
-        //testingDevices: ['YOURTESTDEVICECODE'],
-        //initializeForTesting: true,
-      })
   });
 
   const onSideBar = (_id:string) => {
@@ -99,6 +91,21 @@
   }
 
 </script>
+<svelte:head>
+    <!-- 페이지-->
+    <title>새벽이슬</title>
+    <meta name="description" content="새벽이슬 청년들의 커뮤니티 사이트 입니다.">
+
+    <!-- meta -->
+    <meta property="og:url" content="https://port-0-sungbok-college-1jx7m2gldi7x7be.gksl2.cloudtype.app/">
+    <meta property="og:title" content="새벽이슬">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://optimizeimage-6vca6cxsga-du.a.run.app/The_dew_Logo.png?width=200&height=200">
+    <meta property="og:description" content="새벽이슬 청년부의 커뮤니티 사이트 입니다.">	
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2423848008470963"
+     	crossorigin="anonymous"></script>
+</svelte:head>
 {#await initAuth() then initAuth}
 <div class:dark={$isDark} class:loading={loading} class:scrollbar-hidden={isMobile} class:sidebar-open={isSidebar}>
 
