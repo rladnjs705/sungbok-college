@@ -193,6 +193,7 @@ function setAttendanceList() :any {
     }
 }
 
+
 export const authToken = setAuthToken();
 export const auth = setAuth();
 export const isAdmin = setIsAdmin();

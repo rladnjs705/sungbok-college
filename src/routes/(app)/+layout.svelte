@@ -103,10 +103,13 @@
     <meta property="og:title" content="새벽이슬">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://optimizeimage-6vca6cxsga-du.a.run.app/The_dew_Logo.png?width=200&height=200">
-    <meta property="og:description" content="새벽이슬 청년부의 커뮤니티 사이트 입니다.">	
+    <meta property="og:description" content="새벽이슬 청년들의 커뮤니티 사이트 입니다.">	
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2423848008470963"
      	crossorigin="anonymous"></script>
+    
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss.xml" />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
 </svelte:head>
 <Analytics />
 {#await initAuth() then initAuth}

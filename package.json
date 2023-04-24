@@ -17,6 +17,7 @@
 		"@tailwindcss/forms": "^0.5.3",
 		"@types/gtag.js": "^0.0.12",
 		"autoprefixer": "^10.4.13",
+		"feed": "^4.2.2",
 		"postcss": "^8.4.21",
 		"svelte": "^3.54.0",
 		"svelte-check": "^3.0.1",
@@ -48,6 +49,7 @@
 		"suneditor": "^2.44.6",
 		"sweetalert2": "^11.4.8",
 		"tailwind-scrollbar-hide": "^1.1.7",
+		"xml-js": "^1.6.11",
 		"yup": "^0.32.11"
 	}
 }
