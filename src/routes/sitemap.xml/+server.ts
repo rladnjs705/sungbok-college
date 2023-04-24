@@ -1,4 +1,4 @@
-export const prerender = true;
+export const prerender = false;
 
 export const GET = async (event:any) => {
     const response = await event.fetch("/api/user/board");

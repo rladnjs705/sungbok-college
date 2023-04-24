@@ -2,7 +2,7 @@ import { Feed } from 'feed'
 
 import type { RequestHandler } from './$types'
 
-export const prerender = true
+export const prerender = false
 
 export const GET: RequestHandler = async (event) => {
     const response = await event.fetch("/api/user/board");
