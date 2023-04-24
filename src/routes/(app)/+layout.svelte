@@ -95,6 +95,7 @@
     <!-- 페이지-->
     <title>새벽이슬</title>
     <meta name="description" content="새벽이슬 청년들의 커뮤니티 사이트 입니다.">
+    <meta name="naver-site-verification" content="5042180a7970682db78bf757929d44ddd4c9f4ee" />
 
     <!-- meta -->
     <meta property="og:url" content="https://port-0-sungbok-college-1jx7m2gldi7x7be.gksl2.cloudtype.app/">
