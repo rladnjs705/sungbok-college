@@ -12,6 +12,7 @@
   import { itemFooterSelected, itemCategorySelected,boardDetailList, pageNumber, isProfileOpen } from '$stores';
   import { authToken, auth, isDark } from '$stores';
   import { ALL, FREE, LECTURE, NOTICE, QUESTIONS } from "$lib/utils/constans";
+  import Analytics from "$components/Analytics.svelte";
   $: {
       if($authToken){
           auth.createAuth();
@@ -106,6 +107,7 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2423848008470963"
      	crossorigin="anonymous"></script>
 </svelte:head>
+<Analytics />
 {#await initAuth() then initAuth}
 <div class:dark={$isDark} class:loading={loading} class:scrollbar-hidden={isMobile} class:sidebar-open={isSidebar}>
 
