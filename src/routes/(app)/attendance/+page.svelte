@@ -41,21 +41,11 @@
 
     const onAddAttendance = async () => {
         try {
-            const response = await axios.post("/api/user/attendance/create", addValues);
-            if(response.status == 200){
-                //notyf.success("생성되었습니다.");
-                location.reload()
-            }else{
-                console.log(response);
-                Swal.fire({
-                    icon: 'error',
-                    text: "에러가 발생했습니다. 관리자에게 문의해주세요.",
-                    timer: 3000, // 3초 후 자동으로 닫힘
-                });
-            }
-        } catch(error) {
-            console.log(error)
-            if(error){
+            await axios.post("/api/user/attendance/create", addValues)
+            .then(() => {
+              location.reload()
+            })
+            .catch(error => {
               if(error.response.status == 400){
                 if(error.response.data.resultCode == 1100){
                   Swal.fire({
@@ -67,7 +57,9 @@
               } else if(error.response.status == 401){
                   goto("/login");
               }
-            }
+            });
+        } catch(error) {
+            console.log(error)
         }
     }
 

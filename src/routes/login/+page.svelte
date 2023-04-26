@@ -70,14 +70,10 @@
     }
     const kakaoLogin = async () => {
       try {
-          await fetch('/api/oauth2/authorization/kakao', {
-          method: 'POST'
-        }).then(response => {
-          console.log(response)
-          if (response.ok) {
-            window.location.href = '/';
-          }
-        });
+        const clientId = "a0f68dd1705f7a7dba3d84a6adb5946d";
+        const redirectUrl = "http://localhost:3000/oauth";
+        location.href = "https://kauth.kakao.com/oauth/authorize?client_id="+clientId+"&redirect_uri="+redirectUrl+"&response_type=code";
+
       } catch (error) {
         console.log(error);
       }
@@ -137,7 +133,7 @@
               <svg class="h-5 w-5" viewBox="-1 -1 17 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M9.88343 0V7.06382L5.13527 0H0V14H5.11657V6.93618L9.8666 14H15V0H9.88343Z" fill="currentColor"></path>
               </svg>
             </a>
-            <a class="inline-flex w-full justify-center rounded-md border border-gray-500/30 px-4 py-2 text-gray-700 shadow-sm hover:border-gray-500 dark:bg-gray-700 dark:text-gray-300" href="/api/oauth2/authorization/kakao">
+            <a class="inline-flex w-full justify-center rounded-md border border-gray-500/30 px-4 py-2 text-gray-700 shadow-sm hover:border-gray-500 dark:bg-gray-700 dark:text-gray-300" href="#null" on:click={kakaoLogin}>
               <span class="sr-only">Sign in with Kakao</span>
               <svg class="h-5 w-5" viewBox="0 0 22 21" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_1394_6217)">
