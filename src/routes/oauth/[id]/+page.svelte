@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
     import { goto } from "$app/navigation";
     import { authToken, auth } from '$stores';
     import axios from "axios";
@@ -7,17 +8,24 @@
 
     onMount(async () => {
         const queryParams = new URLSearchParams(window.location.search);
+
+        const id = String($page.params.id);
     
         if(queryParams.get("error")){
             console.error(queryParams.get("error_description"));
         } else{
             const code = queryParams.get("code");
-            const state = queryParams.get("state");
-            const csrfToken = localStorage.getItem("csrfToken");
+            const state = queryParams.get("state") == null ? "" : queryParams.get("state");
+            let csrfToken;
+            if(localStorage.getItem("csrfToken")){
+                csrfToken = localStorage.getItem("csrfToken");
+            } else {
+                csrfToken = "";
+            }
     
             if(state === csrfToken) {
                 try {
-                    await axios.get("/api/login/oauth2/code/kakao?code="+code)
+                    await axios.get("/api/login/oauth2/code/"+id+"?code="+code)
                     .then(response => {
                         
                         authToken.saveAuthToken(response.data.data);
@@ -31,16 +39,6 @@
                             goto("/login");
                         }
                     })
-                    
-
-                    // await fetch("/api/login/oauth2/code/kakao?code="+code, {
-                    //     method: "GET",
-                    // }).then (response => {
-                    //     console.log(response);
-                    //     if(response.ok){
-                    //         //goto("/");
-                    //     }
-                    // })
                 } catch (error) {
                     console.log(error)
                 }

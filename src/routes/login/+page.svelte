@@ -6,6 +6,7 @@
     import logo from "$lib/images/logo.png";
     import { onMount } from 'svelte';
     import 'sweetalert2/src/sweetalert2.scss';
+    import { env } from '$env/dynamic/public'
 
   let formValues = {
     userEmail: '',
@@ -70,8 +71,8 @@
     }
     const kakaoLogin = async () => {
       try {
-        const clientId = "a0f68dd1705f7a7dba3d84a6adb5946d";
-        const redirectUrl = "http://localhost:3000/oauth";
+        const clientId = env.PUBLIC_KAKAO_CLIENT_ID;;
+        const redirectUrl = env.PUBLIC_KAKAO_REDIRECT_URL;
         location.href = "https://kauth.kakao.com/oauth/authorize?client_id="+clientId+"&redirect_uri="+redirectUrl+"&response_type=code";
 
       } catch (error) {
@@ -81,12 +82,20 @@
 
     const naverLogin = async () => {
       try {
-          await fetch('/api/oauth2/authorization/naver')
-          .then(response => {
-          if (response.ok) {
-            location.href = response.url;
-          }
-        });
+        const clientId = env.PUBLIC_NAVER_CLIENT_ID;
+        const redirectUrl = env.PUBLIC_NAVER_REDIRECT_URL;
+        location.href = "https://nid.naver.com/oauth2.0/authorize?client_id="+clientId+"&redirect_uri="+redirectUrl+"&response_type=code";
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    const googleLogin = async () => {
+      try {
+        const clientId = env.PUBLIC_GOOGLE_CLIENT_ID;
+        const redirectUrl = env.PUBLIC_GOOGLE_REDIRECT_URL;
+        const scope = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
+        location.href = "https://accounts.google.com/o/oauth2/v2/auth?client_id="+clientId+"&redirect_uri="+redirectUrl+"&response_type=code&scope="+scope;
       } catch (error) {
         console.log(error);
       }
@@ -114,7 +123,7 @@
         <div class="mt-8">
           <span class="text-sm font-medium">SNS 로그인</span>
           <div class="mt-1 grid grid-cols-3 gap-3">
-            <a class="inline-flex w-full justify-center rounded-md border border-gray-500/30 px-4 py-2 text-gray-700 shadow-sm hover:border-gray-500/70 dark:bg-gray-700 dark:text-gray-300" href="/api/oauth2/authorization/google">
+            <a class="inline-flex w-full justify-center rounded-md border border-gray-500/30 px-4 py-2 text-gray-700 shadow-sm hover:border-gray-500/70 dark:bg-gray-700 dark:text-gray-300" href="#null" on:click={googleLogin}>
               <span class="sr-only">Sign in with Google</span>
               <svg class="h-5 w-5" viewBox="0 0 18 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_1394_6209)">
