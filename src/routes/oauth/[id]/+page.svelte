@@ -26,7 +26,7 @@
             if(state === csrfToken) {
                 try {
                     await axios.get("/api/login/oauth2/code/"+id+"?code="+code)
-                    .then(response => {
+                    .then((response) => {
                         
                         authToken.saveAuthToken(response.data.data);
                         auth.createAuth();
@@ -34,10 +34,8 @@
                     })
                     .catch(async (error) => {
                         console.log(error.response);
-                        const result = await sweetConfirm('로그인 에러입니다. 다시 로그인해주세요.');
-                        if(result.value){
-                            goto("/login");
-                        }
+                        await sweetConfirm('로그인 에러입니다. 다시 로그인해주세요.');
+                        goto("/login");
                     })
                 } catch (error) {
                     console.log(error)
@@ -52,7 +50,9 @@
         return Swal.fire({
             text: msg,
             icon: 'warning',
-            confirmButtonText: "예"
+            confirmButtonText: "예",
+            timer: 3000,
+            timerProgressBar: true,
         });
     }
 
