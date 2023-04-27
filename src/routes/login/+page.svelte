@@ -6,7 +6,8 @@
     import logo from "$lib/images/logo.png";
     import { onMount } from 'svelte';
     import 'sweetalert2/src/sweetalert2.scss';
-    import { env } from '$env/dynamic/public'
+    import { env } from '$env/dynamic/public';
+    import { Browser } from '@capacitor/browser';
 
   let formValues = {
     userEmail: '',
@@ -73,7 +74,12 @@
       try {
         const clientId = env.PUBLIC_KAKAO_CLIENT_ID;;
         const redirectUrl = env.PUBLIC_KAKAO_REDIRECT_URL;
-        location.href = "https://kauth.kakao.com/oauth/authorize?client_id="+clientId+"&redirect_uri="+redirectUrl+"&response_type=code";
+        const url = "https://kauth.kakao.com/oauth/authorize?client_id="+clientId+"&redirect_uri="+redirectUrl+"&response_type=code";
+        try {
+          await Browser.open({ url: url});
+        } catch (error) {
+          location.href = url;
+        }
 
       } catch (error) {
         console.log(error);
@@ -84,7 +90,12 @@
       try {
         const clientId = env.PUBLIC_NAVER_CLIENT_ID;
         const redirectUrl = env.PUBLIC_NAVER_REDIRECT_URL;
-        location.href = "https://nid.naver.com/oauth2.0/authorize?client_id="+clientId+"&redirect_uri="+redirectUrl+"&response_type=code";
+        const url = "https://nid.naver.com/oauth2.0/authorize?client_id="+clientId+"&redirect_uri="+redirectUrl+"&response_type=code";
+        try {
+          await Browser.open({ url: url});
+        } catch (error) {
+          location.href = url;
+        }
       } catch (error) {
         console.log(error);
       }
@@ -95,7 +106,12 @@
         const clientId = env.PUBLIC_GOOGLE_CLIENT_ID;
         const redirectUrl = env.PUBLIC_GOOGLE_REDIRECT_URL;
         const scope = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
-        location.href = "https://accounts.google.com/o/oauth2/v2/auth?client_id="+clientId+"&redirect_uri="+redirectUrl+"&response_type=code&scope="+scope;
+        const url = "https://accounts.google.com/o/oauth2/v2/auth?client_id="+clientId+"&redirect_uri="+redirectUrl+"&response_type=code&scope="+scope;
+        try {
+          await Browser.open({ url: url});
+        } catch (error) {
+          location.href = url;
+        }
       } catch (error) {
         console.log(error);
       }
